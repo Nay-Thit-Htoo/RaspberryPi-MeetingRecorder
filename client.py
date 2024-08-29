@@ -3,7 +3,7 @@ import threading
 
 # Server configuration
 SERVER_IP = socket.gethostbyname(socket.gethostname())  # Replace with the IP address of the server Raspberry Pi
-PORT = 5090                 # The port the server is listening on
+PORT = 5090# The port the server is listening on
 
 # Function to receive messages from the server
 def receive_messages(client_socket):
