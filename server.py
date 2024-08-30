@@ -1,6 +1,7 @@
 import socket
 import threading
-import settings as appsetting
+import Settings as appsetting
+import json
 
 # Server configuration
 HOST = socket.gethostbyname(socket.gethostname())#get host ip address
@@ -28,35 +29,33 @@ def broadcast(message, sender_socket=None, recipient_socket=None):
 
 # Function to handle individual client connections
 def handle_client(client_socket, addr):
-    print(f"Connected by {addr}") 
-    host,port=addr  
+    print(f"[Connected By] : {addr}")
+    clients[addr] = client_socket 
     while True:
         try:
             message = client_socket.recv(1024)
             if not message:
                 break
 
-            # Decode message
+            # Received Message and Decode Message
             decoded_message = message.decode('utf-8')
-            print(f'Received Message {decoded_message}')
-
             # Reply to Clients
-            recipient_ip, msg = decoded_message.split(": ", 1)      
-            print(f"Only Message{msg}")   
-            #recipient_socket = None
-            # for client_addr, socket in clients.items():
-            #     recipient_socket = socket
-            #     # if client_addr[0] == recipient_ip:
-            #     #     recipient_socket = socket
-            #     #     break
-            #     if recipient_socket:
-            #         broadcast(("Reply from server: Seen!").encode('utf-8'), sender_socket=client_socket, recipient_socket=recipient_socket)
-            #     else:
-            #         client_socket.send(f"Client with IP {recipient_ip} not found.".encode('utf-8'))
+            recipient_ip, msg = decoded_message.split(": ", 1) 
+            print(f'\n[Received Message] : IP Address={recipient_ip} Message={msg}')
+
+            for client_addr, socket in clients.items():
+                print(f"[Client Address] : {client_addr}")
+                print(f"[Socket Name] : {socket}")
+                recipient_socket = socket               
+                if recipient_socket:
+                    broadcast(("Reply from server: Seen!").encode('utf-8'), sender_socket=client_socket, recipient_socket=recipient_socket)
+                else:
+                    client_socket.send(f"Client with IP {recipient_ip} not found.".encode('utf-8'))
         except:
             break
 
-    print(f"Disconnected by {addr}")
+    print(f"[Disconnected By] : {addr}")
+    del clients[addr]
     client_socket.close()
 
 # Set up the server socket
@@ -65,7 +64,6 @@ def start_server():
     server_socket.bind((HOST, PORT))
     server_socket.listen(5)
     print(f"Server listening on {HOST}:{PORT}")
-
     while True:
         client_socket, addr = server_socket.accept()
         thread = threading.Thread(target=handle_client, args=(client_socket, addr))
