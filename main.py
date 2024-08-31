@@ -1,40 +1,46 @@
 import tkinter as tk
+from login import Login 
+from meeting_record import MeetingRecord
 
-def center_window(window, width, height):
-    # Get the screen width and height
-    screen_width = window.winfo_screenwidth()
-    screen_height = window.winfo_screenheight()
+class Main(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.title("Recorder Project")        
+        width=400
+        height=300        
+        # Get the screen width and height        
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
 
-    # Calculate the position to center the window
-    x = (screen_width // 2) - (width // 2)
-    y = (screen_height // 2) - (height // 2)
+         # Calculate the position to center the window
+        x = (screen_width // 2) - (width // 2)
+        y = (screen_height // 2) - (height // 2)
 
-    # Set the geometry of the window
-    window.geometry(f'{width}x{height}+{x}+{y}')
+        # Set the geometry of the window
+        self.geometry(f'{width}x{height}+{x}+{y}')
+        
 
-# Set the window size
-window_width = 400
-window_height = 300
+        # Create a container for the frames
+        self.container = tk.Frame(self)
+        self.container.pack(expand=True)
 
-root = tk.Tk()
-root.title("Recorder Project")
+        # Create the frames for each page
+        self.frames = {}
+        for F in (Login, MeetingRecord):
+            page_name = F.__name__
+            frame = F(parent=self.container, controller=self)
+            self.frames[page_name] = frame
+            frame.grid(row=0, column=0, sticky="nsew")
 
-# Create a frame to hold the widgets
-frame = tk.Frame(root)
-frame.pack(expand=True)
+    
+        # Show the first page
+        self.show_frame("Login")        
 
-#region recorder image
-image = tk.PhotoImage(file="Assets/mic.png")
-label = tk.Label(frame, image=image)
-label.pack(pady=10)
+    def show_frame(self, page_name):
+        frame = self.frames[page_name]
+        frame.tkraise()    
+   
 
-#start & stop buttons
-startBtn=tk.Button(frame,text="Start",bg="#121212", fg="white",width=15,height=2,font=("Helvetica", 10))
-stopBtn=tk.Button(frame,text="Stop",bg="#DEE3E2", fg="black",width=15,height=2,font=("Helvetica", 10))
-startBtn.pack(side=tk.LEFT,padx=10, pady=10)
-stopBtn.pack(side=tk.LEFT,padx=10, pady=10)
-
-# Center the window
-center_window(root, window_width, window_height)
-
-root.mainloop()
+if __name__ == "__main__":
+    app = Main()
+    app.mainloop()
