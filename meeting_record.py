@@ -7,8 +7,8 @@ import threading
 import json
 
 # Server configuration
-SERVER_IP = socket.gethostbyname(socket.gethostname())  # Replace with the IP address of the server Raspberry Pi
-PORT = 5090# The port the server is listening on
+SERVER_IP = '192.168.99.166'#socket.gethostbyname(socket.gethostname())  # Replace with the IP address of the server Raspberry Pi
+PORT = 1234# The port the server is listening on
 
 class MeetingRecord(tk.Frame):
     def __init__(self, parent, controller):

@@ -15,7 +15,7 @@ def broadcast(message, sender_socket=None, recipient_socket=None):
     if recipient_socket:
         # Send to a specific client
         try:
-            recipient_socket.send(message)
+            recipient_socket.sendall(message)
         except:
             pass
     else:
@@ -31,6 +31,7 @@ def broadcast(message, sender_socket=None, recipient_socket=None):
 def handle_client(client_socket, addr):
     print(f"[Connected By] : {addr}")
     clients[addr] = client_socket 
+    print(f"Client Address : {clients}")
     while True:
         try:
             message = client_socket.recv(1024)
