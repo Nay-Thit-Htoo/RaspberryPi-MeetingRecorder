@@ -47,11 +47,12 @@ def handle_client(client_socket, addr):
             for client_addr, socket in clients.items():
                 print(f"[Client Address] : {client_addr}")
                 print(f"[Socket Name] : {socket}")
-                recipient_socket = socket               
-                if recipient_socket:
-                    broadcast(msg.encode('utf-8'), sender_socket=client_socket, recipient_socket=recipient_socket)
-                else:
-                    client_socket.send(f"Client with IP {recipient_ip} not found.".encode('utf-8'))
+                recipient_socket = socket             
+                recipient_socket.sendall(msg.encode('utf-8'))  
+                # if recipient_socket:
+                #     broadcast(msg.encode('utf-8'), sender_socket=client_socket, recipient_socket=recipient_socket)
+                # else:
+                #     client_socket.send(f"Client with IP {recipient_ip} not found.".encode('utf-8'))
         except:
             break
 
