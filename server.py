@@ -4,28 +4,11 @@ import Settings as appsetting
 import json
 
 # Server configuration
-HOST = socket.gethostbyname(socket.gethostname())#get host ip address
-PORT = 5090 # Port to listen on
+HOST = '0.0.0.0'#socket.gethostbyname(socket.gethostname())#get host ip address
+PORT = 1234 # Port to listen on
 
 # json to hold all connected clients
 clients = {}
-
-# Function to handle broadcasting messages to all or specific clients
-def broadcast(message, sender_socket=None, recipient_socket=None):
-    if recipient_socket:
-        # Send to a specific client
-        try:
-            recipient_socket.sendall(message)
-        except:
-            pass
-    else:
-        # Broadcast to all clients except the sender
-        for client in clients.values():
-            if client != sender_socket:
-                try:
-                    client.send(message)
-                except:
-                    pass
 
 # Function to handle individual client connections
 def handle_client(client_socket, addr):
@@ -46,13 +29,8 @@ def handle_client(client_socket, addr):
             
             for client_addr, socket in clients.items():
                 print(f"[Client Address] : {client_addr}")
-                print(f"[Socket Name] : {socket}")
-                recipient_socket = socket             
-                recipient_socket.sendall(msg.encode('utf-8'))  
-                # if recipient_socket:
-                #     broadcast(msg.encode('utf-8'), sender_socket=client_socket, recipient_socket=recipient_socket)
-                # else:
-                #     client_socket.send(f"Client with IP {recipient_ip} not found.".encode('utf-8'))
+                print(f"[Socket Name] : {socket}")                         
+                socket.sendall(msg.encode('utf-8'))                
         except:
             break
 

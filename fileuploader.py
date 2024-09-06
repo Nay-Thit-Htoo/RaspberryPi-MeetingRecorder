@@ -25,7 +25,7 @@ class FileUploader(tk.Tk):
         self.upload_button.pack(pady=10)
         
         self.file_path = None
-        self.network_path = "C:/Users/naythithtoo.ABANK/Downloads/RecordFile"  # Change this to your network share path
+        self.network_path = "\\ZINMIN-1281999\PythonProject\RecordFile"  # Change this to your network share path
 
     def browse_file(self):
         self.file_path = filedialog.askopenfilename()
@@ -37,7 +37,8 @@ class FileUploader(tk.Tk):
             messagebox.showerror("Error", "No file selected!")
             return
         
-        threading.Thread(target=self.upload_file_thread).start()
+        threading.Thread(target=self.upload_file_thread).start()    
+
     
     def upload_file_thread(self):
         file_name = os.path.basename(self.file_path)
@@ -46,11 +47,16 @@ class FileUploader(tk.Tk):
         file_size = os.path.getsize(self.file_path)
         self.progress["maximum"] = file_size
         
-        with open(self.file_path, 'rb') as src_file, open(dest_path, 'wb') as dest_file:
-            for chunk in tqdm(iter(lambda: src_file.read(1024), b''), total=file_size, unit='B', unit_scale=True, desc=file_name):
-                dest_file.write(chunk)
-                self.progress.step(len(chunk))
-        
+        with open(self.file_path, 'rb') as src_file:
+            with open(dest_path, 'wb') as dest_file:
+                while True:
+                    # Read the file in chunks (64KB)
+                    chunk = src_file.read(1024)
+                    if not chunk:
+                        break
+                    dest_file.write(chunk)                   
+                    self.progress.step(len(chunk)) 
+                    
         messagebox.showinfo("Success", "File uploaded successfully!")
 
 if __name__ == "__main__":

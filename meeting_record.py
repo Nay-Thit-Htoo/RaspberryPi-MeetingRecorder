@@ -7,7 +7,7 @@ import threading
 import json
 
 # Server configuration
-SERVER_IP = '192.168.99.166'#socket.gethostbyname(socket.gethostname())  # Replace with the IP address of the server Raspberry Pi
+SERVER_IP = '192.168.99.157'#socket.gethostbyname(socket.gethostname())  # Replace with the IP address of the server Raspberry Pi
 PORT = 1234# The port the server is listening on
 
 class MeetingRecord(tk.Frame):
@@ -36,11 +36,18 @@ class MeetingRecord(tk.Frame):
         meeting_status_label.pack(padx=5, pady=5)
           
         #start & stop buttons
-        startBtn=tk.Button(self,text="Start",bg="#121212", fg="white",width=15,height=2,font=self.label_font,command=lambda: start_client('{"username":"aungaung","type":"client","login_date":"2024-08-30 22:52:03.961074","ipaddress":"192.168.99.157"}'))
+        startBtn=tk.Button(self,text="Start",bg="#121212", fg="white",width=15,height=2,font=self.label_font,command=lambda: start_recording())
         stopBtn=tk.Button(self,text="Stop",bg="#DEE3E2", fg="black",width=15,height=2,font=self.label_font)
         startBtn.pack(side=tk.LEFT,padx=5, pady=5)
         stopBtn.pack(side=tk.LEFT,padx=5, pady=5)   
     
+        # start btn 
+        def start_recording():
+            client_msg='{"username":"naythithtoo","type":"client","login_date":"2024-08-30 22:52:03.961074","ipaddress":"192.168.99.157"}';
+            start_record_thread = threading.Thread(target=start_client, args=(client_msg,))
+            start_record_thread.start()
+       
+
         # Function receiving message from server
         def receive_messages(client_socket):
             while True:
