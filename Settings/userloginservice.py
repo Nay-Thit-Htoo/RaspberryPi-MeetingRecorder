@@ -23,15 +23,15 @@ def write_all_appsetting(app_setting_data):
     with open(file_path, 'w') as file:
         json.dump(app_setting_data, file, indent=4)   
 
-# Update App Setting Data
-def update_client_info(update_client_data):
+# Update User Login Date
+def update_user_info(update_user_data):
     org_data=read_setting_data()
     if(not org_data):
        return
     org_client_data=org_data['clients']
     for obj in org_client_data:
-        if obj.get('usercode')==update_client_data['usercode']:
-            new_obj={'ipaddress':update_client_data['ipaddress'],'login_date':str(datetime.now())}
+        if obj.get('usercode')==update_user_data['usercode']:
+            new_obj={'login_date':str(datetime.now())}
             obj.update(new_obj)
             break
     org_data['clients']=org_client_data
@@ -46,29 +46,92 @@ def check_exist_appsetting(usercode):
       return True
     return False
 
+# Check Chairman User Already Exist or Not
+def check_chairman_user_exist_appsetting(usertype):   
+    config_filter=lambda obj: (obj['type']).lower() == usertype.lower()
+    config_result=filter_objects(config_filter)       
+    if(config_result):
+      print(f"Chairman user Already Exist already exist in settings")
+      return True
+    return False
+
 # Filter App Setting Data    
 def filter_objects(filter_condition):
     org_setting_data=read_setting_data()
     filtered_objects = [obj for obj in org_setting_data['clients'] if filter_condition(obj)]
     return filtered_objects
    
-
-
-
-         
-
+def user_login(login_user_data):
+    config_filter=lambda obj: (obj['usercode']).lower() == login_user_data['usercode'].lower()
+    config_result=filter_objects(config_filter)
+    if(config_result):
+         return {
+            "message": "User Already Exist",
+            "message_code": "fail"
+          }
+    else:
+        user_type=login_user_data['type']
+        if(user_type.lower()=="chairman" and check_chairman_user_exist_appsetting(user_type)):
+            return {
+                "message": "User Type Already Exist in Server",
+                "message_code": "fail"
+            }
+        else :
+            newuser_obj={
+                "usercode": login_user_data['usercode'],
+                "login_date":str(datetime.now()),
+                "type": login_user_data['type'],        
+            }            
+            add_new_appsetting(newuser_obj)
+            config_filter=lambda obj: (obj['usercode']).lower() == login_user_data['usercode'].lower()
+            return filter_objects(config_filter)
+ 
+# Remove Login User after UI Close 
+def remove_login_user(login_user_data):
+    org_data=read_setting_data()
+    if(not org_data):
+       return
+    org_client_data=org_data['clients']
+    for obj in org_client_data:
+        if obj.get('usercode')==login_user_data['usercode']:            
+            org_client_data.remove(obj)
+            break
+    org_data['clients']=org_client_data
+    write_all_appsetting(org_data) 
+    
+# Remove All Login User Information after Server Restart
+def remove_all_login_user():
+    org_data=read_setting_data()
+    if(not org_data):
+       return  
+    org_data['clients']=[]
+    write_all_appsetting(org_data) 
 
 # Main function to demonstrate the process
 def main():  
+    #remove_all_login_user()
     # to_update_object={'usercode': 'aungaung','ipaddress':"('0.0.0.0',4455)"}
     # update_client_info(to_update_object)
         
     # Read the app setting data
-    appsetting_data = read_setting_data()
-    print("Original App Settings:")
-    print(json.dumps(appsetting_data, indent=4))
+    # appsetting_data = read_setting_data()
+    # print("Original App Settings:")
+    # print(json.dumps(appsetting_data, indent=4))
     
+    # login_userdata={
+    #     "usercode": '345623791',             
+    #     "type": 'client',
+    #  }
+    # print("User Login:")
+    # print(json.dumps(user_login(login_userdata), indent=4))
 
+    login_userdata={
+        "usercode": '345623791',             
+        "type": 'client',
+     }
+    print("Remove Logged User:")
+    print(json.dumps(remove_login_user(login_userdata), indent=4))
+ 
     # Add new app setting data
     # new_appsetting_data={
     #         "usercode": "aungaung2",

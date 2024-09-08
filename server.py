@@ -32,6 +32,7 @@ def handle_client(client_socket, addr):
                 print(f"[Socket Name] : {socket}")                         
                 socket.sendall(msg.encode('utf-8'))                
         except:
+            print(f"[Face Excepiton] : {addr}")
             break
 
     print(f"[Disconnected By] : {addr}")
