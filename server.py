@@ -5,7 +5,7 @@ import json
 
 # Server configuration
 HOST = '0.0.0.0'#socket.gethostbyname(socket.gethostname())#get host ip address
-PORT = 1234 # Port to listen on
+PORT =  8090# Port to listen on
 
 # json to hold all connected clients
 clients = {}

@@ -8,8 +8,7 @@ class Main(tk.Tk):
         super().__init__()
         self.title("Recorder Project")  
         
-
-        width=400
+        width=500
         height=300        
         # Get the screen width and height        
         screen_width = self.winfo_screenwidth()
@@ -34,7 +33,6 @@ class Main(tk.Tk):
             frame = F(parent=self.container, controller=self)
             self.frames[page_name] = frame
             frame.grid(row=0, column=0, sticky="nsew")
-
     
         # Show the first page
         self.show_frame("Login")        
