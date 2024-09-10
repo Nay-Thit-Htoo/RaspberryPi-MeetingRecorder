@@ -56,7 +56,7 @@ class ResetServerConnection:
         # Allow only digits
         return char.isdigit() or char == ""
     
-    def save_server_configuration():
+    def save_server_configuration(self):
         ipaddress = self.ipaddress_entry.get()      
         if(not ipaddress):
             return self.ipaddress_entry.focus()       
