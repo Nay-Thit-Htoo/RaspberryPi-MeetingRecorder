@@ -2,6 +2,8 @@ import tkinter as tk
 import tkinter.font as tkFont
 from tkinter import messagebox
 
+import client_server_service
+
 class ResetServerConnection:
     def __init__(self, parent_app):  
         self.parent_app=parent_app       
@@ -37,7 +39,7 @@ class ResetServerConnection:
         # IP Address label and entry
         ipaddress_label = tk.Label(frame, text="IP Address:",font=label_font)
         ipaddress_label.grid(row=1,column=0,padx=5, pady=5)
-        ipaddress_entry = tk.Entry(frame,font=label_font,validate='key',validatecommand=validate_keypress)
+        ipaddress_entry = tk.Entry(frame,font=label_font)
         ipaddress_entry.grid(row=1,column=1,padx=5, pady=5,columnspan=2)
        
         # Port Number label and entry
@@ -47,27 +49,25 @@ class ResetServerConnection:
         portnumber_entry.grid(row=2,column=1,padx=5, pady=5)
 
         # Login button
-        save_button =tk.Button(frame,text="Save",bg="#121212", fg="white",width=15,height=1,font=label_font)
+        save_button =tk.Button(frame,text="Save",bg="#121212", fg="white",width=15,height=1,font=label_font,command=lambda : self.save_server_configuration)
         save_button.grid(row=3,column=0,pady=15,columnspan=3)         
 
     def validate_number_input(self,char):
         # Allow only digits
         return char.isdigit() or char == ""
     
-    def save_server_configuration(self):
+    def save_server_configuration():
         ipaddress = self.ipaddress_entry.get()      
         if(not ipaddress):
             return self.ipaddress_entry.focus()       
-    
+
         port_number = self.portnumber_entry.get()      
         if(not port_number):
             return self.portnumber_entry.focus()  
         
-        user_obj={'ser':username,'ipaddress':str(socket.gethostbyname(socket.gethostname()))} 
-        if(clientservice.client_login(user_obj)):
-            controller.show_frame("MeetingRecord")
-        else:
-            messagebox.showerror("Error", "Login Failed!")
+        server_obj={'server_ip':ipaddress,'server_port':port_number} 
+        client_server_service.update_serverInfo(server_obj)
+           
         
         
 

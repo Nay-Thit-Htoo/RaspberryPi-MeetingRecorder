@@ -1,7 +1,7 @@
 {
-    "server_ip":"",
-    "server_port":"",
-    "upload_file_path":"",
-    "user_code":"",
-    "user_type":""
+    "server_ip": "192.168.56.90",
+    "server_port": "8090",
+    "upload_file_path": "",
+    "user_code": "",
+    "user_type": ""
 }

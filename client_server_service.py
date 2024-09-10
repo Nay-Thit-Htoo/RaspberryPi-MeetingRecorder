@@ -20,10 +20,10 @@ def update_clientInfo(new_object):
 
 # Update Client Information
 def update_serverInfo(new_object):
+    print(f"Update Sever Information : {new_object}")
     org_setting_data=read_clientInfo() 
     org_setting_data["server_ip"]=new_object["server_ip"]
-    org_setting_data["server_port"]=new_object["server_port"]
-    org_setting_data["upload_file_path"]=new_object["upload_file_path"]
+    org_setting_data["server_port"]=new_object["server_port"]   
     write_all_clientInfo(org_setting_data)
     return org_setting_data
 
