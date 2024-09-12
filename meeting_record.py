@@ -1,7 +1,7 @@
 import tkinter as tk
 import tkinter.font as tkFont
 from PIL import Image, ImageTk
-import client as clientsocket
+import client_socket as clientsocket
 import socket
 import threading
 import json

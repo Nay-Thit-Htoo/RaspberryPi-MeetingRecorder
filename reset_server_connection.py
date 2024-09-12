@@ -1,8 +1,9 @@
 import tkinter as tk
 import tkinter.font as tkFont
 from tkinter import messagebox
-
+from checkserver import check_server_connection
 import client_server_service
+import re
 
 class ResetServerConnection:
     def __init__(self, parent_app):  
@@ -49,24 +50,47 @@ class ResetServerConnection:
         portnumber_entry.grid(row=2,column=1,padx=5, pady=5)
 
         # Login button
-        save_button =tk.Button(frame,text="Save",bg="#121212", fg="white",width=15,height=1,font=label_font,command=lambda : self.save_server_configuration)
-        save_button.grid(row=3,column=0,pady=15,columnspan=3)         
+        save_button =tk.Button(frame,text="Save",bg="#121212", fg="white",width=15,height=1,font=label_font,command=lambda: save_server_configuration(dialog,ipaddress_entry,portnumber_entry))
+        save_button.grid(row=3,column=0,pady=15,columnspan=3)       
 
     def validate_number_input(self,char):
         # Allow only digits
         return char.isdigit() or char == ""
-    
-    def save_server_configuration(self):
-        ipaddress = self.ipaddress_entry.get()      
-        if(not ipaddress):
-            return self.ipaddress_entry.focus()       
 
-        port_number = self.portnumber_entry.get()      
-        if(not port_number):
-            return self.portnumber_entry.focus()  
-        
-        server_obj={'server_ip':ipaddress,'server_port':port_number} 
-        client_server_service.update_serverInfo(server_obj)
+   
+def save_server_configuration(dialog,ipaddress_entry,portnumber_entry):
+    ipaddress = ipaddress_entry.get()      
+    if(not ipaddress):
+        return ipaddress_entry.focus()       
+
+    port_number = portnumber_entry.get()      
+    if(not port_number):
+        return portnumber_entry.focus()  
+    
+    # Validate IP Address
+    if(not validate_ip(ipaddress)):
+        messagebox.showerror("Fail Message","Invalid IP Address!")  
+    else:
+        if(check_server_connection(ipaddress,int(port_number))):
+            server_obj={'server_ip':ipaddress,'server_port':port_number} 
+            if(client_server_service.update_serverInfo(server_obj)==None):     
+                messagebox.showerror("Fail Message","Fail to Connect Server!")
+        else:
+             messagebox.showerror("Error Message","Your Server isn't Running!")            
+    dialog.destroy()
+    dialog.update()
+    
+
+def validate_ip(ip_address):
+    # Regular expression to match a valid IPv4 address
+    ip_pattern = r"^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$"
+    
+    if re.match(ip_pattern, ip_address):
+        # Check if each octet is in the valid range (0-255)
+        if all(0 <= int(octet) <= 255 for octet in ip_address.split(".")):
+            return True
+    return False
+
            
         
         

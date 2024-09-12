@@ -48,7 +48,7 @@ def check_exist_appsetting(usercode):
 
 # Check Chairman User Already Exist or Not
 def check_chairman_user_exist_appsetting(usertype):   
-    config_filter=lambda obj: (obj['type']).lower() == usertype.lower()
+    config_filter=lambda obj: (obj['usertype']).lower() == usertype.lower()
     config_result=filter_objects(config_filter)       
     if(config_result):
       print(f"Chairman user Already Exist already exist in settings")
@@ -59,6 +59,8 @@ def check_chairman_user_exist_appsetting(usertype):
 def filter_objects(filter_condition):
     org_setting_data=read_setting_data()
     filtered_objects = [obj for obj in org_setting_data['clients'] if filter_condition(obj)]
+    if(len(filtered_objects)>0):
+         return filtered_objects[0] 
     return filtered_objects
    
 def user_login(login_user_data):
@@ -66,11 +68,11 @@ def user_login(login_user_data):
     config_result=filter_objects(config_filter)
     if(config_result):
          return {
-            "message": "User Already Exist",
-            "message_code": "fail"
+            "message": "User Already Used",
+            "message_code": "fail"            
           }
     else:
-        user_type=login_user_data['type']
+        user_type=login_user_data['usertype']
         if(user_type.lower()=="chairman" and check_chairman_user_exist_appsetting(user_type)):
             return {
                 "message": "User Type Already Exist in Server",
@@ -80,7 +82,9 @@ def user_login(login_user_data):
             newuser_obj={
                 "usercode": login_user_data['usercode'],
                 "login_date":str(datetime.now()),
-                "type": login_user_data['type'],        
+                "usertype": login_user_data['usertype'],
+                "message":"Login Success",
+                "message_code":"success"                                   
             }            
             add_new_appsetting(newuser_obj)
             config_filter=lambda obj: (obj['usercode']).lower() == login_user_data['usercode'].lower()
@@ -108,29 +112,29 @@ def remove_all_login_user():
     write_all_appsetting(org_data) 
 
 # Main function to demonstrate the process
-def main():  
-    #remove_all_login_user()
-    # to_update_object={'usercode': 'aungaung','ipaddress':"('0.0.0.0',4455)"}
-    # update_client_info(to_update_object)
+# def main():  
+#     #remove_all_login_user()
+#     # to_update_object={'usercode': 'aungaung','ipaddress':"('0.0.0.0',4455)"}
+#     # update_client_info(to_update_object)
         
-    # Read the app setting data
-    # appsetting_data = read_setting_data()
-    # print("Original App Settings:")
-    # print(json.dumps(appsetting_data, indent=4))
+#     # Read the app setting data
+#     # appsetting_data = read_setting_data()
+#     # print("Original App Settings:")
+#     # print(json.dumps(appsetting_data, indent=4))
     
-    # login_userdata={
-    #     "usercode": '345623791',             
-    #     "type": 'client',
-    #  }
-    # print("User Login:")
-    # print(json.dumps(user_login(login_userdata), indent=4))
+#     # login_userdata={
+#     #     "usercode": '345623791',             
+#     #     "type": 'client',
+#     #  }
+#     # print("User Login:")
+#     # print(json.dumps(user_login(login_userdata), indent=4))
 
-    login_userdata={
-        "usercode": '345623791',             
-        "type": 'client',
-     }
-    print("Remove Logged User:")
-    print(json.dumps(remove_login_user(login_userdata), indent=4))
+#     login_userdata={
+#         "usercode": '345623791',             
+#         "usertype": 'client',
+#      }
+#     print("Remove Logged User:")
+#     print(json.dumps(remove_login_user(login_userdata), indent=4))
  
     # Add new app setting data
     # new_appsetting_data={
