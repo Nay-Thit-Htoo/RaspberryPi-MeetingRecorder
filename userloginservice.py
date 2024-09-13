@@ -48,6 +48,7 @@ def check_exist_appsetting(usercode):
 
 # Check Chairman User Already Exist or Not
 def check_chairman_user_exist_appsetting(usertype):   
+    print(f'[User Login Service]: [Check Chairman] : {usertype}')
     config_filter=lambda obj: (obj['usertype']).lower() == usertype.lower()
     config_result=filter_objects(config_filter)       
     if(config_result):
@@ -60,10 +61,12 @@ def filter_objects(filter_condition):
     org_setting_data=read_setting_data()
     filtered_objects = [obj for obj in org_setting_data['clients'] if filter_condition(obj)]
     if(len(filtered_objects)>0):
-         return filtered_objects[0] 
+         filtered_objects[0]['upload_file_path']=org_setting_data['upload_file_path']
+         return filtered_objects[0]     
     return filtered_objects
    
 def user_login(login_user_data):
+    print(f'[User Login Service] : Login Request : {login_user_data}')
     config_filter=lambda obj: (obj['usercode']).lower() == login_user_data['usercode'].lower()
     config_result=filter_objects(config_filter)
     if(config_result):
@@ -72,10 +75,10 @@ def user_login(login_user_data):
             "message_code": "fail"            
           }
     else:
-        user_type=login_user_data['usertype']
+        user_type=login_user_data['usertype']       
         if(user_type.lower()=="chairman" and check_chairman_user_exist_appsetting(user_type)):
             return {
-                "message": "User Type Already Exist in Server",
+                "message": "Chairman User Already Exist in Server",
                 "message_code": "fail"
             }
         else :
