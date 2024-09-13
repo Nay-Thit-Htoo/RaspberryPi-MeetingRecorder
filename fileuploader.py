@@ -1,8 +1,6 @@
 import os
-import shutil
 import tkinter as tk
 from tkinter import filedialog, ttk, messagebox
-from tqdm import tqdm
 import threading
 
 class FileUploader(tk.Tk):

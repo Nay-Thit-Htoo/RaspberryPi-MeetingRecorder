@@ -1,27 +1,18 @@
 import tkinter as tk
 import tkinter.font as tkFont
 from PIL import Image, ImageTk
-import client_socket as clientsocket
+import client_server_service as clientservice
 import socket
 import threading
 import json
 
-# Server configuration
-SERVER_IP = '192.168.99.157'#socket.gethostbyname(socket.gethostname())  # Replace with the IP address of the server Raspberry Pi
-PORT = 1234# The port the server is listening on
+from Enum.actiontype import ActionType
 
 class MeetingRecord(tk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent)
-        self.controller = controller   
-
-        # Meeting State Change
-        def on_change(*args):
-            status=self.meeting_status.get()
-            meeting_status_label.config(text=status)
-
-        self.meeting_status = tk.StringVar() 
-        self.meeting_status.trace_add('write',on_change)
+        self.controller = controller 
+        self.logged_user_info=None  
 
         # Font Style for Label
         self.label_font=tkFont.Font(family="Helvetica", size=10) 
@@ -32,54 +23,97 @@ class MeetingRecord(tk.Frame):
         label = tk.Label(self, image=self.photo)
         label.pack(padx=5, pady=5)
         
-        meeting_status_label = tk.Label(self,fg='Black')
-        meeting_status_label.pack(padx=5, pady=5)
+        self.meeting_status_label = tk.Label(self,fg='Black')
+        self.meeting_status_label.pack(padx=5, pady=5)
           
         #start & stop buttons
-        startBtn=tk.Button(self,text="Start",bg="#121212", fg="white",width=15,height=2,font=self.label_font,command=lambda: start_recording())
-        stopBtn=tk.Button(self,text="Stop",bg="#DEE3E2", fg="black",width=15,height=2,font=self.label_font)
-        startBtn.pack(side=tk.LEFT,padx=5, pady=5)
-        stopBtn.pack(side=tk.LEFT,padx=5, pady=5)   
+        self.startBtn=tk.Button(self,text="Start",bg="#121212", fg="white",width=15,height=2,font=self.label_font,command=self.start_recording)
+        self.startBtn.pack(side=tk.LEFT,padx=5, pady=5)
+        
+        self.stopBtn=tk.Button(self,text="Stop",bg="#DEE3E2", fg="black",width=15,height=2,font=self.label_font,command=self.stop_recording)
+        self.stopBtn.pack(side=tk.LEFT,padx=5, pady=5)   
     
-        # start btn 
-        def start_recording():
-            client_msg='{"username":"naythithtoo","type":"client","login_date":"2024-08-30 22:52:03.961074","ipaddress":"192.168.99.157"}';
-            start_record_thread = threading.Thread(target=start_client, args=(client_msg,))
-            start_record_thread.start()
+    # start btn 
+    def start_recording(self):
+        self.logged_user_info=clientservice.read_clientInfo()
+        meeting_record_obj={"usercode":self.logged_user_info['usercode'],
+                    "usertype":self.logged_user_info['usertype'],
+                    "actiontype":ActionType.START_RECORD.name                      
+                    }
+        print(f'[Meeting Record][Start Record] : {meeting_record_obj}')
+        start_record_thread = threading.Thread(target=self.start_client, args=(meeting_record_obj,))
+        start_record_thread.start()
+     # stop btn 
+    
+    # stop btn
+    def stop_recording(self):
+        meeting_status=self.meeting_status_label.cget('text')
+        if(meeting_status is not None or meeting_status !=""):
+            self.logged_user_info=clientservice.read_clientInfo()
+            meeting_record_obj={"usercode":self.logged_user_info['usercode'],
+                    "usertype":self.logged_user_info['usertype'],
+                    "actiontype":ActionType.STOP_RECORD.name                      
+                    }
+            print(f'[Meeting Record][Stop Record] : {meeting_record_obj}')
+            stop_record_thread = threading.Thread(target=self.start_client, args=(meeting_record_obj,))
+            stop_record_thread.start()
        
-
         # Function receiving message from server
-        def receive_messages(client_socket):
-            while True:
-                try:
-                    message = client_socket.recv(1024).decode('utf-8')
-                    if not message:
-                        break
-                    print(f"Receive Message From Client Without Json format: {message}")
-                    message_json=json.loads(message)
-                    print(f"Receive Message From Client : {message_json}")
-                    self.meeting_status.set(f"{message_json['username']} is recording.......")       
-                except:
-                    print("An error occurred. Exiting...")
-                    client_socket.close()
+    
+    def receive_messages(self,client_socket):
+        while True:
+            try:
+                message = client_socket.recv(1024).decode('utf-8')
+                if not message:
                     break
+                print(f"[Meeting Record][Receive Message Reply From Server] : {message}")
+                response_message=json.loads(message.replace("'", '"')) 
+                print(f'[Meeting Record][Action Type]: {response_message['actiontype']}')
+                if(self.logged_user_info['usercode']==response_message['usercode']):                 
+                    if(response_message['actiontype']==ActionType.START_RECORD.name): 
+                        self.startBtn.config(state='disabled')
+                    else:
+                        self.startBtn.config(state='normal')
+                    self.meeting_status_label.config(text=f"{response_message['usercode']} is recording.......")   
+                else:
+                    if(self.logged_user_info['usercode'].tolower()!='chairman' ):
+                        if(response_message['actiontype']==ActionType.START_RECORD.name):
+                            self.startBtn.config(state='disabled')
+                            self.stopBtn.config(state='disabled') 
+                        else:
+                            self.startBtn.config(state='normal')
+                            self.stopBtn.config(state='normal') 
+                    self.meeting_status_label.config(text="")
+                    
+            except Exception as err:
+                print(f"[Meeting Record]:[Exception Error] : {err}")
+                client_socket.close()
+                break
 
-        # Function to send messages to the server
-        def send_messages(client_socket,client_message):
-            print(f'Sending Client Message {client_message}')
-            recipient_ip = socket.gethostbyname(socket.gethostname())
-            full_message=f"{recipient_ip}: {client_message}"
-            client_socket.send(full_message.encode('utf-8'))
+    # Function to send messages to the server
+    def send_messages(self,client_socket,client_message):
+        print(f'[Meeting Record][Send Client Message] : {client_message}')
+        recipient_ip = socket.gethostbyname(socket.gethostname())
+        full_message=f"{recipient_ip}: {client_message}"
+        client_socket.send(full_message.encode('utf-8'))
 
-        # Set up client socket
-        def start_client(client_message):    
-            client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            client_socket.connect((SERVER_IP, PORT))
+    # Set up client socket
+    def start_client(self,client_message):    
+        # Get Local Host name 
+        local_ip_address=socket.gethostbyname(socket.gethostname())
 
-            # Start threads for receiving and sending messages
-            receive_thread = threading.Thread(target=receive_messages, args=(client_socket,))
-            receive_thread.start()
+        # Get Logged User's Server IP Address and Port Number
+        logged_user_server_ip=self.logged_user_info['server_ip']
+        logged_user_server_port=int(self.logged_user_info['server_port'])        
+        client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)# Create Client Socket  
+        # Check Local address and logged server ip address 
+        if(local_ip_address!=logged_user_server_ip):             
+          client_socket.bind((local_ip_address,logged_user_server_port))# Bind Local IP Address with Custom Port Number        
+        client_socket.connect((logged_user_server_ip,logged_user_server_port)) # Start Connect To Server
 
-            send_thread = threading.Thread(target=send_messages, args=(client_socket,client_message))
-            send_thread.start()     
+        # Start threads for receiving and sending messages
+        receive_thread = threading.Thread(target=self.receive_messages, args=(client_socket,))
+        receive_thread.start()
+        send_thread = threading.Thread(target=self.send_messages, args=(client_socket,client_message,))
+        send_thread.start()     
        

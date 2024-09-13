@@ -41,7 +41,6 @@ class Main(tk.Tk):
         frame = self.frames[page_name]
         frame.tkraise()    
    
-
 if __name__ == "__main__":
     app = Main()
     app.mainloop()

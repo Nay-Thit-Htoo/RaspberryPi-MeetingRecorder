@@ -13,8 +13,8 @@ def read_clientInfo():
 def update_clientInfo(new_object):
     org_setting_data=read_clientInfo() 
     org_setting_data["upload_file_path"]=new_object["upload_file_path"]    
-    org_setting_data["user_code"]=new_object["user_code"]
-    org_setting_data["user_type"]=new_object["user_type"]   
+    org_setting_data["usercode"]=new_object["usercode"]
+    org_setting_data["usertype"]=new_object["usertype"]   
     write_all_clientInfo(org_setting_data)
     return org_setting_data
 

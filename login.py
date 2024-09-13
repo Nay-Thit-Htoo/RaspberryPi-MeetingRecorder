@@ -2,6 +2,7 @@ import json
 import threading
 import tkinter as tk
 import tkinter.font as tkFont
+from Enum.actiontype import ActionType
 from checkserver import check_server_connection
 import client_server_service as clientservice
 from tkinter import messagebox
@@ -43,9 +44,8 @@ class Login(tk.Frame):
         self.chk_chariman_type.grid(row=2,column=2,padx=5, pady=5)
 
         # Login button
-        login_button =tk.Button(self,text="Login",bg="#121212", fg="white",width=15,height=1,font=label_font,command=self.login)
-                                # lambda: login(usercode_entry,self.client_checkbtn,controller,self.parent_app))
-        login_button.grid(row=3,column=0,pady=15,columnspan=3)        
+        self.login_button =tk.Button(self,text="Login",bg="#121212", fg="white",width=15,height=1,font=label_font,command=self.login)                                
+        self.login_button.grid(row=3,column=0,pady=15,columnspan=3)        
        
         # Reset Server Connection
         reset_server_label = tk.Label(self, text="Reset Server Connection?",font=label_sm_font,fg="blue",cursor="hand2")
@@ -66,27 +66,34 @@ class Login(tk.Frame):
     def login(self):      
             username = self.usercode_entry.get()      
             if(not username):
-                return self.usercode_entry.focus()
-            
-            user_type="Client"
-            if(self.client_checkbtn.get()!=1):
-                user_type="Chairman"        
-
+                return self.usercode_entry.focus()           
+           
             client_info=clientservice.read_clientInfo()
             if(client_info['server_ip']=="" or client_info==None):
                 ResetServerConnection(self.parent_app)
             else:
-                # Check your server ip and port are correct and server is running or not
-                if(check_server_connection(client_info['server_ip'],int(client_info['server_port']))):
-                    user_obj={'server_ip':client_info['server_ip'],'server_port':int(client_info['server_port']),
-                              'usercode':username,
-                              'usertype':user_type,
-                              'actiontype': "LOGIN"                              
-                              }           
-                    # Start Client for Login in Server Socket          
-                    self.start_client(user_obj)
-                else:
-                    messagebox.showerror("Error Message","Your Server isn't Running!")    
+                user_type='Client' if (self.client_checkbtn.get()==1) else 'Chairman'
+                user_login_object={
+                    'server_ip': client_info['server_ip'],
+                    'server_port':int(client_info['server_port']),
+                    'usercode':username,
+                    'usertype':user_type,
+                    'actiontype': ActionType.LOGIN.name
+                }
+                print(f'[Login][Login Request] : {user_login_object}')
+                check_server_thread=threading.Thread(target=self.check_server_status,args=(user_login_object,))                 
+                check_server_thread.start()
+
+    # Check your server ip and port are correct and server is running or not
+    def check_server_status(self,login_user_obj):
+        if(self.login_button.cget("text").lower()=='login'):# check button name is login or not
+            self.login_button.config(text="Please Wait..") 
+            if(check_server_connection(login_user_obj['server_ip'],int(login_user_obj['server_port']))):                        
+                # Start Client for Login in Server Socket          
+                self.start_client(login_user_obj)
+            else:
+                self.login_button.config(text="Login") # reset login button label text
+                messagebox.showerror("Error Message","Your Server isn't Running!")  
 
     def receive_messages(self,client_socket):
         while True:
@@ -94,14 +101,15 @@ class Login(tk.Frame):
                 message = client_socket.recv(1024).decode('utf-8')
                 if not message:
                     break
-                print(f"Receive Message Reply From Server Without Json format: {message}")
-                message_json=(json.loads(str(message).replace("'", '"')))
-                print(f"Receive Message with Json Format : {message_json}")            
-                if(message_json['actiontype']=='LOGIN'):      
+                print(f"[Login] [Receive Message Reply From Server Without Json format] : {message}")
+                message_json=(json.loads(str(message).replace("'", '"')))                  
+                if(message_json['actiontype']==ActionType.LOGIN.name):      
                     if(message_json['message_code']=='success'):
-                        print(f'{message_json['message']}')
+                        clientservice.update_clientInfo(message_json)
+                        print(f'[Login]: {message_json['message']}')
                         self.controller.show_frame('MeetingRecord')
                     else:
+                        self.login_button.config(text="Login")
                         messagebox.showerror("Error Message",message_json['message'])                            
 
             except Exception as err:
@@ -111,7 +119,7 @@ class Login(tk.Frame):
 
     # Function to send messages to the server
     def send_messages(self,client_socket,client_message):
-        print(f'Sending Client Message {client_message}')
+        print(f'[Login][Client Sending Message] : {client_message}')
         recipient_ip = socket.gethostbyname(socket.gethostname())
         full_message=f"{recipient_ip}: {client_message}"
         client_socket.send(full_message.encode('utf-8'))
