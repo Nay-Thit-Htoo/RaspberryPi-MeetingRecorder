@@ -99,12 +99,10 @@ class MeetingRecord(tk.Frame):
 
     # Set up client socket
     def start_client(self,client_message):    
-        # Get Local Host name 
-        #local_ip_address=socket.gethostbyname(socket.gethostname())
-
         # Get Logged User's Server IP Address and Port Number
         logged_user_server_ip=self.logged_user_info['server_ip']
-        logged_user_server_port=int(self.logged_user_info['server_port'])        
+        logged_user_server_port=int(self.logged_user_info['server_port'])    
+        print(f"[Meeting Record][Before Start Client]:[Server IP Address]{logged_user_server_ip}:[Server Port]{logged_user_server_port}")    
         client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)# Create Client Socket  
         client_socket.connect((logged_user_server_ip,logged_user_server_port)) # Start Connect To Server
         
