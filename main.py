@@ -6,8 +6,9 @@ from meeting_record import MeetingRecord
 class Main(tk.Tk):
     def __init__(self,):
         super().__init__()
-        self.title("Recorder Project")  
-        
+        self.title("Recorder Project")
+        self.iconbitmap('Assets/recording-icon.ico')
+
         width=500
         height=300        
         # Get the screen width and height        
