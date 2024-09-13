@@ -69,26 +69,26 @@ class MeetingRecord(tk.Frame):
                 print(f"[Meeting Record][Receive Message Reply From Server] : {message}")
                 response_message=json.loads(message.replace("'", '"')) 
                 print(f'[Meeting Record][Action Type]: {response_message['actiontype']}')
-                if(self.logged_user_info['usercode']==response_message['usercode']):                 
-                    if(response_message['actiontype']==ActionType.START_RECORD.name): 
-                        self.meeting_status_label.config(text=f"{response_message['usercode']} is recording.......")
-                        self.startBtn.config(state='disabled')
+                if(response_message['actiontype']==ActionType.START_RECORD.name): 
+                    self.meeting_status_label.config(text=f"{response_message['usercode']} is recording.......")
+                    if(self.logged_user_info['usercode']==response_message['usercode']):      
+                        self.startBtn.config(state='disabled')                                    
                     else:
-                        self.startBtn.config(state='normal')
-                        self.meeting_status_label.config(text="")                       
-                else:
-                    if(self.logged_user_info['usercode'].tolower()!='chairman'):
-                        if(response_message['actiontype']==ActionType.START_RECORD.name):
-                            self.startBtn.config(state='disabled')
-                            self.stopBtn.config(state='disabled') 
-                        else:
+                        if(self.logged_user_info['usercode'].tolower()=='chairman'):
                             self.startBtn.config(state='normal')
                             self.stopBtn.config(state='normal') 
-                    self.meeting_status_label.config(text="")                    
+                        else:
+                            self.startBtn.config(state='disabled')
+                            self.stopBtn.config(state='disabled')
+                else:
+                    self.meeting_status_label.config(text="")   
+                    self.startBtn.config(state='normal')
+                    self.stopBtn.config(state='normal')  
+                                             
             except Exception as err:
                 print(f"[Meeting Record]:[Exception Error] : {err}")
                 client_socket.close()
-                break
+            break
 
     # Function to send messages to the server
     def send_messages(self,client_socket,client_message):
