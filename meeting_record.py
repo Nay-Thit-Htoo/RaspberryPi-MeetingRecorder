@@ -106,10 +106,11 @@ class MeetingRecord(tk.Frame):
         logged_user_server_ip=self.logged_user_info['server_ip']
         logged_user_server_port=int(self.logged_user_info['server_port'])        
         client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)# Create Client Socket  
+        client_socket.connect((logged_user_server_ip,logged_user_server_port)) # Start Connect To Server
+        
         # Check Local address and logged server ip address 
         # logged_user_server_port=(logged_user_server_port+100) if(local_ip_address!=logged_user_server_ip) else logged_user_server_port
         # client_socket.bind((local_ip_address,logged_user_server_port))# Bind Local IP Address with Custom Port Number        
-        client_socket.connect((logged_user_server_ip,logged_user_server_port)) # Start Connect To Server
 
         # Start threads for receiving and sending messages
         receive_thread = threading.Thread(target=self.receive_messages, args=(client_socket,))
