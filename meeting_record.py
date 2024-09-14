@@ -45,7 +45,7 @@ class MeetingRecord(tk.Frame):
                     "usertype":self.logged_user_info['usertype'],
                     "actiontype":ActionType.START_RECORD.name                      
                     }
-        print(f'[Meeting Record][Start Record] : {meeting_record_obj}')
+        print(f"[Meeting Record][Start Record] : {meeting_record_obj}")
         self.start_client(meeting_record_obj)
         
     # stop recording
@@ -57,7 +57,7 @@ class MeetingRecord(tk.Frame):
                     "usertype":self.logged_user_info['usertype'],
                     "actiontype":ActionType.STOP_RECORD.name                      
                     }
-            print(f'[Meeting Record][Stop Record] : {meeting_record_obj}')
+            print(f"[Meeting Record][Stop Record] : {meeting_record_obj}")
             self.start_client(meeting_record_obj)
        
         # Function receiving message from server
@@ -72,7 +72,7 @@ class MeetingRecord(tk.Frame):
                     break
                 print(f"[Meeting Record][Receive Message Reply From Server] : {message}")
                 response_message=json.loads(message.replace("'", '"')) 
-                print(f'[Meeting Record][Action Type]: {response_message['actiontype']}') 
+                print(f"[Meeting Record][Action Type]: {response_message['actiontype']}") 
                 if(response_message['actiontype']==ActionType.START_RECORD.name): 
                    self.change_meeting_status_after_startrecord(response_message)
                 elif(response_message['actiontype']==ActionType.OPEN_RECORD.name):
@@ -114,7 +114,7 @@ class MeetingRecord(tk.Frame):
 
     # Function to send messages to the server
     def send_messages(self,client_socket,client_message): 
-        print(f'[Meeting Record][Send Client Message] : {client_message}')
+        print(f"[Meeting Record][Send Client Message] : {client_message}")
         recipient_ip = socket.gethostbyname(socket.gethostname())
         full_message=f"{recipient_ip}: {client_message}"
         client_socket.send(full_message.encode('utf-8'))
