@@ -41,16 +41,16 @@ def handle_client(client_socket, addr):
                     'usertype':client_messsage_json['usertype']
                 })  
                 login_result['actiontype']=ActionType.LOGIN.name                 
-                print(f'[Server][Login Result]: {login_result}')                
+                print(f"[Server][Login Result]: {login_result}")                
                 clients[addr].sendall(str(login_result).encode('utf-8'))  
             if(client_messsage_json['actiontype']==ActionType.OPEN_RECORD.name): 
-                print(f'[Server][Folder Create for]: {client_messsage_json['usercode']}')
+                print(f"[Server][Folder Create for]: {client_messsage_json['usercode']}")
                 if(not create_folder_with_usercode(client_messsage_json['usercode'])):
                     client_messsage_json["message"]="Folder Creation Failed!"
                     client_messsage_json["message_code"]="fail"
                 clients[addr].sendall(str(client_messsage_json).encode('utf-8'))  
             else:
-                print(f'[Server][Send All Clients]:{clients}')
+                print(f"[Server][Send All Clients]:{clients}")
                 for client_addr, socket in clients.items():
                     print(f"[Server][Client Address] : {client_addr}")
                     print(f"[Server][Socket Name] : {socket}")     

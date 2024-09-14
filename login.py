@@ -83,7 +83,7 @@ class Login(tk.Frame):
                     'usertype':user_type,
                     'actiontype': ActionType.LOGIN.name
                 }
-                print(f'[Login][Login Request] : {user_login_object}')
+                print(f"[Login][Login Request] : {user_login_object}")
                 check_server_thread=threading.Thread(target=self.check_server_status,args=(user_login_object,))                 
                 check_server_thread.start()
 
@@ -109,7 +109,7 @@ class Login(tk.Frame):
                 if(message_json['actiontype']==ActionType.LOGIN.name):      
                     if(message_json['message_code']=='success'):
                         clientservice.update_clientInfo(message_json)
-                        print(f'[Login]: {message_json['message']}')
+                        print(f"[Login]: {message_json['message']}")
                         self.controller.show_frame('MeetingRecord')
                         self.stop_receive_message_thread.set()                        
                     else:
@@ -123,7 +123,7 @@ class Login(tk.Frame):
 
     # Function to send messages to the server
     def send_messages(self,client_socket,client_message):
-        print(f'[Login][Client Sending Message] : {client_message}')
+        print(f"[Login][Client Sending Message] : {client_message}")
         recipient_ip = socket.gethostbyname(socket.gethostname())
         full_message=f"{recipient_ip}: {client_message}"
         client_socket.send(full_message.encode('utf-8'))
