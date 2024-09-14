@@ -48,6 +48,12 @@ def handle_client(client_socket, addr):
                 if(not create_folder_with_usercode(client_messsage_json['usercode'])):
                     client_messsage_json["message"]="Folder Creation Failed!"
                     client_messsage_json["message_code"]="fail"
+                else:
+                    client_messsage_json=server_service.get_current_recoring_user()
+                    if(client_messsage_json is not None):
+                         client_messsage_json['actiontype']=ActionType.OPEN_RECORD.name
+                    client_messsage_json['message_code']='success'
+                    client_messsage_json['message']=f"{client_messsage_json['usercode']} is recording"
                 clients[addr].sendall(str(client_messsage_json).encode('utf-8'))  
             else:
                 print(f"[Server][Send All Clients]:{clients}")
@@ -69,8 +75,7 @@ def create_folder_with_usercode(usercode):
     server_folder_path=server_setting_data['upload_file_path']    
     file_service = FileService(usercode, server_folder_path)
     file_service.create_folder()
-    return True
-    
+    return True   
 
 
 # Set up the server socket

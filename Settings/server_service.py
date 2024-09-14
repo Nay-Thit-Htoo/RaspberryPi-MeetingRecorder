@@ -51,6 +51,13 @@ def filter_objects(filter_condition):
     org_setting_data=read_setting_data()
     filtered_objects = [obj for obj in org_setting_data['clients'] if filter_condition(obj)]
     return filtered_objects
+
+# Get Current Recording User
+def get_current_recoring_user():
+    org_setting_data=read_setting_data()
+    recording_filter=lambda obj: obj['is_recording'] == True
+    current_recording_user = [obj for obj in org_setting_data['clients'] if recording_filter(obj)]
+    return current_recording_user
    
 
 # Filter App Setting Data    

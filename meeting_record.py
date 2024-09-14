@@ -32,11 +32,7 @@ class MeetingRecord(tk.Frame):
         self.startBtn.pack(side=tk.LEFT,padx=5, pady=5)
         
         self.stopBtn=tk.Button(self,text="Stop",bg="#DEE3E2", fg="black",width=15,height=2,font=self.label_font,command=self.stop_recording)
-        self.stopBtn.pack(side=tk.LEFT,padx=5, pady=5)   
-        
-        self.socket_thread = threading.Thread(target=self.start_client,args=(None,), daemon=True)
-        self.socket_thread.start()
-
+        self.stopBtn.pack(side=tk.LEFT,padx=5, pady=5)  
                 
     # start recording
     def start_recording(self):       
@@ -64,7 +60,7 @@ class MeetingRecord(tk.Frame):
     
     # Receive Message via Client Socket
     def receive_messages(self,client_socket):
-        print(f"Meeting Record][Receive Message]")
+        print(f"Meeting Record][Receive Message]: {client_socket}")
         while True:
             try:
                 message = client_socket.recv(1024).decode('utf-8')
@@ -102,10 +98,13 @@ class MeetingRecord(tk.Frame):
 
     # Create Folder After PageLoaded
     def folder_create_result_show(self,response):
-        if("message_code" in response and response['message_code']=="fail"):
-            messagebox.showerror("Folder Creation Message",response['message'])
-            self.clear_meeting_status_enable_buttons()
-   
+        if("message_code" in response):
+            if(response['message_code']=="fail"):
+                messagebox.showerror("Folder Creation Message",response['message'])
+                self.clear_meeting_status_enable_buttons()                   
+            elif(response['message_code']=="success"):
+                self.change_meeting_status_after_startrecord(response)
+      
    # Clean meeting status and enable start & stop buttons
     def clear_meeting_status_enable_buttons(self):
         self.meeting_status_label.config(text="")   
@@ -120,7 +119,7 @@ class MeetingRecord(tk.Frame):
         client_socket.send(full_message.encode('utf-8'))
     
     # Set up client socket
-    def start_client(self,client_message):    
+    def start_client(self,client_message):
         self.logged_user_info=clientservice.read_clientInfo()
         logged_user_server_ip=self.logged_user_info['server_ip']
         logged_user_server_port=int(self.logged_user_info['server_port']) 
@@ -135,6 +134,10 @@ class MeetingRecord(tk.Frame):
         client_message=client_message if (client_message is not None) else empty_obj
         send_mesg_thread = threading.Thread(target=self.send_messages, args=(client_socket, client_message,))
         send_mesg_thread.start()
+    
+    def on_show(self):     
+        socket_thread = threading.Thread(target=self.start_client,args=(None,), daemon=True)
+        socket_thread.start()
         
        
 

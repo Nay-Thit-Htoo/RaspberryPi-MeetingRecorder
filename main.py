@@ -27,7 +27,7 @@ class Main(tk.Tk):
         self.container.pack(expand=True)
 
         # Create the frames for each page
-        self.frames = {}
+        self.frames = {}       
         for F in (Login, MeetingRecord):
             page_name = F.__name__
             frame = F(parent=self.container, controller=self)
@@ -38,8 +38,11 @@ class Main(tk.Tk):
         self.show_frame("Login")        
 
     def show_frame(self, page_name):
-        frame = self.frames[page_name]
+        frame = self.frames[page_name]        
         frame.tkraise()    
+
+        if hasattr(frame, "on_show"):
+         frame.on_show()
    
 if __name__ == "__main__":
     app = Main()
