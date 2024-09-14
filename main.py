@@ -2,7 +2,6 @@ import tkinter as tk
 from login import Login 
 from meeting_record import MeetingRecord
 
-
 class Main(tk.Tk):
     def __init__(self,):
         super().__init__()

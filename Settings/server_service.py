@@ -53,9 +53,20 @@ def filter_objects(filter_condition):
     return filtered_objects
    
 
-
+# Filter App Setting Data    
+def clean_clients():
+    org_setting_data=read_setting_data()
+    if(org_setting_data is not None):
+        org_setting_data['clients']=[]
+        write_all_appsetting(org_setting_data)   
+   
 
          
+
+
+
+
+
 
 
 # Main function to demonstrate the process

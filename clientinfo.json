@@ -1,7 +1,7 @@
 {
-    "server_ip": "192.168.120.49",
+    "server_ip": "192.168.99.157",
     "server_port": "8090",
     "upload_file_path": "D:/NTH-Projects/RaspberryPi-MeetingRecorder/Settings",
-    "usercode": "NTH",
+    "usercode": "3456",
     "usertype": "Client"
 }

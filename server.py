@@ -2,7 +2,10 @@ import socket
 import threading
 import json
 from Enum.actiontype import ActionType
+from Settings import server_service
+from file_service import FileService
 from userloginservice import user_login
+
 
 # Server configuration
 HOST = '0.0.0.0'#socket.gethostbyname(socket.gethostname())#get host ip address
@@ -37,9 +40,15 @@ def handle_client(client_socket, addr):
                     'usercode':client_messsage_json['usercode'],
                     'usertype':client_messsage_json['usertype']
                 })  
-                login_result['actiontype']=ActionType.LOGIN.name
-                print(f'[Server][Login Result]: {login_result}')
+                login_result['actiontype']=ActionType.LOGIN.name                 
+                print(f'[Server][Login Result]: {login_result}')                
                 clients[addr].sendall(str(login_result).encode('utf-8'))  
+            if(client_messsage_json['actiontype']==ActionType.OPEN_RECORD.name): 
+                print(f'[Server][Folder Create for]: {client_messsage_json['usercode']}')
+                if(not create_folder_with_usercode(client_messsage_json['usercode'])):
+                    client_messsage_json["message"]="Folder Creation Failed!"
+                    client_messsage_json["message_code"]="fail"
+                clients[addr].sendall(str(client_messsage_json).encode('utf-8'))  
             else:
                 print(f'[Server][Send All Clients]:{clients}')
                 for client_addr, socket in clients.items():
@@ -51,18 +60,33 @@ def handle_client(client_socket, addr):
             print(f"[Server][Exception Error Occur] : {err}")
             break
 
+# Create Folder When Client's Meeting Record Page Open
+def create_folder_with_usercode(usercode):
+    server_setting_data=server_service.read_setting_data()
+    if(server_setting_data is None or server_setting_data['upload_file_path'] is None):
+        print(f'Server Upload Folder Path Not Found!')
+        return False           
+    server_folder_path=server_setting_data['upload_file_path']    
+    file_service = FileService(usercode, server_folder_path)
+    file_service.create_folder()
+    return True
+    
+
+
 # Set up the server socket
 def start_server():
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind((HOST, PORT))
     server_socket.listen(5)
     print(f"[Server][Server listening on] : {socket.gethostbyname(socket.gethostname())}:{PORT}")
-    while True:
+    while True:        
         client_socket, addr = server_socket.accept()
         thread = threading.Thread(target=handle_client, args=(client_socket, addr))
         thread.start()
 
 if __name__ == "__main__":
+    clean_user_thread=threading.Thread(target=server_service.clean_clients)
+    clean_user_thread.start()
     start_server()
 
      
