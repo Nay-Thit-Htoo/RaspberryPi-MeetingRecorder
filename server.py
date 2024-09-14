@@ -48,14 +48,15 @@ def handle_client(client_socket, addr):
                 if(not create_folder_with_usercode(client_messsage_json['usercode'])):
                     client_messsage_json["message"]="Folder Creation Failed!"
                     client_messsage_json["message_code"]="fail"
-                else:
-                    client_messsage_json=server_service.get_current_recoring_user()
-                    if(client_messsage_json is not None):
-                         client_messsage_json['actiontype']=ActionType.OPEN_RECORD.name
-                    client_messsage_json['message_code']='success'
-                    client_messsage_json['message']=f"{client_messsage_json['usercode']} is recording"
+                else:                    
+                    current_record_user=get_recording_user()  
+                    client_messsage_json=client_messsage_json if current_record_user is None else current_record_user
                 clients[addr].sendall(str(client_messsage_json).encode('utf-8'))  
             else:
+                if(client_messsage_json['actiontype']==ActionType.START_RECORD.name):
+                    server_service.update_recording_client_info(client_messsage_json,is_start_recording=True)
+                elif(client_messsage_json['actiontype']==ActionType.STOP_RECORD.name):
+                    server_service.update_recording_client_info(client_messsage_json,is_start_recording=False)
                 print(f"[Server][Send All Clients]:{clients}")
                 for client_addr, socket in clients.items():
                     print(f"[Server][Client Address] : {client_addr}")
@@ -76,6 +77,17 @@ def create_folder_with_usercode(usercode):
     file_service = FileService(usercode, server_folder_path)
     file_service.create_folder()
     return True   
+
+# Get current recording user
+def get_recording_user():
+    current_record_user=server_service.get_current_recording_user()
+    if(len(current_record_user)>0 and current_record_user is not None):
+        current_record_user=current_record_user[0]
+        current_record_user['actiontype']=ActionType.OPEN_RECORD.name
+        current_record_user['message_code']='success'
+        current_record_user['message']=f"{current_record_user['usercode']} is recording...."
+        return current_record_user
+    return None
 
 
 # Set up the server socket

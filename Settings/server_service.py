@@ -53,12 +53,26 @@ def filter_objects(filter_condition):
     return filtered_objects
 
 # Get Current Recording User
-def get_current_recoring_user():
+def get_current_recording_user():    
     org_setting_data=read_setting_data()
-    recording_filter=lambda obj: obj['is_recording'] == True
+    recording_filter=lambda obj: obj['is_recording'] == "true"
     current_recording_user = [obj for obj in org_setting_data['clients'] if recording_filter(obj)]
     return current_recording_user
-   
+
+# Update Meeting Record Person
+def update_recording_client_info(update_client_data,is_start_recording):
+    org_data=read_setting_data()
+    if(not org_data):
+       return
+    org_client_data=org_data['clients']
+    for obj in org_client_data:
+        if obj.get('usercode')==update_client_data['usercode'] and is_start_recording:
+            new_obj={'is_recording':"true"}      
+        else:
+            new_obj={'is_recording':"false"}
+        obj.update(new_obj)
+    org_data['clients']=org_client_data
+    write_all_appsetting(org_data) 
 
 # Filter App Setting Data    
 def clean_clients():

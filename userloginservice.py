@@ -87,7 +87,8 @@ def user_login(login_user_data):
                 "login_date":str(datetime.now()),
                 "usertype": login_user_data['usertype'],
                 "message":"Login Success",
-                "message_code":"success"                                   
+                "message_code":"success",
+                "is_recording": "false"                                   
             }            
             add_new_appsetting(newuser_obj)
             config_filter=lambda obj: (obj['usercode']).lower() == login_user_data['usercode'].lower()
