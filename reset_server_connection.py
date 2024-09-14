@@ -24,7 +24,7 @@ class ResetServerConnection:
         
         dialog = tk.Toplevel(parent_app)
         dialog.title("Reset Server Configuration")           
-        dialog.iconbitmap('Assets/recording-icon.ico')
+        # dialog.iconbitmap('Assets/recording-icon.ico')
         dialog.geometry(f'{width}x{height}+{x}+{y}') # Set the geometry of the window   
 
         # Register for Validate Key Press for only digit  
