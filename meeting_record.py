@@ -93,7 +93,7 @@ class MeetingRecord(tk.Frame):
         if(self.logged_user_info['usercode']==response['usercode']):      
             self.startBtn.config(state='disabled')                                    
         else:
-            if(self.logged_user_info['usercode'].tolower()=='chairman'):
+            if(self.logged_user_info['usercode'].lower()=='chairman'):
                 self.startBtn.config(state='normal')
                 self.stopBtn.config(state='normal') 
             else:
