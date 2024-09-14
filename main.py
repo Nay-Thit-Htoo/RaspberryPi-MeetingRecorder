@@ -6,7 +6,7 @@ class Main(tk.Tk):
     def __init__(self,):
         super().__init__()
         self.title("Recorder Project")
-        self.iconbitmap('Assets/recording-icon.ico')
+        # self.iconbitmap('Assets/recording-icon.ico')
 
         width=500
         height=300        
