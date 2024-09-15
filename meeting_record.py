@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 import tkinter.font as tkFont
 from PIL import Image, ImageTk
+import audio_record_service
 import client_server_service as clientservice
 import socket
 import threading
@@ -71,10 +72,12 @@ class MeetingRecord(tk.Frame):
                 print(f"[Meeting Record][Action Type]: {response_message['actiontype']}") 
                 if(response_message['actiontype']==ActionType.START_RECORD.name): 
                    self.change_meeting_status_after_startrecord(response_message)
+                   self.start_audio_record()
                 elif(response_message['actiontype']==ActionType.OPEN_RECORD.name):
                     self.folder_create_result_show(response_message)
                 else:
-                  self.clear_meeting_status_enable_buttons()      
+                  self.clear_meeting_status_enable_buttons() 
+                  self.stop_audio_record()
 
             except Exception as err:
                 print(f"[Meeting Record]:[Exception Error] : {err}")                
@@ -102,6 +105,14 @@ class MeetingRecord(tk.Frame):
             else:
                 self.startBtn.config(state='disabled')
                 self.stopBtn.config(state='disabled')
+
+    # Audio Record Start
+    def start_audio_record(self):
+        audio_record_service.start_audio_record(self.logged_user_info)
+
+    # Audio Record Stop
+    def stop_audio_record(self):
+        audio_record_service.stop_audio_recording(self.logged_user_info)
 
     # Create Folder After PageLoaded
     def folder_create_result_show(self,response):

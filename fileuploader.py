@@ -23,7 +23,7 @@ class FileUploader(tk.Tk):
         self.upload_button.pack(pady=10)
         
         self.file_path = None
-        self.network_path = "\\ZINMIN-1281999\PythonProject\RecordFile"  # Change this to your network share path
+        self.network_path = "\\NAYTHITHTOO\Audio"  # Change this to your network share path
 
     def browse_file(self):
         self.file_path = filedialog.askopenfilename()

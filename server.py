@@ -45,12 +45,12 @@ def handle_client(client_socket, addr):
                 clients[addr].sendall(str(login_result).encode('utf-8'))  
             if(client_messsage_json['actiontype']==ActionType.OPEN_RECORD.name): 
                 print(f"[Server][Folder Create for]: {client_messsage_json['usercode']}")
-                if(not create_folder_with_usercode(client_messsage_json['usercode'])):
-                    client_messsage_json["message"]="Folder Creation Failed!"
-                    client_messsage_json["message_code"]="fail"
-                else:                    
-                    current_record_user=get_recording_user()  
-                    client_messsage_json=client_messsage_json if current_record_user is None else current_record_user
+                # if(not create_folder_with_usercode(client_messsage_json['usercode'])):
+                #     client_messsage_json["message"]="Folder Creation Failed!"
+                #     client_messsage_json["message_code"]="fail"
+                # else:                    
+                current_record_user=get_recording_user()  
+                client_messsage_json=client_messsage_json if current_record_user is None else current_record_user
                 clients[addr].sendall(str(client_messsage_json).encode('utf-8'))  
             else:
                 if(client_messsage_json['actiontype']==ActionType.START_RECORD.name):
