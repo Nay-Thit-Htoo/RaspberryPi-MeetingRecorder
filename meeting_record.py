@@ -21,8 +21,8 @@ class MeetingRecord(tk.Frame):
         # Create Image and Show on Label
         self.image = Image.open("Assets/mic.png")
         self.photo = ImageTk.PhotoImage(self.image)       
-        label = tk.Label(self, image=self.photo)
-        label.pack(padx=5, pady=5)
+        self.image_label = tk.Label(self, image=self.photo)
+        self.image_label.pack(padx=5, pady=5)
         
         self.meeting_status_label = tk.Label(self,fg='Black')
         self.meeting_status_label.pack(padx=5, pady=5)
@@ -85,7 +85,14 @@ class MeetingRecord(tk.Frame):
 
     # Change Meeting Status and Disable or Enable Start and Stop Buttons
     def change_meeting_status_after_startrecord(self,response):
+        new_image = Image.open("Assets/recording-mic.png")
+        new_image_tk = ImageTk.PhotoImage(new_image)
+
+        self.image_label.config(image=new_image_tk)
+        self.image_label.image = new_image_tk
         self.meeting_status_label.config(text=f"{response['usercode']} is recording.......")
+
+
         if(self.logged_user_info['usercode']==response['usercode']):      
             self.startBtn.config(state='disabled')                                    
         else:
@@ -107,6 +114,12 @@ class MeetingRecord(tk.Frame):
       
    # Clean meeting status and enable start & stop buttons
     def clear_meeting_status_enable_buttons(self):
+        new_image = Image.open("Assets/mic.png")
+        new_image_tk = ImageTk.PhotoImage(new_image)
+
+        self.image_label.config(image=new_image_tk)
+        self.image_label.image = new_image_tk
+
         self.meeting_status_label.config(text="")   
         self.startBtn.config(state='normal')
         self.stopBtn.config(state='normal')
