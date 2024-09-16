@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 import tkinter.font as tkFont
 from PIL import Image, ImageTk
-import audio_record_service
+from audio_recorder import AudioRecorder
 import client_server_service as clientservice
 import socket
 import threading
@@ -14,7 +14,8 @@ class MeetingRecord(tk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.controller = controller 
-        self.logged_user_info=None       
+        self.logged_user_info=None      
+        self.audio_record_service=None
 
         # Font Style for Label
         self.label_font=tkFont.Font(family="Helvetica", size=10) 
@@ -108,11 +109,13 @@ class MeetingRecord(tk.Frame):
 
     # Audio Record Start
     def start_audio_record(self):
-        audio_record_service.start_audio_record(self.logged_user_info)
+        self.audio_record_service=AudioRecorder(self.logged_user_info)
+        self.audio_record_service.start_recording()
 
     # Audio Record Stop
     def stop_audio_record(self):
-        audio_record_service.stop_audio_recording(self.logged_user_info)
+        self.audio_record_service.stop_recording()        
+        self.audio_record_service.terminate()
 
     # Create Folder After PageLoaded
     def folder_create_result_show(self,response):

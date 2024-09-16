@@ -18,45 +18,54 @@ audio = pyaudio.PyAudio()
 # Create a flag to control the recording state
 stop_recording = threading.Event()
 
-def record_audio(record_user_obj):
-    # Open audio stream
-    stream = audio.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, frames_per_buffer=CHUNK)
-    print(f"[Audio Recording] Start Audio Recording...")
+def record_audio(stream,record_user_obj):
+    try:
+        # Open audio stream       
+        print(f"[Audio Recording] Start Audio Recording...")
+        frames = []
+        # Continue recording until stop_recording event is set
+        while not stop_recording.is_set():
+            data = stream.read(CHUNK)
+            frames.append(data)
     
-    frames = []
+    except OSError as e:
+        print(f"Error opening stream: {e}")
+    finally:
+        print(f"[Audio Recording] Stop Audio Recording...")
+        if 'stream' in locals():
+            if stream.is_active():
+                stream.stop_stream()
+            stream.close()
+        stream=None
+        audio.terminate()
 
-    # Continue recording until stop_recording event is set
-    while not stop_recording.is_set():
-        data = stream.read(CHUNK)
-        frames.append(data)
-
-    print(f"[Audio Recording] Stop Audio Recording...")
-    
     # Stop and close the stream
-    stream.stop_stream()
-    stream.close()
+    # stream.stop_stream()
+    # stream.close()
 
      # Ensure the subfolder exists
-    os.makedirs(record_user_obj['usercode'], exist_ok=True)    
-    output_audio_path=os.path.join(record_user_obj['usercode'],f"{record_user_obj['usercode']}_{datetime.now().strftime('%d_%m_%Y')}.wav")
+    # os.makedirs(record_user_obj['usercode'], exist_ok=True)    
+    # output_audio_path=os.path.join(record_user_obj['usercode'],f"{record_user_obj['usercode']}_{datetime.now().strftime('%d_%m_%Y_%H_%M_%S')}.wav")
  
-    # Write the recorded data to a WAV file
-    with wave.open(output_audio_path, 'wb') as wf:
-        wf.setnchannels(CHANNELS)
-        wf.setsampwidth(audio.get_sample_size(FORMAT))
-        wf.setframerate(RATE)
-        wf.writeframes(b''.join(frames))
+    # # Write the recorded data to a WAV file
+    # with wave.open(output_audio_path, 'wb') as wf:
+    #     wf.setnchannels(CHANNELS)
+    #     wf.setsampwidth(audio.get_sample_size(FORMAT))
+    #     wf.setframerate(RATE)
+    #     wf.writeframes(b''.join(frames))
 
-    audio.terminate()
-    file_upload_service.file_upload_to_server(output_audio_path,record_user_obj)
+    # audio.terminate()
+    # file_upload_service.file_upload_to_server(output_audio_path,record_user_obj)
 
 
 def stop_audio_recording(record_user_obj):    
     # Set the flag to stop the recording
-    stop_recording.set()
+    stop_recording.set()   
+
 
 def start_audio_record(record_user_obj):   
     # Start recording in a separate thread
-    record_thread = threading.Thread(target=record_audio,args=(record_user_obj,))
+    stream = audio.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, frames_per_buffer=CHUNK)
+    record_thread = threading.Thread(target=record_audio,args=(stream,record_user_obj,))
     record_thread.start()
 
