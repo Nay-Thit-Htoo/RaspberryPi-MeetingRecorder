@@ -1,4 +1,5 @@
 import os
+import shutil
 import tkinter as tk
 from tkinter import filedialog, ttk, messagebox
 import threading
@@ -23,7 +24,7 @@ class FileUploader(tk.Tk):
         self.upload_button.pack(pady=10)
         
         self.file_path = None
-        self.network_path = "\\NAYTHITHTOO\Audio"  # Change this to your network share path
+        self.network_path = r"\\NAYTHITHTOO\Audio"  # Change this to your network share path
 
     def browse_file(self):
         self.file_path = filedialog.askopenfilename()
@@ -39,23 +40,38 @@ class FileUploader(tk.Tk):
 
     
     def upload_file_thread(self):
+
         file_name = os.path.basename(self.file_path)
         dest_path = os.path.join(self.network_path, file_name)
+        try:
+            # Copy the file to the network share
+            shutil.copy2(self.file_path, dest_path)
+            messagebox.showinfo("Success", f"File '{file_name}' uploaded successfully!")
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to upload file: {str(e)}")
         
-        file_size = os.path.getsize(self.file_path)
-        self.progress["maximum"] = file_size
         
-        with open(self.file_path, 'rb') as src_file:
-            with open(dest_path, 'wb') as dest_file:
-                while True:
-                    # Read the file in chunks (64KB)
-                    chunk = src_file.read(1024)
-                    if not chunk:
-                        break
-                    dest_file.write(chunk)                   
-                    self.progress.step(len(chunk)) 
+        
+        
+        
+        # file_name = os.path.basename(self.file_path)
+        # dest_path = os.path.join(self.network_path, file_name)
+        
+
+        # file_size = os.path.getsize(self.file_path)
+        # self.progress["maximum"] = file_size
+        
+        # with open(self.file_path, 'rb') as src_file:
+        #     with open(dest_path, 'wb') as dest_file:
+        #         while True:
+        #             # Read the file in chunks (64KB)
+        #             chunk = src_file.read(1024)
+        #             if not chunk:
+        #                 break
+        #             dest_file.write(chunk)                   
+        #             self.progress.step(len(chunk)) 
                     
-        messagebox.showinfo("Success", "File uploaded successfully!")
+        # messagebox.showinfo("Success", "File uploaded successfully!")
 
 if __name__ == "__main__":
     app = FileUploader()
