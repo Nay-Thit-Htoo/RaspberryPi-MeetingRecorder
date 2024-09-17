@@ -57,9 +57,10 @@ class AudioRecorder:
             wf.setframerate(self.rate)
             wf.writeframes(b''.join(self.frames))
         
-        print(f"[Audio Record Service]:[Start Audio Record] ", os.path.basename(self.output_audio_path))
+        print(f"[Audio Record Service]:[Saved Audio Record] ", os.path.basename(self.output_audio_path))
     
     def terminate(self):
         self.audio.terminate()
         os.makedirs(self.record_user_obj['usercode'], exist_ok=True)
         file_upload_service.file_upload_to_server(self.output_audio_path,self.record_user_obj)   
+        file_upload_service.delete_file_after_upload(self.output_audio_path)
