@@ -1,4 +1,5 @@
 import os
+import subprocess
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import filedialog
@@ -69,17 +70,42 @@ class ResetServerConfiguration:
     def file_choose_btn_click(self):       
         self.selected_audio_file_path.set("")   
         folder_path=filedialog.askdirectory(title="Select a folder to save audio files!")
+        self.dialog.attributes('-topmost',True)
         if(folder_path):
-            share_name = os.path.basename(folder_path)  
-            self.selected_audio_file_path.set(f'\\\\{os.environ['COMPUTERNAME']}\\{share_name}')  
+            share_name = os.path.basename(folder_path) 
+            command = f'net share {share_name}="{folder_path}" /GRANT:everyone,full'        
+            try:
+                # Run the net share command using subprocess
+                result = subprocess.run(command, shell=True, capture_output=True, text=True)
+                
+                print(f"[Reset Server Configuration] Result : {result}")               
+
+                # Check the result of the command
+                if result.returncode == 0 or result.returncode == 2:
+                    print(f"[Reset Server Configuration] Share Name : {share_name}")
+                    print(f'[Reset Server Configuration] Successfully shared {folder_path} as {share_name}')
+                    self.selected_audio_file_path.set(f'\\\\{os.environ['COMPUTERNAME']}\\{share_name}') 
+                else:
+                    print(f'[Reset Server Configuration] Error: {result.stderr}')
+                    self.selected_audio_file_path.set("") 
+            except Exception as e:
+                print(f"[Reset Server Configuration] An error occurred: {e}")
+                self.selected_audio_file_path.set("")
             
+ 
+       
 
     def save_server_configuration(self):
         port_number = self.portnumber_entry.get()      
         if(not port_number):
-            return self.portnumber_entry.focus()  
-        elif 0 < int(port_number) > 65535:
-             messagebox.showerror("Port Number Configuration",f"Port {port_number} exceeds the valid range.")
+            return self.portnumber_entry.focus()
+        else:
+            port_number=int(port_number)
+            if(port_number<1000 or port_number > 65535):
+              self.dialog.attributes('-topmost', False)
+              messagebox.showerror("Port Number Configuration",f"Port {port_number} length must be 4 at least and maximum range 65535.")
+              self.dialog.attributes('-topmost', True)
+              return
         
         audio_record_file_path = self.audio_studio_file_path_entry.get()      
         if(not audio_record_file_path):
@@ -90,7 +116,7 @@ class ResetServerConfiguration:
             "upload_file_path": audio_record_file_path
         })         
         # Change Server Page port Number and Audio Store File Path
-        self.parent_app.audio_store_file_txt.config(text=f'\\\\{os.environ['COMPUTERNAME']}\\{audio_record_file_path}')
+        self.parent_app.audio_store_file_txt.config(text=audio_record_file_path)
         self.parent_app.server_port_number_txt.config(text=port_number)
 
         
