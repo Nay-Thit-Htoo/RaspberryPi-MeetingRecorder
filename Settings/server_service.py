@@ -81,14 +81,14 @@ def clean_clients():
         org_setting_data['clients']=[]
         write_all_appsetting(org_setting_data)   
    
-
-         
-
-
-
-
-
-
+# Update Server Info
+def update_server_info(updated_server_obj):
+    org_data=read_setting_data()
+    if(not org_data):
+       return
+    org_data["port_number"]=int(updated_server_obj["port_number"])
+    org_data["upload_file_path"]=updated_server_obj["upload_file_path"]
+    write_all_appsetting(org_data)
 
 # Main function to demonstrate the process
 def main():  

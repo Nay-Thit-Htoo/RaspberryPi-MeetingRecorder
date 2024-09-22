@@ -1,4 +1,5 @@
 import tkinter as tk
+from PIL import Image, ImageTk
 from login import Login 
 from meeting_record import MeetingRecord
 
@@ -6,7 +7,10 @@ class Main(tk.Tk):
     def __init__(self,):
         super().__init__()
         self.title("Recorder Project")
-        # self.iconbitmap('Assets/recording-icon.ico')
+
+        self.image = Image.open("Assets/icon.png")
+        self.icon = ImageTk.PhotoImage(self.image)    
+        self.iconphoto(True,self.icon)
 
         width=500
         height=300        
