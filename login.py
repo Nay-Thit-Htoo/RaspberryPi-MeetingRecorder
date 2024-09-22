@@ -14,6 +14,9 @@ class Login(tk.Frame):
         super().__init__(parent)
         self.controller = controller
         self.parent_app=parent
+        self.stop_receive_message_thread=threading.Event()
+        self.receive_thread=None
+
        
         title_font=tkFont.Font(family="Helvetica", size=13, weight="bold")
         label_font=tkFont.Font(family="Helvetica", size=10)    
@@ -78,9 +81,9 @@ class Login(tk.Frame):
                     'server_port':int(client_info['server_port']),
                     'usercode':username,
                     'usertype':user_type,
-                    'actiontype': ActionType.LOGIN.name
+                    'actiontype': ActionType.LOGIN.name                    
                 }
-                print(f'[Login][Login Request] : {user_login_object}')
+                print(f"[Login][Login Request] : {user_login_object}")
                 check_server_thread=threading.Thread(target=self.check_server_status,args=(user_login_object,))                 
                 check_server_thread.start()
 
@@ -95,19 +98,20 @@ class Login(tk.Frame):
                 self.login_button.config(text="Login") # reset login button label text
                 messagebox.showerror("Error Message","Your Server isn't Running!")  
 
-    def receive_messages(self,client_socket):
-        while True:
+    def receive_messages(self,client_socket,stop_receive_message_thread):
+        while not stop_receive_message_thread.is_set():
             try:
                 message = client_socket.recv(1024).decode('utf-8')
                 if not message:
                     break
-                print(f"[Login] [Receive Message Reply From Server Without Json format] : {message}")
+                print(f"[Login] [Receive Message Reply From Server ] : {message}")
                 message_json=(json.loads(str(message).replace("'", '"')))                  
                 if(message_json['actiontype']==ActionType.LOGIN.name):      
                     if(message_json['message_code']=='success'):
                         clientservice.update_clientInfo(message_json)
-                        print(f'[Login]: {message_json['message']}')
+                        print(f"[Login]: {message_json['message']}")
                         self.controller.show_frame('MeetingRecord')
+                        self.stop_receive_message_thread.set()                        
                     else:
                         self.login_button.config(text="Login")
                         messagebox.showerror("Error Message",message_json['message'])                            
@@ -119,7 +123,7 @@ class Login(tk.Frame):
 
     # Function to send messages to the server
     def send_messages(self,client_socket,client_message):
-        print(f'[Login][Client Sending Message] : {client_message}')
+        print(f"[Login][Client Sending Message] : {client_message}")
         recipient_ip = socket.gethostbyname(socket.gethostname())
         full_message=f"{recipient_ip}: {client_message}"
         client_socket.send(full_message.encode('utf-8'))
@@ -139,12 +143,13 @@ class Login(tk.Frame):
         client_socket.connect((SERVER_IP, PORT))
 
         # Start threads for receiving and sending messages
-        receive_thread = threading.Thread(target=self.receive_messages, args=(client_socket,))
-        receive_thread.start()
+        self.receive_thread = threading.Thread(target=self.receive_messages, args=(client_socket,self.stop_receive_message_thread,))
+        self.receive_thread.start()
 
         send_thread = threading.Thread(target=self.send_messages, args=(client_socket,to_send_message_obj))
         send_thread.start()
 
+        
 
     
             
