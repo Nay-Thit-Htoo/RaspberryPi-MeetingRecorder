@@ -1,5 +1,4 @@
 import os
-import subprocess
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import filedialog
@@ -73,6 +72,7 @@ class ResetServerConfiguration:
         if(folder_path):
             share_name = os.path.basename(folder_path)  
             self.selected_audio_file_path.set(f'\\\\{os.environ['COMPUTERNAME']}\\{share_name}')  
+            
 
     def save_server_configuration(self):
         port_number = self.portnumber_entry.get()      
@@ -83,25 +83,16 @@ class ResetServerConfiguration:
         
         audio_record_file_path = self.audio_studio_file_path_entry.get()      
         if(not audio_record_file_path):
-            return self.audio_studio_file_path_entry.focus()
-        else:
-            audio_record_file_path=f"\\\\{audio_record_file_path.replace('/','\\')}"     
-        
+            return self.audio_studio_file_path_entry.focus()        
+
         server_service.update_server_info({
             "port_number": int(port_number),
             "upload_file_path": audio_record_file_path
         })         
+        # Change Server Page port Number and Audio Store File Path
+        self.parent_app.audio_store_file_txt.config(text=f'\\\\{os.environ['COMPUTERNAME']}\\{audio_record_file_path}')
+        self.parent_app.server_port_number_txt.config(text=port_number)
+
+        
         self.dialog.destroy()
         self.dialog.update()
-    
-
-
-           
-        
-        
-
-      
-    
-       
-    
-    
