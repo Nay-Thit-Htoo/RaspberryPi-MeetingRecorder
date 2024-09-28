@@ -51,7 +51,6 @@ class AudioRecorder:
         self.record_thread.join()  # Wait for the recording thread to finish
     
     def save_wave(self): 
-        os.makedirs(self.output_audio_path, exist_ok=True)
         with wave.open(self.output_audio_path, 'wb') as wf:
             wf.setnchannels(self.channels)
             wf.setsampwidth(self.audio.get_sample_size(self.format))

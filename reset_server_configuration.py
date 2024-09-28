@@ -109,7 +109,12 @@ class ResetServerConfiguration:
         
         audio_record_file_path = self.audio_studio_file_path_entry.get()      
         if(not audio_record_file_path):
-            return self.audio_studio_file_path_entry.focus()        
+            return self.audio_studio_file_path_entry.focus()   
+        elif(not self.check_world_writable(audio_record_file_path)):
+            self.dialog.attributes('-topmost', False)
+            messagebox.showerror("File Permission",f"{audio_record_file_path} don't have Write Permission!")
+            self.dialog.attributes('-topmost', True)  
+            return self.audio_studio_file_path_entry.focus()                
 
         server_service.update_server_info({
             "port_number": int(port_number),
@@ -122,3 +127,18 @@ class ResetServerConfiguration:
         
         self.dialog.destroy()
         self.dialog.update()
+    
+    def check_world_writable(self,file_path):
+        try:
+            # Get the file's status
+            file_status = os.stat(file_path)
+            
+            # Check if the file is writable by others
+            if file_status.st_mode & os.stat.S_IWOTH:
+                return True
+            else:
+               return False
+        except FileNotFoundError:
+           return False
+        except Exception as e:
+            return False
