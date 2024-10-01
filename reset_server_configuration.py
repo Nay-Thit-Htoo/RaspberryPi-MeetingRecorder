@@ -69,11 +69,12 @@ class ResetServerConfiguration:
 
     def file_choose_btn_click(self):       
         self.selected_audio_file_path.set("")   
+        self.dialog.attributes('-topmost', False)
         folder_path=filedialog.askdirectory(title="Select a folder to save audio files!")
         self.dialog.attributes('-topmost',True)
         if(folder_path):
             share_name = os.path.basename(folder_path) 
-            command = f'net share {share_name}="{folder_path}" /GRANT:everyone,full'        
+            command = f'net share {share_name}="{folder_path}" /grant:Everyone,full'        
             try:
                 # Run the net share command using subprocess
                 result = subprocess.run(command, shell=True, capture_output=True, text=True)
@@ -92,9 +93,6 @@ class ResetServerConfiguration:
                 print(f"[Reset Server Configuration] An error occurred: {e}")
                 self.selected_audio_file_path.set("")
             
- 
-       
-
     def save_server_configuration(self):
         port_number = self.portnumber_entry.get()      
         if(not port_number):
@@ -128,17 +126,17 @@ class ResetServerConfiguration:
         self.dialog.destroy()
         self.dialog.update()
     
-    def check_world_writable(self,file_path):
+    def check_world_writable(self,file_path):       
+        print(f"[Reset Server Configuration] [Check Folder Writeable]: {file_path}")
+        test_file = os.path.join(file_path, "test_write.txt")
         try:
-            # Get the file's status
-            file_status = os.stat(file_path)
-            
-            # Check if the file is writable by others
-            if file_status.st_mode & os.stat.S_IWOTH:
-                return True
-            else:
-               return False
-        except FileNotFoundError:
-           return False
+            # Try writing a test file
+            with open(test_file, "w") as file:
+                file.write("This is a test to check if the folder is writable.")
+             # Optionally, clean up by removing the test file
+            os.remove(test_file)
+            print(f"[Reset Server Configuration] [Check Folder Writeable]: {file_path} can write!")
+            return True
         except Exception as e:
-            return False
+           print(f"[Reset Server Configuration] [Check Folder Writeable]: {e}")
+           return False
