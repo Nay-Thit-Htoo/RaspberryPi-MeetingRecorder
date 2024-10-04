@@ -50,6 +50,7 @@ class MeetingRecord(tk.Frame):
     def stop_recording(self):
         meeting_status=self.meeting_status_label.cget('text')
         if(meeting_status is not None or meeting_status !=""):
+            self.meeting_status_label.config(text="")
             self.logged_user_info=clientservice.read_clientInfo()
             meeting_record_obj={"usercode":self.logged_user_info['usercode'],
                     "usertype":self.logged_user_info['usertype'],
@@ -76,7 +77,7 @@ class MeetingRecord(tk.Frame):
                    self.start_audio_record()
                 elif(response_message['actiontype']==ActionType.OPEN_RECORD.name):
                     self.folder_create_result_show(response_message)
-                else:
+                elif(response_message['actiontype']==ActionType.STOP_RECORD.name):
                   self.clear_meeting_status_enable_buttons() 
                   self.stop_audio_record()
 

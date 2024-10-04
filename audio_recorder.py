@@ -50,7 +50,7 @@ class AudioRecorder:
         self.recording = False
         self.record_thread.join()  # Wait for the recording thread to finish
     
-    def save_wave(self):
+    def save_wave(self): 
         with wave.open(self.output_audio_path, 'wb') as wf:
             wf.setnchannels(self.channels)
             wf.setsampwidth(self.audio.get_sample_size(self.format))
@@ -60,7 +60,6 @@ class AudioRecorder:
         print(f"[Audio Record Service]:[Saved Audio Record] ", os.path.basename(self.output_audio_path))
     
     def terminate(self):
-        self.audio.terminate()
-        os.makedirs(self.record_user_obj['usercode'], exist_ok=True)
+        self.audio.terminate()   
         file_upload_service.file_upload_to_server(self.output_audio_path,self.record_user_obj)   
         file_upload_service.delete_file_after_upload(self.output_audio_path)

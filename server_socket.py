@@ -99,7 +99,7 @@ class ServerSocket:
                 return
         self.server_is_running=False
         self.server_socket.close()
-        print("Server stopped.")       
+        print("[Server]Server stopped....")       
         
     # Create Folder When Client's Meeting Record Page Open
     def create_folder_with_usercode(usercode):

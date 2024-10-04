@@ -1,6 +1,8 @@
+import os
 import socket
 import threading
 import tkinter as tk
+from tkinter import messagebox
 import tkinter.font as tkFont
 from PIL import Image, ImageTk
 from Settings import server_service
@@ -87,6 +89,8 @@ class ServerPage(tk.Tk):
         if(start_btn_txt.lower()!="running"):
             if(self.server_setting_info is None or self.server_setting_info['port_number'] is None or self.server_setting_info['upload_file_path'] is None):
                 ResetServerConfiguration(self)
+            elif(not self.check_world_writable(self.server_setting_info['upload_file_path'])):                
+                messagebox.showerror("File Permission",f"{self.server_setting_info['upload_file_path']} don't have Write Permission!")
             else:
                 self.server_start_btn.config(text="Running"),
                 self.server_start_btn.config(state='disabled')
@@ -103,6 +107,21 @@ class ServerPage(tk.Tk):
     def call_server_socket(self):
         self.server_socket=ServerSocket(port=int(self.server_setting_info['port_number']))
         self.server_socket.start_server()  
+    
+    def check_world_writable(self,file_path):       
+        print(f"[Server Page] [Check Folder Writeable]: {file_path}")
+        test_file = os.path.join(file_path, "test_write.txt")
+        try:
+            # Try writing a test file
+            with open(test_file, "w") as file:
+                file.write("This is a test to check if the folder is writable.")
+             # Optionally, clean up by removing the test file
+            os.remove(test_file)
+            print(f"[Server Page] [Check Folder Writeable]: {file_path} can write!")
+            return True
+        except Exception as e:
+           print(f"[Server Page] [Check Folder Writeable]: {e}")
+           return False
 
 
 if __name__ == "__main__":
