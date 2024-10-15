@@ -64,7 +64,8 @@ class Login(tk.Frame):
                 self.client_checkbtn.set(0)
 
     def on_label_click(self,event):
-        ResetServerConnection(self.parent_app)
+        if(self.login_button.cget("text").lower()=='login'):
+            ResetServerConnection(self.parent_app)
 
     def login(self):      
             username = self.usercode_entry.get()      
@@ -90,7 +91,7 @@ class Login(tk.Frame):
     # Check your server ip and port are correct and server is running or not
     def check_server_status(self,login_user_obj):
         if(self.login_button.cget("text").lower()=='login'):# check button name is login or not
-            self.login_button.config(text="Please Wait..") 
+            self.login_button.config(text="Please Wait...") 
             if(check_server_connection(login_user_obj['server_ip'],int(login_user_obj['server_port']))):                        
                 # Start Client for Login in Server Socket          
                 self.start_client(login_user_obj)
