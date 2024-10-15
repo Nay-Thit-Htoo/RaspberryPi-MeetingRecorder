@@ -142,10 +142,10 @@ class ServerSocket:
 
     # Get Current Recording User List
     def get_current_recording_users(self):
-       recording_user=None
-       recording_user['actiontype']=ActionType.START_RECORD.name
-       recording_user['is_starting_meeting']=server_service.get_meeting_status()
-       recording_user['message_code']='success'
+       recording_user={"message_code":'success',
+                    "is_starting_meeting":server_service.get_meeting_status(),
+                    "actiontype":ActionType.START_RECORD.name                      
+                    };     
        current_record_userLst=server_service.get_current_recording_user() 
        if(len(current_record_userLst)>0 and current_record_userLst is not None):  
            recording_user['message']=", ".join([item['usercode'] for item in current_record_userLst])             

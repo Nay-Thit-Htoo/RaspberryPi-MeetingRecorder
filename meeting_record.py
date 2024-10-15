@@ -118,6 +118,7 @@ class MeetingRecord(tk.Frame):
     
     # Change Meeting Status and Disable or Enable Start and Stop Buttons 
     def change_meeting_status_after_startrecord(self,response):
+       print(f"[Meeting Recording][Meeting Status]: {response}")
        if(response['is_starting_meeting']=="true"):         
             new_image = Image.open("Assets/recording-mic.png")
             new_image_tk = ImageTk.PhotoImage(new_image)
@@ -133,8 +134,7 @@ class MeetingRecord(tk.Frame):
                  recording_user_list=(response['message']).split(", ")
                  if(self.logged_user_info['usercode'] in recording_user_list):
                       self.startBtn.config(state='disabled')                                                    
-         
-
+   
     # Audio Record Start
     def start_audio_record(self):
         self.audio_record_service=AudioRecorder(self.logged_user_info)
