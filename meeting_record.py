@@ -196,9 +196,9 @@ class MeetingRecord(tk.Frame):
         socket_thread = threading.Thread(target=self.start_client,args=(None,), daemon=True)
         socket_thread.start()
         
-    def discuss_request_confirmation(self,response):
+    #def discuss_request_confirmation(self,response):
         # Display a confirmation dialog
-        result = messagebox.askyesno("Request for Discussion", f'Do you want to allow "{response['usercode']}" for Discussion?')
+        #result = messagebox.askyesno("Request for Discussion", f'Do you want to allow "{response['usercode']}" for Discussion?')
         
         # Handle the result
         # if result:
