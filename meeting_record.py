@@ -15,10 +15,11 @@ class MeetingRecord(tk.Frame):
         super().__init__(parent)
         self.controller = controller 
         self.logged_user_info=None      
-        self.audio_record_service=None
+        self.audio_record_service=None 
 
         # Font Style for Label
-        self.label_font=tkFont.Font(family="Helvetica", size=10) 
+        self.label_font=tkFont.Font(family="Helvetica", size=10)       
+
 
         # Create Image and Show on Label
         self.image = Image.open("Assets/mic.png")
@@ -27,14 +28,16 @@ class MeetingRecord(tk.Frame):
         self.image_label.pack(padx=5, pady=5)
         
         self.meeting_status_label = tk.Label(self,fg='Black')
-        self.meeting_status_label.pack(padx=5, pady=5)
-          
+        self.meeting_status_label.pack(padx=5, pady=5) 
+
         #start & stop buttons
-        self.startBtn=tk.Button(self,text="Start",bg="#121212", fg="white",width=15,height=2,font=self.label_font,command=self.start_recording)
+        self.startBtn=tk.Button(self,text="Discuss",bg="#121212", fg="white",width=15,height=2,font=self.label_font,command=self.start_recording)
         self.startBtn.pack(side=tk.LEFT,padx=5, pady=5)
-        
+        self.startBtn.config(state='disabled')
+
         self.stopBtn=tk.Button(self,text="Stop",bg="#DEE3E2", fg="black",width=15,height=2,font=self.label_font,command=self.stop_recording)
-        self.stopBtn.pack(side=tk.LEFT,padx=5, pady=5)  
+        self.stopBtn.pack(side=tk.LEFT,padx=5, pady=5)    
+        self.stopBtn.config(state='disabled')    
                 
     # start recording
     def start_recording(self):       
@@ -44,6 +47,26 @@ class MeetingRecord(tk.Frame):
                     "actiontype":ActionType.START_RECORD.name                      
                     }
         print(f"[Meeting Record][Start Record] : {meeting_record_obj}")
+        self.start_client(meeting_record_obj)
+    
+    #start meeting
+    def start_meeting(self):       
+        self.logged_user_info=clientservice.read_clientInfo()
+        meeting_record_obj={"usercode":self.logged_user_info['usercode'],
+                    "usertype":self.logged_user_info['usertype'],
+                    "actiontype":ActionType.START_MEETING.name                      
+                    }
+        print(f"[Meeting Record][Start Meeting] : {meeting_record_obj}")
+        self.start_client(meeting_record_obj)
+    
+    #stop meeting
+    def stop_meeting(self):       
+        self.logged_user_info=clientservice.read_clientInfo()
+        meeting_record_obj={"usercode":self.logged_user_info['usercode'],
+                    "usertype":self.logged_user_info['usertype'],
+                    "actiontype":ActionType.STOP_MEETING.name                      
+                    }
+        print(f"[Meeting Record][Stop Meeting] : {meeting_record_obj}")
         self.start_client(meeting_record_obj)
         
     # stop recording
@@ -55,11 +78,9 @@ class MeetingRecord(tk.Frame):
             meeting_record_obj={"usercode":self.logged_user_info['usercode'],
                     "usertype":self.logged_user_info['usertype'],
                     "actiontype":ActionType.STOP_RECORD.name                      
-                    }
+                    }   
             print(f"[Meeting Record][Stop Record] : {meeting_record_obj}")
-            self.start_client(meeting_record_obj)
-       
-        # Function receiving message from server
+            self.start_client(meeting_record_obj)       
     
     # Receive Message via Client Socket
     def receive_messages(self,client_socket):
@@ -72,14 +93,21 @@ class MeetingRecord(tk.Frame):
                 print(f"[Meeting Record][Receive Message Reply From Server] : {message}")
                 response_message=json.loads(message.replace("'", '"')) 
                 print(f"[Meeting Record][Action Type]: {response_message['actiontype']}") 
-                if(response_message['actiontype']==ActionType.START_RECORD.name): 
+                if(response_message['actiontype']==ActionType.START_MEETING.name): 
+                    self.startBtn.config(state='normal')
+                    self.stopBtn.config(state='normal')
+                elif(response_message['actiontype']==ActionType.STOP_MEETING.name): 
+                    self.startBtn.config(state='disabled')
+                    self.stopBtn.config(state='disabled') 
+                    self.stop_audio_record()
+                elif(response_message['actiontype']==ActionType.START_RECORD.name): 
                    self.change_meeting_status_after_startrecord(response_message)
                    self.start_audio_record()
                 elif(response_message['actiontype']==ActionType.OPEN_RECORD.name):
                     self.folder_create_result_show(response_message)
                 elif(response_message['actiontype']==ActionType.STOP_RECORD.name):
                   self.clear_meeting_status_enable_buttons() 
-                  self.stop_audio_record()
+                  self.stop_audio_record()             
 
             except Exception as err:
                 print(f"[Meeting Record]:[Exception Error] : {err}")                
@@ -87,26 +115,25 @@ class MeetingRecord(tk.Frame):
             except ConnectionAbortedError as connError:
                print(f"[Meeting Record]:[Connection Aborted Error] : {connError}")                
                break 
-
-    # Change Meeting Status and Disable or Enable Start and Stop Buttons
+    
+    # Change Meeting Status and Disable or Enable Start and Stop Buttons 
     def change_meeting_status_after_startrecord(self,response):
-        new_image = Image.open("Assets/recording-mic.png")
-        new_image_tk = ImageTk.PhotoImage(new_image)
+       if(response['is_starting_meeting']=="true"):         
+            new_image = Image.open("Assets/recording-mic.png")
+            new_image_tk = ImageTk.PhotoImage(new_image)
 
-        self.image_label.config(image=new_image_tk)
-        self.image_label.image = new_image_tk
-        self.meeting_status_label.config(text=f"{response['usercode']} is recording.......")
+            self.image_label.config(image=new_image_tk)
+            self.image_label.image = new_image_tk
+            self.meeting_status_label.config(text=f"{response['message']} recording......")
 
-
-        if(self.logged_user_info['usercode']==response['usercode']):      
-            self.startBtn.config(state='disabled')                                    
-        else:
-            if(self.logged_user_info['usercode'].lower()=='chairman'):
+            if(self.logged_user_info['usertype'].lower()!='chairman'):
                 self.startBtn.config(state='normal')
-                self.stopBtn.config(state='normal') 
+                self.stopBtn.config(state='normal')
             else:
-                self.startBtn.config(state='disabled')
-                self.stopBtn.config(state='disabled')
+                 recording_user_list=(response['message']).split(", ")
+                 if(self.logged_user_info['usercode'] in recording_user_list):
+                      self.startBtn.config(state='disabled')                                                    
+         
 
     # Audio Record Start
     def start_audio_record(self):
@@ -114,7 +141,9 @@ class MeetingRecord(tk.Frame):
         self.audio_record_service.start_recording()
 
     # Audio Record Stop
-    def stop_audio_record(self):
+    def stop_audio_record(self):        
+        if(self.audio_record_service is None):
+             self.audio_record_service=AudioRecorder(self.logged_user_info)
         self.audio_record_service.stop_recording()        
         self.audio_record_service.terminate()
 
@@ -167,6 +196,15 @@ class MeetingRecord(tk.Frame):
         socket_thread = threading.Thread(target=self.start_client,args=(None,), daemon=True)
         socket_thread.start()
         
+    def discuss_request_confirmation(self,response):
+        # Display a confirmation dialog
+        result = messagebox.askyesno("Request for Discussion", f'Do you want to allow "{response['usercode']}" for Discussion?')
+        
+        # Handle the result
+        # if result:
+        #     label.config(text="You selected: Yes")
+        # else:
+        #     label.config(text="You selected: No")
        
 
     
