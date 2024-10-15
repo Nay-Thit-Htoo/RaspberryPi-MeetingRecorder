@@ -16,7 +16,6 @@ class Login(tk.Frame):
         self.parent_app=parent
         self.stop_receive_message_thread=threading.Event()
         self.receive_thread=None
-
        
         title_font=tkFont.Font(family="Helvetica", size=13, weight="bold")
         label_font=tkFont.Font(family="Helvetica", size=10)    
@@ -26,8 +25,8 @@ class Login(tk.Frame):
         self.client_checkbtn.set(1)
 
         self.chariman_checkbtn = tk.IntVar()
-        self.chariman_checkbtn.set(0)
-    
+        self.chariman_checkbtn.set(0)                     
+          
         # Title 
         title_label = tk.Label(self, text='Meeting Recorder',font=title_font)
         title_label.grid(row=0,column=0,pady=20,columnspan=3)
@@ -67,7 +66,7 @@ class Login(tk.Frame):
         if(self.login_button.cget("text").lower()=='login'):
             ResetServerConnection(self.parent_app)
 
-    def login(self):      
+    def login(self):   
             username = self.usercode_entry.get()      
             if(not username):
                 return self.usercode_entry.focus()           
@@ -87,6 +86,8 @@ class Login(tk.Frame):
                 print(f"[Login][Login Request] : {user_login_object}")
                 check_server_thread=threading.Thread(target=self.check_server_status,args=(user_login_object,))                 
                 check_server_thread.start()
+                if(user_type=='Chairman'):
+                  self.controller.show_meeting_buttons()
 
     # Check your server ip and port are correct and server is running or not
     def check_server_status(self,login_user_obj):

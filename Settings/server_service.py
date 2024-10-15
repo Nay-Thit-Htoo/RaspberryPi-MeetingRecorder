@@ -59,6 +59,11 @@ def get_current_recording_user():
     current_recording_user = [obj for obj in org_setting_data['clients'] if recording_filter(obj)]
     return current_recording_user
 
+# Get Is Starting Meeting
+def get_meeting_status():    
+    org_setting_data=read_setting_data()
+    return org_setting_data['is_starting_meeting']
+
 # Update Meeting Record Person
 def update_recording_client_info(update_client_data,is_start_recording):
     org_data=read_setting_data()
@@ -72,6 +77,14 @@ def update_recording_client_info(update_client_data,is_start_recording):
             new_obj={'is_recording':"false"}
         obj.update(new_obj)
     org_data['clients']=org_client_data
+    write_all_appsetting(org_data) 
+
+# Update Meeting Record Person
+def update_meeting_status(is_start_meeting):
+    org_data=read_setting_data()
+    if(not org_data):
+       return
+    org_data['is_starting_meeting']=is_start_meeting
     write_all_appsetting(org_data) 
 
 # Filter App Setting Data    

@@ -20,6 +20,7 @@ class AudioRecorder:
         self.stream = None
         self.frames = []
         self.recording = False
+        self.record_thread=None
     
     def start_recording(self):
         if self.recording:
@@ -48,7 +49,8 @@ class AudioRecorder:
     
     def stop_recording(self):
         self.recording = False
-        self.record_thread.join()  # Wait for the recording thread to finish
+        if(self.record_thread is not None):
+            self.record_thread.join()  # Wait for the recording thread to finish
     
     def save_wave(self): 
         with wave.open(self.output_audio_path, 'wb') as wf:
@@ -61,5 +63,6 @@ class AudioRecorder:
     
     def terminate(self):
         self.audio.terminate()   
-        file_upload_service.file_upload_to_server(self.output_audio_path,self.record_user_obj)   
-        file_upload_service.delete_file_after_upload(self.output_audio_path)
+        if(os.path.exists(self.output_audio_path)):
+            file_upload_service.file_upload_to_server(self.output_audio_path,self.record_user_obj)   
+            file_upload_service.delete_file_after_upload(self.output_audio_path)

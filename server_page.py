@@ -8,6 +8,8 @@ from PIL import Image, ImageTk
 from Settings import server_service
 from reset_server_configuration import ResetServerConfiguration
 from server_socket import ServerSocket
+from tkinter import scrolledtext
+from datetime import datetime
 
 
 class ServerPage(tk.Tk):
@@ -25,8 +27,8 @@ class ServerPage(tk.Tk):
         self.icon = ImageTk.PhotoImage(self.image)    
         self.iconphoto(True,self.icon)
 
-        width=500
-        height=300        
+        width=600
+        height=400        
         # Get the screen width and height        
         screen_width = self.winfo_screenwidth()
         screen_height = self.winfo_screenheight()
@@ -42,7 +44,7 @@ class ServerPage(tk.Tk):
       
         # Title 
         title_label = tk.Label(frame, text='Meeting Record ( Server )',font=title_font)
-        title_label.grid(row=0,column=0,pady=5,columnspan=3)
+        title_label.grid(row=0,column=0,pady=5,columnspan=2)
 
         # Server IP Address 
         server_ip_address_label = tk.Label(frame,text='Server IP : ',font=label_font)
@@ -77,16 +79,26 @@ class ServerPage(tk.Tk):
       
         # Reset Configuration
         reset_server_label = tk.Label(frame, text="Reset Configuration?",font=label_sm_font,fg="blue",cursor="hand2")
-        reset_server_label.grid(row=5,column=0,padx=5, pady=2,columnspan=3)
+        reset_server_label.grid(row=5,column=0,padx=5, pady=2,columnspan=2)
         reset_server_label.bind("<Button-1>", self.on_label_click)
+
+        # View Log
+        self.logs_txt = scrolledtext.ScrolledText(frame, wrap=tk.WORD,bg="black",fg="white")
+        self.logs_txt.grid(row=6,column=0,padx=0, pady=5,columnspan=2)     
+        self.logs_txt.grid_forget() 
+
+        frame.grid_rowconfigure(6, weight=1)  
        
     def on_label_click(self,event):
         ResetServerConfiguration(self)
 
     def start_server(self):
+        self.server_setting_info=server_service.read_setting_data()  
         start_btn_txt=self.server_start_btn.cget("text")
-        print(f'server info: {self.server_setting_info}')
+        #self.write_logtext(f"[Server info] : {self.server_setting_info}")
+        print(f'[Server info] : {self.server_setting_info}')
         if(start_btn_txt.lower()!="running"):
+            self.logs_txt.grid(row=6,column=0,padx=0, pady=5,columnspan=2)   
             if(self.server_setting_info is None or self.server_setting_info['port_number'] is None or self.server_setting_info['upload_file_path'] is None):
                 ResetServerConfiguration(self)
             elif(not self.check_world_writable(self.server_setting_info['upload_file_path'])):                
@@ -102,13 +114,18 @@ class ServerPage(tk.Tk):
     def stop_server(self):   
         self.server_start_btn.config(text="Start")
         self.server_start_btn.config(state='normal')
-        self.server_socket.stop_server()  
+        self.server_socket.stop_server(self.logs_txt)  
 
     def call_server_socket(self):
         self.server_socket=ServerSocket(port=int(self.server_setting_info['port_number']))
-        self.server_socket.start_server()  
+        self.server_socket.start_server(self.logs_txt)  
     
+    def write_logtext(self,log_text):
+        logDate=f"{datetime.now().strftime('%d-%m-%Y %H:%M:%S')}"
+        self.logs_txt.insert(tk.END,f"[{logDate}]{log_text}\n")
+
     def check_world_writable(self,file_path):       
+        self.write_logtext(f"[Server Page] [Check Folder Writeable]: {file_path}")
         print(f"[Server Page] [Check Folder Writeable]: {file_path}")
         test_file = os.path.join(file_path, "test_write.txt")
         try:
@@ -117,12 +134,13 @@ class ServerPage(tk.Tk):
                 file.write("This is a test to check if the folder is writable.")
              # Optionally, clean up by removing the test file
             os.remove(test_file)
+            self.write_logtext(f"[Server Page] [Check Folder Writeable]: {file_path} can write!")
             print(f"[Server Page] [Check Folder Writeable]: {file_path} can write!")
             return True
         except Exception as e:
-           print(f"[Server Page] [Check Folder Writeable]: {e}")
-           return False
-
+            self.write_logtext(f"[Server Page] [Check Folder Writeable]: {e}")
+            print(f"[Server Page] [Check Folder Writeable]: {e}")
+            return False
 
 if __name__ == "__main__":
     app = ServerPage()
