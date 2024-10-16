@@ -2,7 +2,7 @@ import os
 import socket
 import threading
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import Canvas, PhotoImage, messagebox
 import tkinter.font as tkFont
 from PIL import Image, ImageTk
 from Settings import server_service
@@ -13,7 +13,7 @@ from datetime import datetime
 
 
 class ServerPage(tk.Tk):
-    def __init__(self,): 
+    def __init__(self): 
         super().__init__()
         self.server_setting_info=server_service.read_setting_data()  
         self.server_socket=None
@@ -25,7 +25,7 @@ class ServerPage(tk.Tk):
         self.title("Meeting Record (Server)")
         self.image = Image.open("Assets/icon.png")
         self.icon = ImageTk.PhotoImage(self.image)    
-        self.iconphoto(True,self.icon)
+        self.iconphoto(True,self.icon)   
 
         width=600
         height=400        
@@ -38,13 +38,22 @@ class ServerPage(tk.Tk):
         y = (screen_height // 2) - (height // 2)
 
         # Set the geometry of the window
-        self.geometry(f'{width}x{height}+{x}+{y}')
+        self.geometry(f'{width}x{height}+{x}+{y}')     
+       
+        
+        # Load the image
+        self.original_image = Image.open("Assets/background.jpg")
+
+        # Create a label to display the background image
+        self.background_label = tk.Label(self)
+        self.background_label.place(relx=0, rely=0, relwidth=1, relheight=1)
+
         frame = tk.Frame(self)
         frame.pack(expand=True)
       
         # control frame
         control_frame = tk.Frame(frame)
-        control_frame.pack(anchor='center')
+        control_frame.pack(anchor='center',padx=20,pady=20)
 
         # Title 
         title_label = tk.Label(control_frame, text='Meeting Record ( Server )',font=title_font)
@@ -87,9 +96,26 @@ class ServerPage(tk.Tk):
         reset_server_label.bind("<Button-1>", self.on_label_click)
 
         # View Log
-        self.logs_txt = scrolledtext.ScrolledText(frame, wrap=tk.WORD,bg="black",fg="white")
+        self.logs_txt = scrolledtext.ScrolledText(frame, wrap=tk.WORD,bg="black",fg="white",width=screen_width)
         self.logs_txt.pack()
-        self.logs_txt.pack_forget()       
+        self.logs_txt.pack_forget()   
+
+        # Bind the window resizing event
+        self.bind("<Configure>", self.resize_background)
+
+    def resize_background(self, event=None):
+        # Get the current window dimensions
+        width = self.winfo_width()
+        height = self.winfo_height()
+
+        # Resize the image to fit the current window size
+        resized_image = self.original_image.resize((width, height), Image.Resampling.LANCZOS)
+
+        # Convert the resized image to ImageTk format
+        self.tk_image = ImageTk.PhotoImage(resized_image)
+
+        # Update the label with the new image
+        self.background_label.config(image=self.tk_image)    
 
     # Reset Server Configuration Label Click   
     def on_label_click(self,event):

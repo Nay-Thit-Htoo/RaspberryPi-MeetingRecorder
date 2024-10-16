@@ -98,7 +98,9 @@ class ServerSocket:
                     elif(client_messsage_json['actiontype']==ActionType.START_MEETING.name):  
                         self.update_meeting_status("true")
                     elif(client_messsage_json['actiontype']==ActionType.STOP_MEETING.name):  
-                        self.update_meeting_status("false")   
+                        self.update_meeting_status("false") 
+                    elif(client_messsage_json['actiontype']==ActionType.STOP_MEETING.name):
+                         client_messsage_json["recording_users"]=self.get_current_recording_user_list()
 
                     # Send Message to Connected Clients
                     self.write_logtext(server_log_panel,f"[Server][Send All Clients] : {clients}")
@@ -146,11 +148,16 @@ class ServerSocket:
                     "is_starting_meeting":server_service.get_meeting_status(),
                     "actiontype":ActionType.START_RECORD.name                      
                     };     
-       current_record_userLst=server_service.get_current_recording_user() 
+       current_record_userLst=self.get_current_recording_user_list()
        if(len(current_record_userLst)>0 and current_record_userLst is not None):  
-           recording_user['message']=", ".join([item['usercode'] for item in current_record_userLst])             
+           recording_user['message']=", ".join(current_record_userLst)             
            return recording_user
-       return None        
+       return None 
+
+    # Get Recording User List
+    def get_current_recording_user_list(self):
+        current_record_userLst=server_service.get_current_recording_user() 
+        return [item['usercode'] for item in current_record_userLst]
 
     # Get current recording user
     def get_recording_user(self):
