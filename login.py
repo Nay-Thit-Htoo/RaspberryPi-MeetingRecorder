@@ -85,9 +85,7 @@ class Login(tk.Frame):
                 }
                 print(f"[Login][Login Request] : {user_login_object}")
                 check_server_thread=threading.Thread(target=self.check_server_status,args=(user_login_object,))                 
-                check_server_thread.start()
-                if(user_type=='Chairman'):
-                  self.controller.show_meeting_buttons()
+                check_server_thread.start()              
 
     # Check your server ip and port are correct and server is running or not
     def check_server_status(self,login_user_obj):
@@ -113,7 +111,9 @@ class Login(tk.Frame):
                         clientservice.update_clientInfo(message_json)
                         print(f"[Login]: {message_json['message']}")
                         self.controller.show_frame('MeetingRecord')
-                        self.stop_receive_message_thread.set()                        
+                        self.stop_receive_message_thread.set()   
+                        if(message_json['usertype'].lower()=='chairman'):
+                            self.controller.show_meeting_buttons()                     
                     else:
                         self.login_button.config(text="Login")
                         messagebox.showerror("Error Message",message_json['message'])                            
