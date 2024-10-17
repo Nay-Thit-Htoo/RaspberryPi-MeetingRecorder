@@ -127,7 +127,7 @@ class MeetingRecord(tk.Frame):
                 elif(action_type==ActionType.DISCUSS_REQUEST.name):            
                    self.check_discuss_request_confirmation(response_message)
                 elif(action_type==ActionType.REJECT_DISCUSS.name):            
-                   self.reject_discuss()                     
+                   self.reject_discuss(response_message)                     
                 
             except Exception as err:
                 print(f"[Meeting Record]:[Exception Error] : {err}")                
@@ -222,13 +222,14 @@ class MeetingRecord(tk.Frame):
         current_user_type=self.logged_user_info['usertype']
         if(current_user_type is not None and current_user_type.lower()=="chairman"):
             record_user_lst=response['recording_users']        
-            current_user_code=self.logged_user_info['usercode']
-            discuss_obj={"usercode":current_user_code,"usertype": self.logged_user_info['usertype'],"actiontype":ActionType.REJECT_DISCUSS.name,"recording_users":record_user_lst}
-            if(record_user_lst is None or (len(record_user_lst)>0 and not (current_user_code in record_user_lst))):
+            request_user_code=response['usercode']
+            discuss_obj={"usercode":request_user_code,"usertype": self.logged_user_info['usertype'],"actiontype":ActionType.ACCESS_DISCUSS.name,"recording_users":record_user_lst}
+            if(record_user_lst is None or (len(record_user_lst)>0 and not (request_user_code in record_user_lst))):
                 confirm_msg=f"Do you want to allow {response['usercode']} for Discussion?"
                 confrim_result = messagebox.askyesno("Request for Discussion",confirm_msg)
                 discuss_obj["actiontype"]=ActionType.ACCESS_DISCUSS.name if(confrim_result) else ActionType.REJECT_DISCUSS.name
             self.start_client(discuss_obj)
     
-    def reject_discuss(self):
-        messagebox.showinfo("Reject Message","You can't join current Discussoin")   
+    def reject_discuss(self,response):
+        if(response['usercode']==self.logged_user_info['usercode']):
+          messagebox.showinfo("Reject Message","You can't join current Discussoin")   
