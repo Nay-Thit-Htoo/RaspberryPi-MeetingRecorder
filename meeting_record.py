@@ -84,8 +84,7 @@ class MeetingRecord(tk.Frame):
         
     # stop recording
     def stop_recording(self):
-        meeting_status=self.meeting_status_label.cget('text')
-        if(meeting_status is not None or meeting_status !=""):
+       if(self.startBtn.cget("text").lower()=='discussing'):      
             self.meeting_status_label.config(text="")
             self.logged_user_info=clientservice.read_clientInfo()
             meeting_record_obj={"usercode":self.logged_user_info['usercode'],
@@ -117,14 +116,16 @@ class MeetingRecord(tk.Frame):
                     self.startBtn.config(state='disabled')
                     self.stopBtn.config(state='disabled')                   
                     self.muteBtn.pack_forget()
+                    self.clear_meeting_status_enable_buttons()
                     self.stop_audio_record()
                 elif(action_type==ActionType.START_RECORD.name or action_type==ActionType.ACCESS_DISCUSS.name): 
                    self.change_meeting_status_after_startrecord(response_message)                 
                 elif(action_type==ActionType.OPEN_RECORD.name):
                     self.folder_create_result_show(response_message)
                 elif(action_type==ActionType.STOP_RECORD.name):
-                  self.clear_meeting_status_enable_buttons() 
-                  self.stop_audio_record() 
+                  self.clear_meeting_status_enable_buttons()
+                  if(self.logged_user_info['usercode']==response_message['usercode']):
+                        self.stop_audio_record()                   
                 elif(action_type==ActionType.DISCUSS_REQUEST.name):            
                    self.check_discuss_request_confirmation(response_message)
                 elif(action_type==ActionType.REJECT_DISCUSS.name):            
@@ -188,7 +189,7 @@ class MeetingRecord(tk.Frame):
         self.meeting_status_label.config(text="")   
         self.startBtn.config(state='normal')
         self.stopBtn.config(state='normal')
-
+        
     # Function to send messages to the server
     def send_messages(self,client_socket,client_message): 
         print(f"[Meeting Record][Send Client Message] : {client_message}")
