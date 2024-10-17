@@ -68,8 +68,8 @@ class ServerSocket:
                 # Replace single code to double code 
                 # Change to Json Format    
                 client_messsage_json=json.loads(client_messsage.replace("'", '"'))   
-            
-                if(client_messsage_json['actiontype']==ActionType.LOGIN.name):              
+                action_type=client_messsage_json['actiontype']
+                if(action_type==ActionType.LOGIN.name):              
                     login_result=user_login({
                         'usercode':client_messsage_json['usercode'],
                         'usertype':client_messsage_json['usertype']
@@ -79,7 +79,7 @@ class ServerSocket:
                     print(f"[Server][Login Result]: {login_result}")                
                     clients[addr].sendall(str(login_result).encode('utf-8'))  
 
-                if(client_messsage_json['actiontype']==ActionType.OPEN_RECORD.name): 
+                if(action_type==ActionType.OPEN_RECORD.name): 
                     self.write_logtext(server_log_panel,f"[Server][Folder Create for]: {client_messsage_json['usercode']}")   
                     print(f"[Server][Folder Create for]: {client_messsage_json['usercode']}")
                     # if(not create_folder_with_usercode(client_messsage_json['usercode'])):
@@ -91,16 +91,16 @@ class ServerSocket:
                     client_messsage_json['is_starting_meeting']=server_service.get_meeting_status()
                     clients[addr].sendall(str(client_messsage_json).encode('utf-8'))  
                 else:
-                    if(client_messsage_json['actiontype']==ActionType.START_RECORD.name):
+                    if(action_type==ActionType.START_RECORD.name or action_type==ActionType.ACCESS_DISCUSS.name):
                         server_service.update_recording_client_info(client_messsage_json,is_start_recording=True)
                         client_messsage_json=self.get_current_recording_users()
-                    elif(client_messsage_json['actiontype']==ActionType.STOP_RECORD.name):
+                    elif(action_type==ActionType.STOP_RECORD.name):
                         server_service.update_recording_client_info(client_messsage_json,is_start_recording=False)
-                    elif(client_messsage_json['actiontype']==ActionType.START_MEETING.name):  
+                    elif(action_type==ActionType.START_MEETING.name):  
                         self.update_meeting_status("true")
-                    elif(client_messsage_json['actiontype']==ActionType.STOP_MEETING.name):  
+                    elif(action_type==ActionType.STOP_MEETING.name):  
                         self.update_meeting_status("false") 
-                    elif(client_messsage_json['actiontype']==ActionType.STOP_MEETING.name):
+                    elif(action_type==ActionType.DISCUSS_REQUEST.name):
                          client_messsage_json["recording_users"]=self.get_current_recording_user_list()
 
                     # Send Message to Connected Clients

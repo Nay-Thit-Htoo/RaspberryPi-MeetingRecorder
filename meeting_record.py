@@ -116,7 +116,7 @@ class MeetingRecord(tk.Frame):
                     self.stopBtn.config(state='disabled')                   
                     self.muteBtn.pack_forget()
                     self.stop_audio_record()
-                elif(action_type==ActionType.START_RECORD.name or action_type==ActionType.REJECT_DISCUSS.name): 
+                elif(action_type==ActionType.START_RECORD.name or action_type==ActionType.ACCESS_DISCUSS.name): 
                    self.change_meeting_status_after_startrecord(response_message)
                    self.start_audio_record()
                 elif(action_type==ActionType.OPEN_RECORD.name):
@@ -126,7 +126,7 @@ class MeetingRecord(tk.Frame):
                   self.stop_audio_record() 
                 elif(action_type==ActionType.DISCUSS_REQUEST.name):            
                    self.check_discuss_request_confirmation(response_message)
-                elif(action_type==ActionType.ACCESS_DISCUSS.name):            
+                elif(action_type==ActionType.REJECT_DISCUSS.name):            
                    self.reject_discuss()                     
                 
             except Exception as err:
@@ -218,6 +218,7 @@ class MeetingRecord(tk.Frame):
     
     # Check and Request Confirmation for Discussion
     def check_discuss_request_confirmation(self,response):
+        print(f"[Meeting Record][Show Confirm Dialog by Chairman]:{response}")
         current_user_type=self.logged_user_info['usertype']
         if(current_user_type is not None and current_user_type.lower()=="chairman"):
             record_user_lst=response['recording_users']        
