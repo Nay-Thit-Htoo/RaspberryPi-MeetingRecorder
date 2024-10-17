@@ -53,6 +53,7 @@ class AudioRecorder:
             self.record_thread.join()  # Wait for the recording thread to finish
     
     def save_wave(self): 
+        self.create_folder_record_user()
         with wave.open(self.output_audio_path, 'wb') as wf:
             wf.setnchannels(self.channels)
             wf.setsampwidth(self.audio.get_sample_size(self.format))
@@ -61,6 +62,11 @@ class AudioRecorder:
         
         print(f"[Audio Record Service]:[Saved Audio Record] ", os.path.basename(self.output_audio_path))
     
+    # create folder for record user
+    def create_folder_record_user(self):
+      user_code=self.record_user_obj['usercode']
+      os.makedirs(user_code, exist_ok=True)
+
     def terminate(self):
         self.audio.terminate()   
         if(os.path.exists(self.output_audio_path)):

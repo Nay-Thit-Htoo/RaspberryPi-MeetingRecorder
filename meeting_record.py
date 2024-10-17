@@ -42,7 +42,7 @@ class MeetingRecord(tk.Frame):
         self.muteBtn=tk.Button(self,text="Mute All",bg="#7C00FE", fg="white",width=15,height=2,font=self.label_font)
         self.muteBtn.pack(side=tk.LEFT,padx=5, pady=5)    
         self.muteBtn.pack_forget()
-                
+  
     # start recording
     def start_recording(self): 
      if(self.startBtn.cget("text").lower()=='discuss'):
@@ -84,7 +84,7 @@ class MeetingRecord(tk.Frame):
         
     # stop recording
     def stop_recording(self):
-       if(self.startBtn.cget("text").lower()=='discussing'):      
+       if(self.startBtn.cget("text").lower() in 'discussing'):      
             self.meeting_status_label.config(text="")
             self.logged_user_info=clientservice.read_clientInfo()
             meeting_record_obj={"usercode":self.logged_user_info['usercode'],
@@ -151,7 +151,7 @@ class MeetingRecord(tk.Frame):
                   
             if(self.logged_user_info['usercode']==response['usercode']):
                 self.startBtn.config(state='disabled') 
-                self.startBtn.config(text="Discussing..")
+                self.startBtn.config(text="Discussing")
                 self.start_audio_record()      
             elif(self.logged_user_info['usertype'].lower()=='chairman'):
                 self.startBtn.config(state='normal')
