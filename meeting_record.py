@@ -38,6 +38,10 @@ class MeetingRecord(tk.Frame):
         self.stopBtn=tk.Button(self,text="Stop",bg="#DEE3E2", fg="black",width=15,height=2,font=self.label_font,command=self.stop_recording)
         self.stopBtn.pack(side=tk.LEFT,padx=5, pady=5)    
         self.stopBtn.config(state='disabled')    
+        
+        self.muteBtn=tk.Button(self,text="Mute All",bg="#7C00FE", fg="white",width=15,height=2,font=self.label_font)
+        self.muteBtn.pack(side=tk.LEFT,padx=5, pady=5)    
+        self.muteBtn.pack_forget()
                 
     # start recording
     def start_recording(self):   
@@ -101,12 +105,17 @@ class MeetingRecord(tk.Frame):
                 response_message=json.loads(message.replace("'", '"')) 
                 print(f"[Meeting Record][Action Type]: {response_message['actiontype']}") 
                 action_type=response_message['actiontype']
+                user_type=response_message['usertype']
                 if(action_type==ActionType.START_MEETING.name): 
                     self.startBtn.config(state='normal')
                     self.stopBtn.config(state='normal')
+                    if(user_type.lower()=='chairman'):
+                        self.muteBtn.pack(side=tk.LEFT,padx=5, pady=5)
                 elif(action_type==ActionType.STOP_MEETING.name): 
                     self.startBtn.config(state='disabled')
                     self.stopBtn.config(state='disabled') 
+                    if(user_type.lower()=='chairman'):
+                      self.muteBtn.pack(side=tk.LEFT,padx=5, pady=5)
                     self.stop_audio_record()
                 elif(action_type==ActionType.START_RECORD.name or action_type==ActionType.REJECT_DISCUSS.name): 
                    self.change_meeting_status_after_startrecord(response_message)
