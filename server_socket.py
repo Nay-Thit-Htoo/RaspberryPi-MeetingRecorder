@@ -88,6 +88,7 @@ class ServerSocket:
                     # else:                    
                     current_record_user=self.get_recording_user()  
                     client_messsage_json=client_messsage_json if current_record_user is None else current_record_user
+                    client_messsage_json['is_starting_meeting']=server_service.get_meeting_status()
                     clients[addr].sendall(str(client_messsage_json).encode('utf-8'))  
                 else:
                     if(client_messsage_json['actiontype']==ActionType.START_RECORD.name):
