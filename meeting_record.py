@@ -113,9 +113,8 @@ class MeetingRecord(tk.Frame):
                         self.muteBtn.pack(side=tk.LEFT,padx=5, pady=5)
                 elif(action_type==ActionType.STOP_MEETING.name): 
                     self.startBtn.config(state='disabled')
-                    self.stopBtn.config(state='disabled') 
-                    if(user_type.lower()=='chairman'):
-                      self.muteBtn.pack(side=tk.LEFT,padx=5, pady=5)
+                    self.stopBtn.config(state='disabled')                   
+                    self.muteBtn.pack_forget()
                     self.stop_audio_record()
                 elif(action_type==ActionType.START_RECORD.name or action_type==ActionType.REJECT_DISCUSS.name): 
                    self.change_meeting_status_after_startrecord(response_message)
