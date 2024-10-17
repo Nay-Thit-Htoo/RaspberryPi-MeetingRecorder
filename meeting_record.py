@@ -117,8 +117,7 @@ class MeetingRecord(tk.Frame):
                     self.muteBtn.pack_forget()
                     self.stop_audio_record()
                 elif(action_type==ActionType.START_RECORD.name or action_type==ActionType.ACCESS_DISCUSS.name): 
-                   self.change_meeting_status_after_startrecord(response_message)
-                   self.start_audio_record()
+                   self.change_meeting_status_after_startrecord(response_message)                 
                 elif(action_type==ActionType.OPEN_RECORD.name):
                     self.folder_create_result_show(response_message)
                 elif(action_type==ActionType.STOP_RECORD.name):
@@ -146,14 +145,13 @@ class MeetingRecord(tk.Frame):
             self.image_label.config(image=new_image_tk)
             self.image_label.image = new_image_tk
             self.meeting_status_label.config(text=f"{response['message']} recording......")
-
-            if(self.logged_user_info['usertype'].lower()!='chairman'):
+                  
+            if(self.logged_user_info['usercode']==response['usercode']):
+                self.startBtn.config(state='disabled') 
+                self.start_audio_record()      
+            elif(self.logged_user_info['usertype'].lower()=='chairman'):
                 self.startBtn.config(state='normal')
                 self.stopBtn.config(state='normal')
-            else:
-                 recording_user_list=(response['message']).split(", ")
-                 if(self.logged_user_info['usercode'] in recording_user_list):
-                      self.startBtn.config(state='disabled')                                                    
    
     # Audio Record Start
     def start_audio_record(self):
