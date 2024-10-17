@@ -38,14 +38,25 @@ class MeetingRecord(tk.Frame):
         self.stopBtn=tk.Button(self,text="Stop",bg="#DEE3E2", fg="black",width=15,height=2,font=self.label_font,command=self.stop_recording)
         self.stopBtn.pack(side=tk.LEFT,padx=5, pady=5)    
         self.stopBtn.config(state='disabled')    
+        
+        self.muteBtn=tk.Button(self,text="Mute All",bg="#7C00FE", fg="white",width=15,height=2,font=self.label_font)
+        self.muteBtn.pack(side=tk.LEFT,padx=5, pady=5)    
+        self.muteBtn.pack_forget()
                 
     # start recording
-    def start_recording(self):       
+    def start_recording(self):   
         self.logged_user_info=clientservice.read_clientInfo()
         meeting_record_obj={"usercode":self.logged_user_info['usercode'],
-                    "usertype":self.logged_user_info['usertype'],
-                    "actiontype":ActionType.START_RECORD.name                      
-                    }
+                        "usertype":self.logged_user_info['usertype'],
+                        "actiontype":ActionType.START_RECORD.name                      
+                        }        
+        # Get Meeting Status & Confirm Dialog for Discussion
+        meeting_status=self.meeting_status_label.cget('text')
+        if(meeting_status is not None or meeting_status !=""):
+            discuss_result = messagebox.askyesno("Request for Discussion", f'Do you want to join Discussion?')
+            if discuss_result: 
+                meeting_record_obj["actiontype"]=ActionType.DISCUSS_REQUEST.name
+                
         print(f"[Meeting Record][Start Record] : {meeting_record_obj}")
         self.start_client(meeting_record_obj)
     
@@ -93,22 +104,31 @@ class MeetingRecord(tk.Frame):
                 print(f"[Meeting Record][Receive Message Reply From Server] : {message}")
                 response_message=json.loads(message.replace("'", '"')) 
                 print(f"[Meeting Record][Action Type]: {response_message['actiontype']}") 
-                if(response_message['actiontype']==ActionType.START_MEETING.name): 
+                action_type=response_message['actiontype']
+                user_type=response_message['usertype']
+                if(action_type==ActionType.START_MEETING.name): 
                     self.startBtn.config(state='normal')
                     self.stopBtn.config(state='normal')
-                elif(response_message['actiontype']==ActionType.STOP_MEETING.name): 
+                    if(user_type.lower()=='chairman'):
+                        self.muteBtn.pack(side=tk.LEFT,padx=5, pady=5)
+                elif(action_type==ActionType.STOP_MEETING.name): 
                     self.startBtn.config(state='disabled')
-                    self.stopBtn.config(state='disabled') 
+                    self.stopBtn.config(state='disabled')                   
+                    self.muteBtn.pack_forget()
                     self.stop_audio_record()
-                elif(response_message['actiontype']==ActionType.START_RECORD.name): 
+                elif(action_type==ActionType.START_RECORD.name or action_type==ActionType.REJECT_DISCUSS.name): 
                    self.change_meeting_status_after_startrecord(response_message)
                    self.start_audio_record()
-                elif(response_message['actiontype']==ActionType.OPEN_RECORD.name):
+                elif(action_type==ActionType.OPEN_RECORD.name):
                     self.folder_create_result_show(response_message)
-                elif(response_message['actiontype']==ActionType.STOP_RECORD.name):
+                elif(action_type==ActionType.STOP_RECORD.name):
                   self.clear_meeting_status_enable_buttons() 
-                  self.stop_audio_record()             
-
+                  self.stop_audio_record() 
+                elif(action_type==ActionType.DISCUSS_REQUEST.name):            
+                   self.check_discuss_request_confirmation(response_message)
+                elif(action_type==ActionType.ACCESS_DISCUSS.name):            
+                   self.reject_discuss()                     
+                
             except Exception as err:
                 print(f"[Meeting Record]:[Exception Error] : {err}")                
                 break
@@ -195,16 +215,16 @@ class MeetingRecord(tk.Frame):
     def on_show(self):     
         socket_thread = threading.Thread(target=self.start_client,args=(None,), daemon=True)
         socket_thread.start()
-        
-    #def discuss_request_confirmation(self,response):
-        # Display a confirmation dialog
-        #result = messagebox.askyesno("Request for Discussion", f'Do you want to allow "{response['usercode']}" for Discussion?')
-        
-        # Handle the result
-        # if result:
-        #     label.config(text="You selected: Yes")
-        # else:
-        #     label.config(text="You selected: No")
-       
-
     
+    # Check and Request Confirmation for Discussion
+    def check_discuss_request_confirmation(self,response):
+        record_user_lst=response['recording_users']        
+        current_user_code=self.logged_user_info['usercode']
+        discuss_obj={"usercode":current_user_code,"usertype": self.logged_user_info['usertype'],"actiontype":ActionType.REJECT_DISCUSS.name,"recording_users":record_user_lst}
+        if(record_user_lst is None or (len(record_user_lst)>0 and not (current_user_code in record_user_lst))):
+            confrim_result = messagebox.askyesno("Request for Discussion", f'Do you want to allow "{response['usercode']}" for Discussion?')
+            discuss_obj["actiontype"]=ActionType.ACCESS_DISCUSS.name if(confrim_result) else ActionType.REJECT_DISCUSS.name
+        self.start_client(discuss_obj)
+    
+    def reject_discuss(self):
+        messagebox.showinfo("Reject Message","You can't join current Discussoin")   
