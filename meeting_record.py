@@ -218,13 +218,15 @@ class MeetingRecord(tk.Frame):
     
     # Check and Request Confirmation for Discussion
     def check_discuss_request_confirmation(self,response):
-        record_user_lst=response['recording_users']        
-        current_user_code=self.logged_user_info['usercode']
-        discuss_obj={"usercode":current_user_code,"usertype": self.logged_user_info['usertype'],"actiontype":ActionType.REJECT_DISCUSS.name,"recording_users":record_user_lst}
-        if(record_user_lst is None or (len(record_user_lst)>0 and not (current_user_code in record_user_lst))):
-            confrim_result = messagebox.askyesno("Request for Discussion", f'Do you want to allow "{response['usercode']}" for Discussion?')
-            discuss_obj["actiontype"]=ActionType.ACCESS_DISCUSS.name if(confrim_result) else ActionType.REJECT_DISCUSS.name
-        self.start_client(discuss_obj)
+        current_user_type=self.logged_user_info['usertype']
+        if(current_user_type is not None and current_user_type.lower()=="chairman"):
+            record_user_lst=response['recording_users']        
+            current_user_code=self.logged_user_info['usercode']
+            discuss_obj={"usercode":current_user_code,"usertype": self.logged_user_info['usertype'],"actiontype":ActionType.REJECT_DISCUSS.name,"recording_users":record_user_lst}
+            if(record_user_lst is None or (len(record_user_lst)>0 and not (current_user_code in record_user_lst))):
+                confrim_result = messagebox.askyesno("Request for Discussion", f'Do you want to allow "{response['usercode']}" for Discussion?')
+                discuss_obj["actiontype"]=ActionType.ACCESS_DISCUSS.name if(confrim_result) else ActionType.REJECT_DISCUSS.name
+            self.start_client(discuss_obj)
     
     def reject_discuss(self):
         messagebox.showinfo("Reject Message","You can't join current Discussoin")   
