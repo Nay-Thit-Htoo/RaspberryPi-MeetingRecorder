@@ -224,7 +224,8 @@ class MeetingRecord(tk.Frame):
             current_user_code=self.logged_user_info['usercode']
             discuss_obj={"usercode":current_user_code,"usertype": self.logged_user_info['usertype'],"actiontype":ActionType.REJECT_DISCUSS.name,"recording_users":record_user_lst}
             if(record_user_lst is None or (len(record_user_lst)>0 and not (current_user_code in record_user_lst))):
-                confrim_result = messagebox.askyesno("Request for Discussion", f'Do you want to allow {response['usercode']} for Discussion?')
+                confirm_msg=f"Do you want to allow {response['usercode']} for Discussion?"
+                confrim_result = messagebox.askyesno("Request for Discussion",confirm_msg)
                 discuss_obj["actiontype"]=ActionType.ACCESS_DISCUSS.name if(confrim_result) else ActionType.REJECT_DISCUSS.name
             self.start_client(discuss_obj)
     
