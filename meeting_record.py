@@ -18,8 +18,7 @@ class MeetingRecord(tk.Frame):
         self.audio_record_service=None 
 
         # Font Style for Label
-        self.label_font=tkFont.Font(family="Helvetica", size=10)       
-
+        self.label_font=tkFont.Font(family="Helvetica", size=10)  
 
         # Create Image and Show on Label
         self.image = Image.open("Assets/mic.png")
@@ -45,8 +44,7 @@ class MeetingRecord(tk.Frame):
   
     # start recording
     def start_recording(self): 
-     if(self.startBtn.cget("text").lower()=='discuss'):
-        self.logged_user_info=clientservice.read_clientInfo()
+     if(self.startBtn.cget("text").lower()=='discuss'):       
         meeting_record_obj={"usercode":self.logged_user_info['usercode'],
                         "usertype":self.logged_user_info['usertype'],
                         "actiontype":ActionType.START_RECORD.name                      
@@ -73,8 +71,7 @@ class MeetingRecord(tk.Frame):
         self.start_client(meeting_record_obj)
     
     #stop meeting
-    def stop_meeting(self):       
-        self.logged_user_info=clientservice.read_clientInfo()
+    def stop_meeting(self): 
         meeting_record_obj={"usercode":self.logged_user_info['usercode'],
                     "usertype":self.logged_user_info['usertype'],
                     "actiontype":ActionType.STOP_MEETING.name                      
@@ -145,7 +142,7 @@ class MeetingRecord(tk.Frame):
         self.startBtn.config(state='disabled')
         self.stopBtn.config(state='disabled')                   
         self.muteBtn.pack_forget()
-        self.clear_meeting_status_enable_buttons()
+        self.change_recording_icon_status_to_original()
         self.stop_audio_record()
 
     # Change Meeting Status and Disable or Enable Start and Stop Buttons 
@@ -189,8 +186,8 @@ class MeetingRecord(tk.Frame):
             elif(response['message_code']=="success"):
                 self.change_meeting_status_after_startrecord(response)
       
-   # Clean meeting status and enable start & stop buttons
-    def clear_meeting_status_enable_buttons(self):
+    # Change to Mic Icon and Meeting Status
+    def change_recording_icon_status_to_original(self):
         new_image = Image.open("Assets/mic.png")
         new_image_tk = ImageTk.PhotoImage(new_image)
 
@@ -198,7 +195,11 @@ class MeetingRecord(tk.Frame):
         self.image_label.image = new_image_tk
 
         self.meeting_status_label.config(text="")
-        self.startBtn.config(text="Discuss")   
+        self.startBtn.config(text="Discuss") 
+
+   # Clean meeting status and enable start & stop buttons
+    def clear_meeting_status_enable_buttons(self):
+        self.change_recording_icon_status_to_original()
         self.startBtn.config(state='normal')
         self.stopBtn.config(state='normal')
         
