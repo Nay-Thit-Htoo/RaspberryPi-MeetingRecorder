@@ -105,11 +105,11 @@ class MeetingRecord(tk.Frame):
                 response_message=json.loads(message.replace("'", '"')) 
                 print(f"[Meeting Record][Action Type]: {response_message['actiontype']}") 
                 action_type=response_message['actiontype']
-                user_type=response_message['usertype']
+                current_logged_user_type=self.logged_user_info['usertype']
                 if(action_type==ActionType.START_MEETING.name): 
                     self.startBtn.config(state='normal')
                     self.stopBtn.config(state='normal')
-                    if(user_type.lower()=='chairman'):
+                    if(current_logged_user_type.lower()=='chairman'):
                         self.muteBtn.pack(side=tk.LEFT,padx=5, pady=5)
                 elif(action_type==ActionType.STOP_MEETING.name): 
                     self.startBtn.config(state='disabled')
