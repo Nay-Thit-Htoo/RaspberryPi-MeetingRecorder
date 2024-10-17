@@ -44,7 +44,7 @@ class MeetingRecord(tk.Frame):
         self.muteBtn.pack_forget()
                 
     # start recording
-    def start_recording(self):   
+    def start_recording(self): 
         self.logged_user_info=clientservice.read_clientInfo()
         meeting_record_obj={"usercode":self.logged_user_info['usercode'],
                         "usertype":self.logged_user_info['usertype'],
@@ -55,6 +55,7 @@ class MeetingRecord(tk.Frame):
         if(meeting_status is not None or meeting_status !=""):
             discuss_result = messagebox.askyesno("Request for Discussion", f'Do you want to join Discussion?')
             if discuss_result: 
+                self.startBtn.config(text="Please Wait...")
                 meeting_record_obj["actiontype"]=ActionType.DISCUSS_REQUEST.name
                 
         print(f"[Meeting Record][Start Record] : {meeting_record_obj}")
@@ -148,6 +149,7 @@ class MeetingRecord(tk.Frame):
                   
             if(self.logged_user_info['usercode']==response['usercode']):
                 self.startBtn.config(state='disabled') 
+                self.startBtn.config(text="Discussing..")
                 self.start_audio_record()      
             elif(self.logged_user_info['usertype'].lower()=='chairman'):
                 self.startBtn.config(state='normal')
