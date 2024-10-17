@@ -45,6 +45,7 @@ class MeetingRecord(tk.Frame):
                 
     # start recording
     def start_recording(self): 
+     if(self.startBtn.cget("text").lower()=='discuss'):
         self.logged_user_info=clientservice.read_clientInfo()
         meeting_record_obj={"usercode":self.logged_user_info['usercode'],
                         "usertype":self.logged_user_info['usertype'],
