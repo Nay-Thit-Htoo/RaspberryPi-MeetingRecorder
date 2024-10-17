@@ -71,7 +71,7 @@ def update_recording_client_info(update_client_data,is_start_recording):
        return
     org_client_data=org_data['clients']
     for obj in org_client_data:
-        if obj.get('usercode')==update_client_data['usercode'] and is_start_recording:
+        if obj.get('usercode')==update_client_data['usercode'] and is_start_recording and obj.get("is_recording")!="true":
             new_obj={'is_recording':"true"}      
         else:
             new_obj={'is_recording':"false"}
