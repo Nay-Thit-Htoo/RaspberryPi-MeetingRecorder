@@ -69,6 +69,9 @@ class Main(tk.Tk):
         if hasattr(self.frame, "stop_meeting"):          
            self.frame.stop_meeting()
 
+    def change_window_title(self,titleName):
+        self.title(titleName)
+
 if __name__ == "__main__":
     app = Main()
     app.mainloop()

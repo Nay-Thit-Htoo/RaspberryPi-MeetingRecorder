@@ -65,13 +65,16 @@ def get_meeting_status():
     return org_setting_data['is_starting_meeting']
 
 # Update Meeting Record Person
-def update_recording_client_info(update_client_data,is_start_recording):
+def update_recording_client_info(update_client_data,is_start_recording,is_mute_all=False):
     org_data=read_setting_data()
     if(not org_data):
        return
     org_client_data=org_data['clients']
     for obj in org_client_data:
-        if obj.get('usercode')==update_client_data['usercode']:
+        if is_mute_all:
+            new_obj={'is_recording':"false"}
+            obj.update(new_obj)
+        elif obj.get('usercode')==update_client_data['usercode']:            
             new_obj={'is_recording':"true"} if(is_start_recording) else {'is_recording':"false"}
             obj.update(new_obj)
             break 

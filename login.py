@@ -3,6 +3,7 @@ import threading
 import tkinter as tk
 import tkinter.font as tkFont
 from Enum.actiontype import ActionType
+from Enum.usertype import UserType
 from checkserver import check_server_connection
 import client_server_service as clientservice
 from tkinter import messagebox
@@ -24,8 +25,8 @@ class Login(tk.Frame):
         self.client_checkbtn = tk.IntVar()
         self.client_checkbtn.set(1)
 
-        self.chariman_checkbtn = tk.IntVar()
-        self.chariman_checkbtn.set(0)                     
+        self.chairman_checkbtn = tk.IntVar()
+        self.chairman_checkbtn.set(0)                     
           
         # Title 
         title_label = tk.Label(self, text='Meeting Recorder',font=title_font)
@@ -42,7 +43,7 @@ class Login(tk.Frame):
         usertype_label.grid(row=2,column=0,padx=5, pady=5)      
         self.chk_client_type = tk.Checkbutton(self, text='Client',variable=self.client_checkbtn,font=label_font,command=lambda: CheckUnCheck_UserType(True))
         self.chk_client_type.grid(row=2,column=1,padx=5, pady=5)
-        self.chk_chariman_type = tk.Checkbutton(self, text='Chairman',variable=self.chariman_checkbtn,font=label_font,command=lambda: CheckUnCheck_UserType(False))
+        self.chk_chariman_type = tk.Checkbutton(self, text='Chairman',variable=self.chairman_checkbtn,font=label_font,command=lambda: CheckUnCheck_UserType(False))
         self.chk_chariman_type.grid(row=2,column=2,padx=5, pady=5)
 
         # Login button
@@ -57,9 +58,9 @@ class Login(tk.Frame):
         def CheckUnCheck_UserType(isClient):
             if(isClient):
                 self.client_checkbtn.set(1)
-                self.chariman_checkbtn.set(0)
+                self.chairman_checkbtn.set(0)
             else:
-                self.chariman_checkbtn.set(1)
+                self.chairman_checkbtn.set(1)
                 self.client_checkbtn.set(0)
 
     def on_label_click(self,event):
@@ -75,7 +76,7 @@ class Login(tk.Frame):
             if(client_info['server_ip']=="" or client_info==None):
                 ResetServerConnection(self.parent_app)
             else:
-                user_type='Client' if (self.client_checkbtn.get()==1) else 'Chairman'
+                user_type=UserType.CLIENT.value if (self.client_checkbtn.get()==1) else UserType.CHAIRMAN.value
                 user_login_object={
                     'server_ip': client_info['server_ip'],
                     'server_port':int(client_info['server_port']),
@@ -112,7 +113,7 @@ class Login(tk.Frame):
                         print(f"[Login]: {message_json['message']}")
                         self.controller.show_frame('MeetingRecord')
                         self.stop_receive_message_thread.set()   
-                        if(message_json['usertype'].lower()=='chairman'):
+                        if(message_json['usertype'].lower()==UserType.CHAIRMAN.value.lower()):
                             self.controller.show_meeting_buttons()                     
                     else:
                         self.login_button.config(text="Login")
