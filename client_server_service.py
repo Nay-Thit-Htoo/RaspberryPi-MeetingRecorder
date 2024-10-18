@@ -11,12 +11,21 @@ def read_clientInfo():
 
 # Update Client Information
 def update_clientInfo(new_object):
+    print(f"Update Client Information : {new_object}")
     org_setting_data=read_clientInfo() 
     org_setting_data["upload_file_path"]=new_object["upload_file_path"]    
     org_setting_data["usercode"]=new_object["usercode"]
-    org_setting_data["usertype"]=new_object["usertype"]   
+    org_setting_data["usertype"]=new_object["usertype"] 
     write_all_clientInfo(org_setting_data)
     return org_setting_data
+
+# Update Background Image
+def update_background_image(image_path):
+    print(f"Update Background Image : {image_path}")
+    org_setting_data=read_clientInfo()
+    org_setting_data["background_image"]=image_path
+    write_all_clientInfo(org_setting_data)
+    return org_setting_data 
 
 # Update Client Information
 def update_serverInfo(new_object):

@@ -8,4 +8,5 @@ class ActionType(Enum):
     STOP_MEETING=6,
     DISCUSS_REQUEST=7,
     ACCESS_DISCUSS=8,
-    REJECT_DISCUSS=9
+    REJECT_DISCUSS=9,
+    MUTE_ALL=10
