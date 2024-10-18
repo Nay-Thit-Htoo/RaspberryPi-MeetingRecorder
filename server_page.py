@@ -3,6 +3,7 @@ import socket
 import threading
 import tkinter as tk
 from tkinter import Canvas, PhotoImage, messagebox
+from tkinter import filedialog
 import tkinter.font as tkFont
 from PIL import Image, ImageTk
 from Settings import server_service
@@ -40,20 +41,23 @@ class ServerPage(tk.Tk):
         # Set the geometry of the window
         self.geometry(f'{width}x{height}+{x}+{y}')     
        
-        
         # Load the image
-        self.original_image = Image.open("Assets/background.jpg")
+        self.original_image = Image.open(self.server_setting_info['background_image'])
 
         # Create a label to display the background image
         self.background_label = tk.Label(self)
         self.background_label.place(relx=0, rely=0, relwidth=1, relheight=1)
+
+        self.change_background_button =tk.Button(self,text="Change Background",bg="#006989", fg="white",width=16,height=1,font=label_font,command=self.change_background_image)  
+        self.change_background_button.place(relx=1.0, rely=0.0, anchor='ne', x=-10, y=10)
+        self.change_background_button.tkraise()
 
         frame = tk.Frame(self)
         frame.pack(expand=True)
       
         # control frame
         control_frame = tk.Frame(frame)
-        control_frame.pack(anchor='center',padx=20,pady=20)
+        control_frame.pack(anchor='center',padx=20,pady=20)    
 
         # Title 
         title_label = tk.Label(control_frame, text='Meeting Record ( Server )',font=title_font)
@@ -122,6 +126,7 @@ class ServerPage(tk.Tk):
         ResetServerConfiguration(self)
 
     def start_server(self):
+        self.change_background_button.tkraise()
         self.server_setting_info=server_service.read_setting_data()  
         start_btn_txt=self.server_start_btn.cget("text")
         print(f'[Server info] : {self.server_setting_info}')
@@ -169,6 +174,17 @@ class ServerPage(tk.Tk):
             self.write_logtext(f"[Server Page] [Check Folder Writeable]: {e}")
             print(f"[Server Page] [Check Folder Writeable]: {e}")
             return False
+
+    def change_background_image(self):
+        file_path = filedialog.askopenfilename(
+        title="Select an Image",
+        filetypes=[("Image Files", "*.png;*.jpg;*.jpeg;*.gif;*.bmp")]
+        )
+        if file_path:       
+            print(f"[Server Page][Update Image Path]:{file_path}")
+            server_service.update_background_image_path(file_path)
+            self.original_image=Image.open(file_path)      
+            self.resize_background()
 
 if __name__ == "__main__":
     app = ServerPage()

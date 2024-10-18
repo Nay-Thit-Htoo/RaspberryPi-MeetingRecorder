@@ -90,6 +90,15 @@ def update_meeting_status(is_start_meeting):
     org_data['is_starting_meeting']=is_start_meeting
     write_all_appsetting(org_data) 
 
+
+# Update Background Image
+def update_background_image_path(background_img_path):
+    org_data=read_setting_data()
+    if(not org_data):
+       return
+    org_data['background_image']=background_img_path
+    write_all_appsetting(org_data) 
+
 # Filter App Setting Data    
 def clean_clients():
     org_setting_data=read_setting_data()
