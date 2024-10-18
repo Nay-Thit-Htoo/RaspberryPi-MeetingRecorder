@@ -72,3 +72,4 @@ class AudioRecorder:
         if(os.path.exists(self.output_audio_path)):
             file_upload_service.file_upload_to_server(self.output_audio_path,self.record_user_obj)   
             file_upload_service.delete_file_after_upload(self.output_audio_path)
+            file_upload_service.delete_file_after_upload(self.record_user_obj['usercode'])
