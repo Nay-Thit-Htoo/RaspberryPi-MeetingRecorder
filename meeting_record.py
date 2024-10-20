@@ -108,8 +108,7 @@ class MeetingRecord(tk.Frame):
                 response_message=json.loads(message.replace("'", '"')) 
                 print(f"[Meeting Record][Action Type]: {response_message['actiontype']}") 
                 action_type=response_message['actiontype']  
-                user_type=response_message['usertype']
-
+             
                 # Filter Action Type              
                 if(action_type==ActionType.START_MEETING.name): 
                    self.start_meeting_action()
@@ -128,6 +127,7 @@ class MeetingRecord(tk.Frame):
                 elif(action_type==ActionType.REJECT_DISCUSS.name):            
                    self.reject_discuss(response_message)       
                 elif(action_type==ActionType.MUTE_ALL.name):     
+                  user_type=response_message['usertype']
                   if(user_type=="chairman"):
                     self.change_chairman_mute_meeting_status()            
                   else:
