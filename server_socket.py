@@ -90,8 +90,10 @@ class ServerSocket:
                     if(action_type==ActionType.START_RECORD.name or action_type==ActionType.ACCESS_DISCUSS.name):
                         server_service.update_recording_client_info(client_messsage_json,is_start_recording=True)
                         user_code=client_messsage_json['usercode']
+                        user_type=client_messsage_json['usertype']
                         client_messsage_json=self.get_current_recording_users(ActionType.START_RECORD.name)
                         client_messsage_json['usercode']=user_code
+                        client_messsage_json['usertype']=user_type
                     elif(action_type==ActionType.STOP_RECORD.name):
                         server_service.update_recording_client_info(client_messsage_json,is_start_recording=False)
                     elif(action_type==ActionType.MUTE_ALL.name):
