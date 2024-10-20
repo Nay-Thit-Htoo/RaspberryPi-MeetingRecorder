@@ -82,8 +82,9 @@ class Main(tk.Tk):
         if hasattr(self.frame, "on_show"):
          self.frame.on_show()
     
-    def show_meeting_buttons(self):    
-        self.start_meeting_button.place(relx=1.0, rely=0.0, anchor='ne', x=-10, y=10)  
+    def show_meeting_buttons(self):            
+        self.start_meeting_button.place(relx=1.0, rely=0.0, anchor='ne', x=-10, y=10)
+        self.start_meeting_button.tkraise()
 
     def show_change_background_btn(self):
         self.change_background_button.place(relx=1.0, rely=0.0, anchor='ne', x=-10, y=10)
@@ -102,6 +103,10 @@ class Main(tk.Tk):
         self.start_meeting_button.tkraise()  
         if hasattr(self.frame, "stop_meeting"):          
            self.frame.stop_meeting()
+    
+    def hide_change_background_btn(self):
+         print(f"Reach Change Background Btn Hide")
+         self.change_background_button.place_forget()
 
     def change_window_title(self,titleName):
         self.title(titleName)

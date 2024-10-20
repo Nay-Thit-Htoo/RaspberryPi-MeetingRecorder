@@ -83,7 +83,7 @@ class Login(tk.Frame):
             if(client_info['server_ip']=="" or client_info==None):
                 ResetServerConnection(self.parent_app)
             else:
-                user_type=UserType.CLIENT.value if (self.client_checkbtn.get()==1) else UserType.CHAIRMAN.value
+                user_type=UserType.CLIENT.value.lower() if (self.client_checkbtn.get()==1) else UserType.CHAIRMAN.value.lower()
                 user_login_object={
                     'server_ip': client_info['server_ip'],
                     'server_port':int(client_info['server_port']),
@@ -120,8 +120,9 @@ class Login(tk.Frame):
                         print(f"[Login]: {message_json['message']}")
                         self.controller.show_frame('MeetingRecord')
                         self.stop_receive_message_thread.set()   
-                        if(message_json['usertype'].lower()==UserType.CHAIRMAN.value.lower()):
-                            self.controller.show_meeting_buttons()                     
+                        if(message_json['usertype']=="chairman"):                            
+                            self.controller.show_meeting_buttons() 
+                        self.controller.hide_change_background_btn()                    
                     else:
                         self.login_button.config(text="Login")
                         messagebox.showerror("Error Message",message_json['message'])                            
