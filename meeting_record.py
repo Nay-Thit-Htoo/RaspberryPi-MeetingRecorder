@@ -45,7 +45,7 @@ class MeetingRecord(tk.Frame):
         
         self.muteBtn=tk.Button(main_frame,text="Mute All",bg="#7C00FE", fg="white",width=15,height=2,font=self.label_font,command=self.mute_action)
         self.muteBtn.pack(side=tk.LEFT,padx=5, pady=5)    
-        self.muteBtn.pack_forget()
+        self.muteBtn.pack_forget()        
   
     # start recording
     def start_recording(self): 
@@ -128,7 +128,7 @@ class MeetingRecord(tk.Frame):
                 elif(action_type==ActionType.REJECT_DISCUSS.name):            
                    self.reject_discuss(response_message)       
                 elif(action_type==ActionType.MUTE_ALL.name):     
-                  if(user_type==UserType.CHAIRMAN.value.lower()):
+                  if(user_type=="chairman"):
                     self.change_chairman_mute_meeting_status()            
                   else:
                     self.clear_meeting_status_enable_buttons()                  
@@ -146,7 +146,7 @@ class MeetingRecord(tk.Frame):
         current_logged_user_type=self.logged_user_info['usertype']
         self.startBtn.config(state='normal')
         self.stopBtn.config(state='normal')
-        if(current_logged_user_type.lower()==UserType.CHAIRMAN.value.lower()):
+        if(current_logged_user_type.lower()=="chairman"):
             self.muteBtn.pack(side=tk.LEFT,padx=5, pady=5)
  
     # Stop Meeting 
@@ -160,7 +160,7 @@ class MeetingRecord(tk.Frame):
     # Mute Btn
     def mute_action(self):   
         meeting_status=self.meeting_status_label.cget('text')
-        if(meeting_status is not None and meeting_status !="" and self.logged_user_info["usertype"].lower()==UserType.CHAIRMAN.value.lower()):    
+        if(meeting_status is not None and meeting_status !="" and self.logged_user_info["usertype"].lower()=="chairman"):    
             meeting_record_obj={"usercode":self.logged_user_info['usercode'],
                     "usertype":self.logged_user_info['usertype'],
                     "actiontype":ActionType.MUTE_ALL.name                      
@@ -254,7 +254,7 @@ class MeetingRecord(tk.Frame):
     def check_discuss_request_confirmation(self,response):
         print(f"[Meeting Record][Show Confirm Dialog by Chairman]:{response}")
         current_user_type=self.logged_user_info['usertype']
-        if(current_user_type is not None and current_user_type.lower()==UserType.CHAIRMAN.value.lower()):
+        if(current_user_type is not None and current_user_type.lower()=="chairman"):
             record_user_lst=response['recording_users']        
             request_user_code=response['usercode']
             discuss_obj={"usercode":request_user_code,"usertype": self.logged_user_info['usertype'],"actiontype":ActionType.ACCESS_DISCUSS.name,"recording_users":record_user_lst}
