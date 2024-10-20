@@ -90,7 +90,7 @@ class ResetServerConfiguration:
                     print(f"[Reset Server Configuration] Share Name : {share_name}")
                     self.write_logtext(f"[Reset Server Configuration] : Successfully shared {folder_path} as {share_name}")
                     print(f'[Reset Server Configuration] : Successfully shared {folder_path} as {share_name}')
-                    self.selected_audio_file_path.set(f'\\\\{os.environ['COMPUTERNAME']}\\{share_name}') 
+                    self.selected_audio_file_path.set(f"\\\\{os.environ['COMPUTERNAME']}\\{share_name}") 
                 else:
                     self.write_logtext(f"[Reset Server Configuration] [Error] : {result.stderr}\n")
                     print(f'[Reset Server Configuration] [Error] : {result.stderr}')
