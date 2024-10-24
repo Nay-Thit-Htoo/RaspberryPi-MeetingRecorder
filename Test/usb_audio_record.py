@@ -55,7 +55,7 @@ def record_audio(filename, duration, channels, rate, chunk_size):
 filename = "output.wav"
 duration = 10  # Record for 10 seconds
 channels = 1  # Stereo
-rate = 44100  # Sample rate
-chunk_size = 1024  # Buffer size
+rate = 22050  # Sample rate
+chunk_size = 2048  # Buffer size
 
 record_audio(filename, duration, channels, rate, chunk_size)
