@@ -19,9 +19,10 @@ class ServerPage(tk.Tk):
         self.server_setting_info=server_service.read_setting_data()  
         self.server_socket=None
 
-        title_font=tkFont.Font(family="Helvetica", size=13, weight="bold")
-        label_font=tkFont.Font(family="Helvetica", size=10)  
-        label_sm_font=tkFont.Font(family="Helvetica", size=9)   
+        title_font=tkFont.Font(family="Helvetica", size=14, weight="bold")
+        label_font=tkFont.Font(family="Helvetica", size=11) 
+        button_font=tkFont.Font(family="Helvetica", size=12)  
+        label_sm_font=tkFont.Font(family="Helvetica", size=11)   
 
         self.title("Meeting Record (Server)")
         self.image = Image.open("Assets/icon.png")
@@ -86,11 +87,11 @@ class ServerPage(tk.Tk):
         self.audio_store_file_txt.grid(row=3,column=1,pady=5)
        
         # Start button
-        self.server_start_btn =tk.Button(control_frame,text="Start",bg="#121212", fg="white",width=15,height=1,font=label_font,command=self.start_server)                                
+        self.server_start_btn =tk.Button(control_frame,text="Start",bg="#121212", fg="white",width=15,height=1,font=button_font,command=self.start_server)                                
         self.server_start_btn.grid(row=4,column=0,pady=15)  
             
         # Stop button
-        self.server_stop_btn =tk.Button(control_frame,text="Stop",bg="#121212", fg="white",width=15,height=1,font=label_font,command=self.stop_server)                                
+        self.server_stop_btn =tk.Button(control_frame,text="Stop",bg="#121212", fg="white",width=15,height=1,font=button_font,command=self.stop_server)                                
         self.server_stop_btn.grid(row=4,column=1,pady=15) 
         self.server_stop_btn.config(state='disabled')
       

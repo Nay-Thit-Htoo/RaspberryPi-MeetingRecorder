@@ -13,11 +13,11 @@ class ResetServerConfiguration:
 
         self.selected_audio_file_path = tk.StringVar()
 
-        title_font=tkFont.Font(family="Helvetica", size=13, weight="bold")
-        label_font=tkFont.Font(family="Helvetica", size=10)  
-        label_sm_font=tkFont.Font(family="Helvetica", size=9)   
+        title_font=tkFont.Font(family="Helvetica", size=14, weight="bold")
+        label_font=tkFont.Font(family="Helvetica", size=11) 
+        button_font=tkFont.Font(family="Helvetica", size=12)            
       
-        width=400
+        width=420
         height=200 
         screen_width = self.parent_app.winfo_screenwidth()
         screen_height = self.parent_app.winfo_screenheight()
@@ -57,11 +57,11 @@ class ResetServerConfiguration:
         self.audio_studio_file_path_entry.config(state='readonly')
     
         # File Choose
-        file_choose_button =tk.Button(frame,text="Choose",bg="#0E46A3", fg="white",width=6,height=1,font=label_font,command=self.file_choose_btn_click)
+        file_choose_button =tk.Button(frame,text="Choose",bg="#0E46A3", fg="white",width=6,height=1,font=button_font,command=self.file_choose_btn_click)
         file_choose_button.grid(row=2,column=2,padx=5, pady=5)   
 
         # Login button
-        save_button =tk.Button(frame,text="Save",bg="#121212", fg="white",width=15,height=1,font=label_font,command=self.save_server_configuration)
+        save_button =tk.Button(frame,text="Save",bg="#121212", fg="white",width=15,height=1,font=button_font,command=self.save_server_configuration)
         save_button.grid(row=3,column=0,pady=15,columnspan=3)       
 
     def validate_number_input(self,char):
