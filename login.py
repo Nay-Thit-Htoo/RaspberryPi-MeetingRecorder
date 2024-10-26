@@ -19,9 +19,10 @@ class Login(tk.Frame):
         self.stop_receive_message_thread=threading.Event()
         self.receive_thread=None      
             
-        title_font=tkFont.Font(family="Helvetica", size=13, weight="bold")
-        label_font=tkFont.Font(family="Helvetica", size=10)    
-        label_sm_font=tkFont.Font(family="Helvetica", size=9)   
+        title_font=tkFont.Font(family="Helvetica", size=14, weight="bold")
+        label_font=tkFont.Font(family="Helvetica", size=12)    
+        button_font=tkFont.Font(family="Helvetica", size=12)  
+        label_sm_font=tkFont.Font(family="Helvetica", size=11)   
 
         self.client_checkbtn = tk.IntVar()
         self.client_checkbtn.set(1)
@@ -52,7 +53,7 @@ class Login(tk.Frame):
         self.chk_chariman_type.grid(row=2,column=2,padx=5, pady=5)
 
         # Login button
-        self.login_button =tk.Button(main_frame,text="Login",bg="#121212", fg="white",width=15,height=1,font=label_font,command=self.login)                                
+        self.login_button =tk.Button(main_frame,text="Login",bg="#121212", fg="white",width=15,height=1,font=button_font,command=self.login)                                
         self.login_button.grid(row=3,column=0,pady=15,columnspan=3)        
        
         # Reset Server Connection

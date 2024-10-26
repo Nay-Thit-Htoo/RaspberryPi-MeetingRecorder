@@ -11,7 +11,7 @@ class AudioRecorder:
     def __init__(self,record_user_obj):
         self.record_user_obj=record_user_obj
         self.output_audio_path = os.path.join(record_user_obj['usercode'],f"{record_user_obj['usercode']}_{datetime.now().strftime('%d_%m_%Y_%H_%M_%S')}.wav")
-        self.channels = 2
+        self.channels = 1
         self.rate = 44100
         self.chunk = 1024
         self.format = pyaudio.paInt16
@@ -34,7 +34,9 @@ class AudioRecorder:
                                           channels=self.channels,
                                           rate=self.rate,
                                           input=True,
-                                          frames_per_buffer=self.chunk)
+                                          frames_per_buffer=self.chunk,
+                                          input_device_index=1
+                                          )
             print(f"[Audio Record Service]:[Start Audio Record]")
             while self.recording:
                 data = self.stream.read(self.chunk)

@@ -23,27 +23,29 @@ class MeetingRecord(tk.Frame):
         main_frame.pack(padx=50,pady=10)  
 
         # Font Style for Label
-        self.label_font=tkFont.Font(family="Helvetica", size=10)  
-
+        title_font=tkFont.Font(family="Helvetica", size=14, weight="bold")
+        label_font=tkFont.Font(family="Helvetica", size=12)    
+        button_font=tkFont.Font(family="Helvetica", size=12)  
+        label_sm_font=tkFont.Font(family="Helvetica", size=11)   
         # Create Image and Show on Label
         self.image = Image.open("Assets/mic.png")
         self.photo = ImageTk.PhotoImage(self.image)       
         self.image_label = tk.Label(main_frame, image=self.photo)
         self.image_label.pack(padx=5, pady=5)
         
-        self.meeting_status_label = tk.Label(main_frame,fg='Black')
+        self.meeting_status_label = tk.Label(main_frame,fg='Black',font=label_font)
         self.meeting_status_label.pack(padx=5, pady=5) 
 
         #start & stop buttons
-        self.startBtn=tk.Button(main_frame,text="Discuss",bg="#121212", fg="white",width=15,height=2,font=self.label_font,command=self.start_recording)
+        self.startBtn=tk.Button(main_frame,text="Discuss",bg="#121212", fg="white",width=15,height=2,font=button_font,command=self.start_recording)
         self.startBtn.pack(side=tk.LEFT,padx=5, pady=5)
         self.startBtn.config(state='disabled')
 
-        self.stopBtn=tk.Button(main_frame,text="Stop",bg="#DEE3E2", fg="black",width=15,height=2,font=self.label_font,command=self.stop_recording)
+        self.stopBtn=tk.Button(main_frame,text="Stop",bg="#DEE3E2", fg="black",width=15,height=2,font=button_font,command=self.stop_recording)
         self.stopBtn.pack(side=tk.LEFT,padx=5, pady=5)    
         self.stopBtn.config(state='disabled')    
         
-        self.muteBtn=tk.Button(main_frame,text="Mute All",bg="#7C00FE", fg="white",width=15,height=2,font=self.label_font,command=self.mute_action)
+        self.muteBtn=tk.Button(main_frame,text="Mute All",bg="#7C00FE", fg="white",width=15,height=2,font=button_font,command=self.mute_action)
         self.muteBtn.pack(side=tk.LEFT,padx=5, pady=5)    
         self.muteBtn.pack_forget()        
   
