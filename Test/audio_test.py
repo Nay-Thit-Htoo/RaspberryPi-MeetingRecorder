@@ -42,6 +42,7 @@ class AudioRecorder:
                                     channels=self.channels,
                                     rate=self.fs,
                                     frames_per_buffer=self.chunk,
+                                    input_device_index=1,
                                     input=True)
             self.record()
         except Exception as e:

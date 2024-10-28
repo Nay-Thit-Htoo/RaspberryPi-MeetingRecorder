@@ -1,7 +1,8 @@
 {
-    "server_ip": "192.168.43.157",
+    "server_ip": "192.168.1.15",
     "server_port": "8090",
-    "upload_file_path": "\\\\NAYTHITHTOO\\TestNTHShare",
-    "usercode": "NTH",
-    "usertype": "Client"
+    "upload_file_path": "\\\\NAYTHITHTOO\\NTHShare",
+    "background_image": "Assets/background.jpg",
+    "usercode": "NTCH",
+    "usertype": "client"
 }

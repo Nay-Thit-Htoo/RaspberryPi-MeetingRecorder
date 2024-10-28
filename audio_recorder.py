@@ -11,7 +11,7 @@ class AudioRecorder:
     def __init__(self,record_user_obj):
         self.record_user_obj=record_user_obj
         self.output_audio_path = os.path.join(record_user_obj['usercode'],f"{record_user_obj['usercode']}_{datetime.now().strftime('%d_%m_%Y_%H_%M_%S')}.wav")
-        self.channels = 2
+        self.channels = 1
         self.rate = 44100
         self.chunk = 1024
         self.format = pyaudio.paInt16
@@ -20,6 +20,7 @@ class AudioRecorder:
         self.stream = None
         self.frames = []
         self.recording = False
+        self.record_thread=None
     
     def start_recording(self):
         if self.recording:
@@ -33,7 +34,9 @@ class AudioRecorder:
                                           channels=self.channels,
                                           rate=self.rate,
                                           input=True,
-                                          frames_per_buffer=self.chunk)
+                                          frames_per_buffer=self.chunk,
+                                          input_device_index=1
+                                          )
             print(f"[Audio Record Service]:[Start Audio Record]")
             while self.recording:
                 data = self.stream.read(self.chunk)
@@ -48,9 +51,11 @@ class AudioRecorder:
     
     def stop_recording(self):
         self.recording = False
-        self.record_thread.join()  # Wait for the recording thread to finish
+        if(self.record_thread is not None):
+            self.record_thread.join()  # Wait for the recording thread to finish
     
     def save_wave(self): 
+        self.create_folder_record_user()
         with wave.open(self.output_audio_path, 'wb') as wf:
             wf.setnchannels(self.channels)
             wf.setsampwidth(self.audio.get_sample_size(self.format))
@@ -59,7 +64,14 @@ class AudioRecorder:
         
         print(f"[Audio Record Service]:[Saved Audio Record] ", os.path.basename(self.output_audio_path))
     
+    # create folder for record user
+    def create_folder_record_user(self):
+      user_code=self.record_user_obj['usercode']
+      os.makedirs(user_code, exist_ok=True)
+
     def terminate(self):
         self.audio.terminate()   
-        file_upload_service.file_upload_to_server(self.output_audio_path,self.record_user_obj)   
-        file_upload_service.delete_file_after_upload(self.output_audio_path)
+        if(os.path.exists(self.output_audio_path)):
+            file_upload_service.file_upload_to_server(self.output_audio_path,self.record_user_obj)   
+            file_upload_service.delete_file_after_upload(self.output_audio_path)
+            file_upload_service.delete_file_after_upload(self.record_user_obj['usercode'])

@@ -5,6 +5,7 @@ from tkinter import messagebox
 from tkinter import filedialog
 import tkinter.font as tkFont
 from Settings import server_service
+from datetime import datetime
 
 class ResetServerConfiguration:
     def __init__(self, parent_app):  
@@ -12,11 +13,11 @@ class ResetServerConfiguration:
 
         self.selected_audio_file_path = tk.StringVar()
 
-        title_font=tkFont.Font(family="Helvetica", size=13, weight="bold")
-        label_font=tkFont.Font(family="Helvetica", size=10)  
-        label_sm_font=tkFont.Font(family="Helvetica", size=9)   
+        title_font=tkFont.Font(family="Helvetica", size=14, weight="bold")
+        label_font=tkFont.Font(family="Helvetica", size=11) 
+        button_font=tkFont.Font(family="Helvetica", size=12)            
       
-        width=400
+        width=420
         height=200 
         screen_width = self.parent_app.winfo_screenwidth()
         screen_height = self.parent_app.winfo_screenheight()
@@ -56,11 +57,11 @@ class ResetServerConfiguration:
         self.audio_studio_file_path_entry.config(state='readonly')
     
         # File Choose
-        file_choose_button =tk.Button(frame,text="Choose",bg="#0E46A3", fg="white",width=6,height=1,font=label_font,command=self.file_choose_btn_click)
+        file_choose_button =tk.Button(frame,text="Choose",bg="#0E46A3", fg="white",width=6,height=1,font=button_font,command=self.file_choose_btn_click)
         file_choose_button.grid(row=2,column=2,padx=5, pady=5)   
 
         # Login button
-        save_button =tk.Button(frame,text="Save",bg="#121212", fg="white",width=15,height=1,font=label_font,command=self.save_server_configuration)
+        save_button =tk.Button(frame,text="Save",bg="#121212", fg="white",width=15,height=1,font=button_font,command=self.save_server_configuration)
         save_button.grid(row=3,column=0,pady=15,columnspan=3)       
 
     def validate_number_input(self,char):
@@ -79,18 +80,24 @@ class ResetServerConfiguration:
                 # Run the net share command using subprocess
                 result = subprocess.run(command, shell=True, capture_output=True, text=True)
                 
-                print(f"[Reset Server Configuration] Result : {result}")               
+                self.parent_app.logs_txt.grid(row=6,column=0,padx=0, pady=5,columnspan=2)
+                self.write_logtext(f"[Reset Server Configuration] [Result] : {result}")
+                print(f"[Reset Server Configuration] [Result] : {result}")               
 
                 # Check the result of the command
                 if result.returncode == 0 or result.returncode == 2:
+                    self.write_logtext(f"[Reset Server Configuration] Share Name : {share_name}")
                     print(f"[Reset Server Configuration] Share Name : {share_name}")
-                    print(f'[Reset Server Configuration] Successfully shared {folder_path} as {share_name}')
-                    self.selected_audio_file_path.set(f'\\\\{os.environ['COMPUTERNAME']}\\{share_name}') 
+                    self.write_logtext(f"[Reset Server Configuration] : Successfully shared {folder_path} as {share_name}")
+                    print(f'[Reset Server Configuration] : Successfully shared {folder_path} as {share_name}')
+                    self.selected_audio_file_path.set(f"\\\\{os.environ['COMPUTERNAME']}\\{share_name}") 
                 else:
-                    print(f'[Reset Server Configuration] Error: {result.stderr}')
+                    self.write_logtext(f"[Reset Server Configuration] [Error] : {result.stderr}\n")
+                    print(f'[Reset Server Configuration] [Error] : {result.stderr}')
                     self.selected_audio_file_path.set("") 
-            except Exception as e:
-                print(f"[Reset Server Configuration] An error occurred: {e}")
+            except Exception as e:                
+                self.write_logtext(f"[Reset Server Configuration] [An error occurred] : {e}")
+                print(f"[Reset Server Configuration] [An error occurred] : {e}")
                 self.selected_audio_file_path.set("")
             
     def save_server_configuration(self):
@@ -126,7 +133,12 @@ class ResetServerConfiguration:
         self.dialog.destroy()
         self.dialog.update()
     
-    def check_world_writable(self,file_path):       
+    def write_logtext(self,log_text):
+          logDate=f"{datetime.now().strftime('%d-%m-%Y %H:%M:%S')}"
+          self.parent_app.logs_txt.insert(tk.END,f"[{logDate}]{log_text}\n")
+  
+    def check_world_writable(self,file_path):      
+        self.write_logtext(f"[Reset Server Configuration] [Check Folder Writeable]: {file_path}") 
         print(f"[Reset Server Configuration] [Check Folder Writeable]: {file_path}")
         test_file = os.path.join(file_path, "test_write.txt")
         try:
@@ -135,8 +147,10 @@ class ResetServerConfiguration:
                 file.write("This is a test to check if the folder is writable.")
              # Optionally, clean up by removing the test file
             os.remove(test_file)
+            self.write_logtext(f"[Reset Server Configuration] [Check Folder Writeable]: {file_path} can write!")
             print(f"[Reset Server Configuration] [Check Folder Writeable]: {file_path} can write!")
             return True
         except Exception as e:
+           self.write_logtext(f"[Reset Server Configuration] [Check Folder Writeable]: {e}")
            print(f"[Reset Server Configuration] [Check Folder Writeable]: {e}")
            return False

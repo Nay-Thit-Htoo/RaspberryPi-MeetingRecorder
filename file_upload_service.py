@@ -20,7 +20,10 @@ def upload_file_thread(local_file_path,record_user_obj):
 def delete_file_after_upload(to_remove_file_path):
      print(f"[File Upload To Server]:[Remove Local File After Upload] {to_remove_file_path}")
      if os.path.exists(to_remove_file_path):
-        os.remove(to_remove_file_path)
+        if(os.path.isdir(to_remove_file_path)):
+            os.rmdir(to_remove_file_path)
+        else:
+          os.remove(to_remove_file_path)
         print(f"[File Upload To Server]:[Successfully Remove Local File] {to_remove_file_path}") 
 
 def file_upload_to_server(local_file_path,record_user_obj):
