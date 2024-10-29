@@ -148,10 +148,10 @@ class ServerPage(tk.Tk):
         print(f'[Server info] : {self.server_setting_info}')
         if(start_btn_txt.lower()!="running"):
             self.logs_txt.pack()  
-            if(self.server_setting_info is None or self.server_setting_info['port_number'] is None or self.server_setting_info['upload_file_path'] is None):
+            if(self.server_setting_info is None or self.server_setting_info['server_port_number'] is None or self.server_setting_info['server_share_folder_path'] is None):
                 ResetServerConfiguration(self)
-            elif(not self.check_world_writable(self.server_setting_info['upload_file_path'])):                
-                messagebox.showerror("File Permission",f"{self.server_setting_info['upload_file_path']} don't have Write Permission!")
+            elif(not self.check_world_writable(self.server_setting_info['server_share_folder_path'])):                
+                messagebox.showerror("File Permission",f"{self.server_setting_info['server_share_folder_path']} don't have Write Permission!")
             else:
                 self.server_start_btn.config(text="Running"),
                 self.server_start_btn.config(state='disabled')
@@ -166,7 +166,7 @@ class ServerPage(tk.Tk):
         self.server_socket.stop_server(self.logs_txt)  
 
     def call_server_socket(self):
-        self.server_socket=ServerSocket(port=int(self.server_setting_info['port_number']))
+        self.server_socket=ServerSocket(port=int(self.server_setting_info['server_port_number']))
         self.server_socket.start_server(self.logs_txt)  
     
     def write_logtext(self,log_text):

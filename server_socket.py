@@ -75,9 +75,7 @@ class ServerSocket:
                         'usercode':client_messsage_json['usercode'],
                         'usertype':client_messsage_json['usertype']
                     })  
-                    login_result['actiontype']=ActionType.LOGIN.name   
-                    login_result['server_user_name'] =self.server_info['server_user_name']
-                    login_result['server_password'] =self.server_info['server_password']
+                    login_result['actiontype']=ActionType.LOGIN.name
                     self.write_logtext(server_log_panel,f"[Server][Login Result]: {login_result}")            
                     print(f"[Server][Login Result]: {login_result}")                
                     clients[addr].sendall(str(login_result).encode('utf-8'))  
@@ -133,18 +131,8 @@ class ServerSocket:
         self.server_is_running=False
         self.server_socket.close()
         self.write_logtext(server_log_panel,"[Server]Server stopped....")
-        print("[Server]Server stopped....")       
-        
-    # Create Folder When Client's Meeting Record Page Open
-    def create_folder_with_usercode(usercode):
-        server_setting_data=server_service.read_setting_data()
-        if(server_setting_data is None or server_setting_data['upload_file_path'] is None):
-            print(f'Server Upload Folder Path Not Found!')
-            return False           
-        server_folder_path=server_setting_data['upload_file_path']    
-        file_service = FileService(usercode, server_folder_path)
-        file_service.create_folder()
-        return True   
+        print("[Server]Server stopped....")  
+        server_service.clean_clients()  
 
     # Get Current Recording User List
     def get_current_recording_users(self,actionType):

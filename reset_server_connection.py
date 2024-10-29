@@ -9,8 +9,9 @@ class ResetServerConnection:
     def __init__(self, parent_app):  
         self.parent_app=parent_app       
 
-        title_font=tkFont.Font(family="Helvetica", size=13, weight="bold")
-        label_font=tkFont.Font(family="Helvetica", size=10)  
+        title_font=tkFont.Font(family="Helvetica", size=14, weight="bold")
+        label_font=tkFont.Font(family="Helvetica", size=11) 
+        button_font=tkFont.Font(family="Helvetica", size=12)   
       
         width=400
         height=200 
@@ -51,7 +52,7 @@ class ResetServerConnection:
         portnumber_entry.grid(row=2,column=1,padx=5, pady=5)
 
         # Login button
-        save_button =tk.Button(frame,text="Save",bg="#121212", fg="white",width=15,height=1,font=label_font,command=lambda: save_server_configuration(dialog,ipaddress_entry,portnumber_entry))
+        save_button =tk.Button(frame,text="Save",bg="#121212", fg="white",width=15,height=1,font=button_font,command=lambda: save_server_configuration(dialog,ipaddress_entry,portnumber_entry))
         save_button.grid(row=3,column=0,pady=15,columnspan=3)       
 
     def validate_number_input(self,char):

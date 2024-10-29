@@ -61,7 +61,10 @@ def filter_objects(filter_condition):
     org_setting_data=read_setting_data()
     filtered_objects = [obj for obj in org_setting_data['clients'] if filter_condition(obj)]
     if(len(filtered_objects)>0):
-         filtered_objects[0]['upload_file_path']=org_setting_data['upload_file_path']
+         filtered_objects[0]['server_share_folder_path']=org_setting_data['server_share_folder_path']
+         filtered_objects[0]['server_share_folder_name']=org_setting_data['server_share_folder_name']
+         filtered_objects[0]['server_user_name']=org_setting_data['server_user_name']
+         filtered_objects[0]['server_password']=org_setting_data['server_password']  
          return filtered_objects[0]     
     return filtered_objects
    

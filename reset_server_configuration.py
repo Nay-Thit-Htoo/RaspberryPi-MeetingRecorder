@@ -12,6 +12,7 @@ class ResetServerConfiguration:
         self.parent_app=parent_app     
 
         self.selected_audio_file_path = tk.StringVar()
+        self.os_user_name=tk.StringVar(value=self.get_full_username())
         self.share_folder_name=""
 
         title_font=tkFont.Font(family="Helvetica", size=14, weight="bold")
@@ -53,8 +54,9 @@ class ResetServerConfiguration:
          # Server User Name 
         username_label = tk.Label(frame, text="User Name",font=label_font)
         username_label.grid(row=2,column=0,padx=5, pady=5)
-        self.username_entry = tk.Entry(frame,font=label_font,width=30)
+        self.username_entry = tk.Entry(frame,font=label_font,width=30,textvariable=self.os_user_name)
         self.username_entry.grid(row=2,column=1,padx=5, pady=5,columnspan=2)
+        self.username_entry.config(state='readonly')
 
         # Server Password
         password_label = tk.Label(frame, text="Password",font=label_font)
@@ -77,6 +79,13 @@ class ResetServerConfiguration:
         save_button =tk.Button(frame,text="Save",bg="#121212", fg="white",width=15,height=1,font=button_font,command=self.save_server_configuration)
         save_button.grid(row=5,column=0,pady=15,columnspan=3)  
             
+    def get_full_username(self):
+        try:
+            org_full_username = rf'{subprocess.check_output("whoami", shell=True, text=True).strip()}'
+            full_username=org_full_username.replace("\\","\\\\")
+            return full_username
+        except subprocess.CalledProcessError:
+            return None
 
     def validate_number_input(self,char):
         # Allow only digits
