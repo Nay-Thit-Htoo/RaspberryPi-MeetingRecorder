@@ -1,8 +1,11 @@
 {
-    "upload_file_path": "\\\\NAYTHITHTOO\\NTHShare",
-    "port_number": 8090,
+    "server_port_number": 8090,
+    "server_share_folder_path": "\\\\NAYTHITHTOO\\NTHShare",
+    "server_share_folder_name": "NTHShare",
+    "server_user_name": "test",
+    "server_password": "test",
     "is_starting_meeting": "true",
-    "background_image": "D:/NTH-Projects/RaspberryPi-MeetingRecorder/Assets/background.jpg",
+    "background_image": "Assets/background.jpg",
     "clients": [
         {
             "usercode": "VGT",

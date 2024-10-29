@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 
 # Define appsettings.json file path
-file_path = 'Settings/appsettings.json'
+file_path = 'server_setting.json'
 
 # Read App Setting Data
 def read_setting_data():

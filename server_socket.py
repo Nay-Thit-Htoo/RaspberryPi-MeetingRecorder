@@ -2,7 +2,7 @@ import socket
 import threading
 import json
 from Enum.actiontype import ActionType
-from Settings import server_service
+import server_service
 from file_service import FileService
 from userloginservice import user_login
 from datetime import datetime
@@ -16,6 +16,7 @@ class ServerSocket:
         self.port = port
         self.server_socket = None
         self.server_is_running=False
+        self.server_info=server_service.read_setting_data()
     
     # Set up the server socket
     def start_server(self,server_log_panel):
@@ -74,11 +75,12 @@ class ServerSocket:
                         'usercode':client_messsage_json['usercode'],
                         'usertype':client_messsage_json['usertype']
                     })  
-                    login_result['actiontype']=ActionType.LOGIN.name     
+                    login_result['actiontype']=ActionType.LOGIN.name   
+                    login_result['server_user_name'] =self.server_info['server_user_name']
+                    login_result['server_password'] =self.server_info['server_password']
                     self.write_logtext(server_log_panel,f"[Server][Login Result]: {login_result}")            
                     print(f"[Server][Login Result]: {login_result}")                
                     clients[addr].sendall(str(login_result).encode('utf-8'))  
-
                 if(action_type==ActionType.OPEN_RECORD.name): 
                     user_code=client_messsage_json['usercode']                               
                     self.write_logtext(server_log_panel,f"[Server][Open Meeting Record Page By]: {user_code}")

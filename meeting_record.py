@@ -17,7 +17,6 @@ class MeetingRecord(tk.Frame):
         self.controller = controller 
         self.logged_user_info=None      
         self.audio_record_service=None 
-        self.logged_user_info=None 
 
         main_frame=tk.Frame(self,relief='raised')
         main_frame.pack(padx=50,pady=10)  

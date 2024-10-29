@@ -6,8 +6,8 @@ from tkinter import Canvas, PhotoImage, messagebox
 from tkinter import filedialog
 import tkinter.font as tkFont
 from PIL import Image, ImageTk
-from Settings import server_service
 from reset_server_configuration import ResetServerConfiguration
+import server_service
 from server_socket import ServerSocket
 from tkinter import scrolledtext
 from datetime import datetime
@@ -76,28 +76,43 @@ class ServerPage(tk.Tk):
         server_port_number_label = tk.Label(control_frame,text='Server Port : ',font=label_font)
         server_port_number_label.grid(row=2,column=0,pady=5)
         
-        self.server_port_number_txt = tk.Label(control_frame,text=self.server_setting_info['port_number'],font=label_font)
-        self.server_port_number_txt.grid(row=2,column=1,pady=5)        
+        self.server_port_number_txt = tk.Label(control_frame,text=self.server_setting_info['server_port_number'],font=label_font)
+        self.server_port_number_txt.grid(row=2,column=1,pady=5)
+
+        # Server User Name
+        server_user_name_label = tk.Label(control_frame,text='User Name : ', font=label_font)
+        server_user_name_label.grid(row=3,column=0,pady=5)
+        
+        self.server_user_name_txt = tk.Label(control_frame,text=self.server_setting_info['server_user_name'],font=label_font)
+        self.server_user_name_txt.grid(row=3,column=1,pady=5)   
+
+        # Server Password
+        server_user_password_label = tk.Label(control_frame,text='Password : ', font=label_font)
+        server_user_password_label.grid(row=4,column=0,pady=5)
+        
+        self.server_user_password_txt = tk.Label(control_frame,text=self.server_setting_info['server_password'],font=label_font)
+        self.server_user_password_txt.grid(row=4,column=1,pady=5)   
+
 
         # Server Audio Store File Path
         audio_store_file_label = tk.Label(control_frame,text='Audio Store File Path : ', font=label_font)
-        audio_store_file_label.grid(row=3,column=0,pady=5)
+        audio_store_file_label.grid(row=5,column=0,pady=5)
         
-        self.audio_store_file_txt = tk.Label(control_frame,text=self.server_setting_info['upload_file_path'],font=label_font)
-        self.audio_store_file_txt.grid(row=3,column=1,pady=5)
+        self.audio_store_file_txt = tk.Label(control_frame,text=self.server_setting_info['server_share_folder_path'],font=label_font)
+        self.audio_store_file_txt.grid(row=5,column=1,pady=5)
        
         # Start button
         self.server_start_btn =tk.Button(control_frame,text="Start",bg="#121212", fg="white",width=15,height=1,font=button_font,command=self.start_server)                                
-        self.server_start_btn.grid(row=4,column=0,pady=15)  
+        self.server_start_btn.grid(row=6,column=0,pady=15)  
             
         # Stop button
         self.server_stop_btn =tk.Button(control_frame,text="Stop",bg="#121212", fg="white",width=15,height=1,font=button_font,command=self.stop_server)                                
-        self.server_stop_btn.grid(row=4,column=1,pady=15) 
+        self.server_stop_btn.grid(row=6,column=1,pady=15) 
         self.server_stop_btn.config(state='disabled')
       
         # Reset Configuration
         reset_server_label = tk.Label(control_frame, text="Reset Configuration?",font=label_sm_font,fg="blue",cursor="hand2")
-        reset_server_label.grid(row=5,column=0,padx=5, pady=2,columnspan=2)
+        reset_server_label.grid(row=7,column=0,padx=5, pady=2,columnspan=2)
         reset_server_label.bind("<Button-1>", self.on_label_click)
 
         # View Log

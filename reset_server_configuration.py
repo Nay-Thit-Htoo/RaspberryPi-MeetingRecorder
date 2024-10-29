@@ -4,7 +4,7 @@ import tkinter as tk
 from tkinter import messagebox
 from tkinter import filedialog
 import tkinter.font as tkFont
-from Settings import server_service
+import server_service
 from datetime import datetime
 
 class ResetServerConfiguration:
@@ -12,13 +12,14 @@ class ResetServerConfiguration:
         self.parent_app=parent_app     
 
         self.selected_audio_file_path = tk.StringVar()
+        self.share_folder_name=""
 
         title_font=tkFont.Font(family="Helvetica", size=14, weight="bold")
         label_font=tkFont.Font(family="Helvetica", size=11) 
         button_font=tkFont.Font(family="Helvetica", size=12)            
       
         width=420
-        height=200 
+        height=300 
         screen_width = self.parent_app.winfo_screenwidth()
         screen_height = self.parent_app.winfo_screenheight()
 
@@ -49,20 +50,33 @@ class ResetServerConfiguration:
         self.portnumber_entry = tk.Entry(frame,font=label_font,validate='key',width=30,validatecommand=validate_keypress)
         self.portnumber_entry.grid(row=1,column=1,padx=5, pady=5,columnspan=2)
 
+         # Server User Name 
+        username_label = tk.Label(frame, text="User Name",font=label_font)
+        username_label.grid(row=2,column=0,padx=5, pady=5)
+        self.username_entry = tk.Entry(frame,font=label_font,width=30)
+        self.username_entry.grid(row=2,column=1,padx=5, pady=5,columnspan=2)
+
+        # Server Password
+        password_label = tk.Label(frame, text="Password",font=label_font)
+        password_label.grid(row=3,column=0,padx=5, pady=5)
+        self.password_entry = tk.Entry(frame,font=label_font,width=30)
+        self.password_entry.grid(row=3,column=1,padx=5, pady=5,columnspan=2)
+
         # Audio Store File Path label and entry
         audio_studio_file_path_label = tk.Label(frame, text="Audio Store File Path",font=label_font)
-        audio_studio_file_path_label.grid(row=2,column=0,padx=5, pady=5)
+        audio_studio_file_path_label.grid(row=4,column=0,padx=5, pady=5)
         self.audio_studio_file_path_entry = tk.Entry(frame,font=label_font,textvariable=self.selected_audio_file_path)
-        self.audio_studio_file_path_entry.grid(row=2,column=1,padx=5, pady=5)
-        self.audio_studio_file_path_entry.config(state='readonly')
-    
+        self.audio_studio_file_path_entry.grid(row=4,column=1,padx=5, pady=5)
+        self.audio_studio_file_path_entry.config(state='readonly')   
+        
         # File Choose
         file_choose_button =tk.Button(frame,text="Choose",bg="#0E46A3", fg="white",width=6,height=1,font=button_font,command=self.file_choose_btn_click)
-        file_choose_button.grid(row=2,column=2,padx=5, pady=5)   
-
-        # Login button
+        file_choose_button.grid(row=4,column=2,padx=5, pady=5)   
+       
+        # Save button
         save_button =tk.Button(frame,text="Save",bg="#121212", fg="white",width=15,height=1,font=button_font,command=self.save_server_configuration)
-        save_button.grid(row=3,column=0,pady=15,columnspan=3)       
+        save_button.grid(row=5,column=0,pady=15,columnspan=3)  
+            
 
     def validate_number_input(self,char):
         # Allow only digits
@@ -78,9 +92,8 @@ class ResetServerConfiguration:
             command = f'net share {share_name}="{folder_path}" /grant:Everyone,full'        
             try:
                 # Run the net share command using subprocess
-                result = subprocess.run(command, shell=True, capture_output=True, text=True)
+                result = subprocess.run(command, shell=True, capture_output=True, text=True)                
                 
-                self.parent_app.logs_txt.grid(row=6,column=0,padx=0, pady=5,columnspan=2)
                 self.write_logtext(f"[Reset Server Configuration] [Result] : {result}")
                 print(f"[Reset Server Configuration] [Result] : {result}")               
 
@@ -89,15 +102,16 @@ class ResetServerConfiguration:
                     self.write_logtext(f"[Reset Server Configuration] Share Name : {share_name}")
                     print(f"[Reset Server Configuration] Share Name : {share_name}")
                     self.write_logtext(f"[Reset Server Configuration] : Successfully shared {folder_path} as {share_name}")
-                    print(f'[Reset Server Configuration] : Successfully shared {folder_path} as {share_name}')
-                    self.selected_audio_file_path.set(f"\\\\{os.environ['COMPUTERNAME']}\\{share_name}") 
+                    print(f'[Reset Server Configuration] : Successfully shared {folder_path} as {share_name}')                    
+                    self.selected_audio_file_path.set(f"\\\\{os.environ['COMPUTERNAME']}\\{share_name}")
+                    self.share_folder_name=share_name 
                 else:
                     self.write_logtext(f"[Reset Server Configuration] [Error] : {result.stderr}\n")
                     print(f'[Reset Server Configuration] [Error] : {result.stderr}')
                     self.selected_audio_file_path.set("") 
             except Exception as e:                
                 self.write_logtext(f"[Reset Server Configuration] [An error occurred] : {e}")
-                print(f"[Reset Server Configuration] [An error occurred] : {e}")
+                print(f"[Reset Server Configuration] [File Choose Error] : {e}")
                 self.selected_audio_file_path.set("")
             
     def save_server_configuration(self):
@@ -119,16 +133,30 @@ class ResetServerConfiguration:
             self.dialog.attributes('-topmost', False)
             messagebox.showerror("File Permission",f"{audio_record_file_path} don't have Write Permission!")
             self.dialog.attributes('-topmost', True)  
-            return self.audio_studio_file_path_entry.focus()                
+            return self.audio_studio_file_path_entry.focus()    
+
+        # Server user name entry
+        server_user_name = self.username_entry.get()
+        if(not server_user_name):
+            return self.username_entry.focus()                 
+
+        # Server user name entry
+        server_user_password = self.password_entry.get()
+        if(not server_user_password):
+            return self.password_entry.focus()  
 
         server_service.update_server_info({
-            "port_number": int(port_number),
-            "upload_file_path": audio_record_file_path
+            "server_port_number": int(port_number),
+            "server_share_folder_path":audio_record_file_path,
+            "server_share_folder_name": self.share_folder_name,
+            "server_user_name":server_user_name,
+            "server_password":server_user_password
         })         
         # Change Server Page port Number and Audio Store File Path
         self.parent_app.audio_store_file_txt.config(text=audio_record_file_path)
         self.parent_app.server_port_number_txt.config(text=port_number)
-
+        self.parent_app.server_user_name_txt.config(text=server_user_name)
+        self.parent_app.server_user_password_txt.config(text=server_user_password)
         
         self.dialog.destroy()
         self.dialog.update()

@@ -1,8 +1,8 @@
 import json
 from datetime import datetime
 
-# Define appsettings.json file path
-file_path = 'Settings/appsettings.json'
+# Define server_setting.json file path
+file_path = 'server_setting.json'
 
 # Read App Setting Data
 def read_setting_data():
@@ -111,8 +111,11 @@ def update_server_info(updated_server_obj):
     org_data=read_setting_data()
     if(not org_data):
        return
-    org_data["port_number"]=int(updated_server_obj["port_number"])
-    org_data["upload_file_path"]=updated_server_obj["upload_file_path"]
+    org_data["server_port_number"]=int(updated_server_obj["server_port_number"])
+    org_data["server_share_folder_path"]=updated_server_obj["server_share_folder_path"]
+    org_data["server_share_folder_name"]=updated_server_obj["server_share_folder_name"]
+    org_data["server_user_name"]=updated_server_obj["server_user_name"]
+    org_data["server_password"]=updated_server_obj["server_password"]
     write_all_appsetting(org_data)
 
 # Main function to demonstrate the process
@@ -122,7 +125,7 @@ def main():
         
     # Read the app setting data
     appsetting_data = read_setting_data()
-    print("Original App Settings:")
+    print("Original Server Settings:")
     print(json.dumps(appsetting_data, indent=4))
     
 

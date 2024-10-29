@@ -1,36 +1,43 @@
 import os
 import subprocess
 
-# Configuration
-local_folder = "/path/to/local/folder"
-remote_share = "//192.168.43.157/NTHShare"
-username = "abank\naythithtoo"
-password = "Galanthus123!@#"
+def create_and_copy_to_network_share(local_folder, remote_folder, server_address, share_name, username, password):
+    # Check if the local folder exists
+    if not os.path.exists(local_folder):
+        print("Local folder does not exist.")
+        return
 
-def copy_folder_to_share(local_folder, remote_share, username, password):
-    # Iterate over all files in the local folder
-    for root, dirs, files in os.walk(local_folder):
-        for file_name in files:
-            # Define the full local path
-            local_file = os.path.join(root, file_name)
-            
-            # Define the remote path within the network share
-            remote_path = os.path.relpath(local_file, local_folder).replace(os.sep, "/")
-            
-            # Command to copy file using smbclient
-            smbclient_command = [
-                "smbclient", remote_share, "-U", username, "-c",
-                f'put "{local_file}" "{remote_path}"'
-            ]
-            
-            # Run smbclient command
-            try:
-                result = subprocess.run(
-                    smbclient_command, input=password, text=True, capture_output=True, check=True
-                )
-                print(f"Copied {local_file} to {remote_share}/{remote_path}")
-            except subprocess.CalledProcessError as e:
-                print(f"Failed to copy {local_file}: {e.stderr}")
+    # Step 1: Create the target folder on the Windows network share
+    create_folder_command = [
+        "smbclient", f"//{server_address}/{share_name}", "-U", f"{username}%{password}", "-c",
+        f'mkdir "{remote_folder}"'
+    ]
+    
+    try:
+        subprocess.run(create_folder_command, check=True, capture_output=True, text=True)
+        print(f"Created folder '{remote_folder}' on network share.")
+    except subprocess.CalledProcessError as e:
+        print("Error creating remote folder:", e.stderr)
+        return
 
-# Execute folder copy
-copy_folder_to_share(local_folder, remote_share, username, password)
+    # Step 2: Copy files from local folder to the network share
+    copy_command = [
+        "smbclient", f"//{server_address}/{share_name}", "-U", f"{username}%{password}", "-c",
+        f'lcd "{local_folder}"; cd "{remote_folder}"; prompt OFF; recurse ON; mput *'
+    ]
+    
+    try:
+        subprocess.run(copy_command, check=True, capture_output=True, text=True)
+        print("Files copied successfully to network share.")
+    except subprocess.CalledProcessError as e:
+        print("Error copying files:", e.stderr)
+
+# Usage
+local_folder = "/home/alpha/Desktop/Test"  # Local folder path on your Raspberry Pi
+remote_folder = "NTH"      # Folder to create on network share
+server_address = "192.168.43.157"         # IP address of the Windows machine
+share_name = "NTHShare"                # Name of the Windows share
+username = "abank\\naythithtoo"              # Username for network share
+password = "Galanthus123!@#"              # Password for network share
+
+create_and_copy_to_network_share(local_folder, remote_folder, server_address, share_name, username, password)
