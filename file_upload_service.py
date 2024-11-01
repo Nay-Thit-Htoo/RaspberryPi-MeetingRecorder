@@ -30,17 +30,17 @@ def create_and_copy_to_network_share(local_folder, remote_folder, server_address
         print(f"[File Upload To Server]: Error creating remote folder:", e.stderr)
         return
 
-    # # Step 2: Copy files from local folder to the network share
-    # copy_command = [
-    #     "smbclient", f"//{server_address}/{share_name}", "-U", f"{username}%{password}", "-c",
-    #     f'lcd "{local_folder}"; cd "{remote_folder}"; prompt OFF; recurse ON; mput *'
-    # ]
+    # Step 2: Copy files from local folder to the network share
+    copy_command = [
+        "smbclient", f"//{server_address}/{share_name}", "-U", f"{username}%{password}", "-c",
+        f'lcd "{local_folder}"; cd "{remote_folder}"; prompt OFF; recurse ON; mput *'
+    ]
     
-    # try:
-    #     subprocess.run(copy_command, check=True, capture_output=True, text=True)
-    #     print(f"[File Upload To Server]: Files copied successfully to network share.")
-    # except subprocess.CalledProcessError as e:
-    #     print(f"[File Upload To Server]: Error copying files:", e.stderr)
+    try:
+        subprocess.run(copy_command, check=True, capture_output=True, text=True)
+        print(f"[File Upload To Server]: Files copied successfully to network share.")
+    except subprocess.CalledProcessError as e:
+        print(f"[File Upload To Server]: Error copying files:", e.stderr)
 
 
 def delete_file_after_upload(to_remove_file_path):
@@ -53,6 +53,7 @@ def delete_file_after_upload(to_remove_file_path):
         print(f"[File Upload To Server]:[Successfully Remove Local File] {to_remove_file_path}") 
 
 def file_upload_to_server(local_file_path,record_user_obj):
+    local_file_path=os.path.join(os.getcwd(), local_file_path)
     remote_folder = record_user_obj['usercode']      # Folder to create on network share
     server_address = record_user_obj['server_ip']       # IP address of the Windows machine
     share_name = record_user_obj['server_share_folder_name']           # Name of the Windows share
