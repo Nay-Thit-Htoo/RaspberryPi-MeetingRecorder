@@ -15,11 +15,12 @@ def create_and_copy_to_network_share(local_folder, remote_folder, server_address
         "smbclient", f"//{server_address}/{share_name}", "-U", f"{username}%{password}", "-c",
         f'mkdir "{remote_folder}"'
     ]
+    print(f"[File Upload To Server]:[Server Address]:{server_address}")
     print(f"[File Upload To Server]:[Local Folder Name]:{local_folder}")
+    print(f"[File Upload To Server]:[Remote Folder]:{remote_folder}")
     print(f"[File Upload To Server]:[Share Name]:{share_name}")
     print(f"[File Upload To Server]:[User Name]:{username}")
     print(f"[File Upload To Server]:[Password]:{password}")
-
 
     try:
         subprocess.run(create_folder_command, check=True, capture_output=True, text=True)
@@ -28,17 +29,17 @@ def create_and_copy_to_network_share(local_folder, remote_folder, server_address
         print(f"[File Upload To Server]: Error creating remote folder:", e.stderr)
         return
 
-    # Step 2: Copy files from local folder to the network share
-    copy_command = [
-        "smbclient", f"//{server_address}/{share_name}", "-U", f"{username}%{password}", "-c",
-        f'lcd "{local_folder}"; cd "{remote_folder}"; prompt OFF; recurse ON; mput *'
-    ]
+    # # Step 2: Copy files from local folder to the network share
+    # copy_command = [
+    #     "smbclient", f"//{server_address}/{share_name}", "-U", f"{username}%{password}", "-c",
+    #     f'lcd "{local_folder}"; cd "{remote_folder}"; prompt OFF; recurse ON; mput *'
+    # ]
     
-    try:
-        subprocess.run(copy_command, check=True, capture_output=True, text=True)
-        print(f"[File Upload To Server]: Files copied successfully to network share.")
-    except subprocess.CalledProcessError as e:
-        print(f"[File Upload To Server]: Error copying files:", e.stderr)
+    # try:
+    #     subprocess.run(copy_command, check=True, capture_output=True, text=True)
+    #     print(f"[File Upload To Server]: Files copied successfully to network share.")
+    # except subprocess.CalledProcessError as e:
+    #     print(f"[File Upload To Server]: Error copying files:", e.stderr)
 
 
 def delete_file_after_upload(to_remove_file_path):
