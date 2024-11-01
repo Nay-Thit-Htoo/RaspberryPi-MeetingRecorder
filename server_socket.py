@@ -144,7 +144,7 @@ class ServerSocket:
        if(len(current_record_userLst)>0 and current_record_userLst is not None):  
            recording_user['message']=", ".join(current_record_userLst)             
            return recording_user
-       return None 
+       return recording_user 
 
     # Get Recording User List
     def get_current_recording_user_list(self):
