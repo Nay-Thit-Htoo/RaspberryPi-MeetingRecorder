@@ -83,6 +83,7 @@ class ServerSocket:
                     user_code=client_messsage_json['usercode']                               
                     self.write_logtext(server_log_panel,f"[Server][Open Meeting Record Page By]: {user_code}")
                     current_record_user=self.get_current_recording_users(ActionType.OPEN_RECORD.name)
+                    print(f"[Server][Get Current Recording Users] {current_record_user}")
                     client_messsage_json=client_messsage_json if current_record_user is None else current_record_user
                     client_messsage_json['usercode']=user_code
                     clients[addr].sendall(str(client_messsage_json).encode('utf-8'))  
@@ -138,7 +139,8 @@ class ServerSocket:
     def get_current_recording_users(self,actionType):
        recording_user={"message_code":'success',
                     "is_starting_meeting":server_service.get_meeting_status(),
-                    "actiontype":actionType                      
+                    "actiontype":actionType,
+                    "message":""                      
                     };     
        current_record_userLst=self.get_current_recording_user_list()
        if(len(current_record_userLst)>0 and current_record_userLst is not None):  

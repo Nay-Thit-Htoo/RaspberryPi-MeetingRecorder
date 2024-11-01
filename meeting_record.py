@@ -173,12 +173,13 @@ class MeetingRecord(tk.Frame):
     def change_meeting_status_after_startrecord(self,response):
        print(f"[Meeting Recording][Meeting Status]: {response}")
        if(response['is_starting_meeting']=="true"):         
-            new_image = Image.open("Assets/recording-mic.png")
-            new_image_tk = ImageTk.PhotoImage(new_image)
+            if(response['message']!=""):
+                new_image = Image.open("Assets/recording-mic.png")
+                new_image_tk = ImageTk.PhotoImage(new_image)
 
-            self.image_label.config(image=new_image_tk)
-            self.image_label.image = new_image_tk
-            self.meeting_status_label.config(text=f"{response['message']} recording......")
+                self.image_label.config(image=new_image_tk)
+                self.image_label.image = new_image_tk
+                self.meeting_status_label.config(text=f"{response['message']} recording......")
                   
             if(self.logged_user_info['usercode']==response['usercode']):
                 self.startBtn.config(state='disabled') 
