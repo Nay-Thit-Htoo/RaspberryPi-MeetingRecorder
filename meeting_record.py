@@ -87,7 +87,7 @@ class MeetingRecord(tk.Frame):
         
     # stop recording
     def stop_recording(self):
-       if(self.startBtn.cget("text").lower() in 'discussing'):      
+       if(self.startBtn.cget("text").lower() =='discussing'):      
             self.meeting_status_label.config(text="")
             self.logged_user_info=clientservice.read_clientInfo()
             meeting_record_obj={"usercode":self.logged_user_info['usercode'],
