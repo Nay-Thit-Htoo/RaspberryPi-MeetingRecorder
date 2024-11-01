@@ -9,7 +9,8 @@ def create_and_copy_to_network_share(local_folder, remote_folder, server_address
     if not os.path.exists(local_folder):
         print(f"[File Upload To Server]: Local folder does not exist.")
         return
-
+    
+    local_folder=os.path.join(os.getcwd(), local_folder)
     # Step 1: Create the target folder on the Windows network share
     create_folder_command = [
         "smbclient", f"//{server_address}/{share_name}", "-U", f"{username}%{password}", "-c",
@@ -55,7 +56,7 @@ def file_upload_to_server(local_file_path,record_user_obj):
     remote_folder = record_user_obj['usercode']      # Folder to create on network share
     server_address = record_user_obj['server_ip']       # IP address of the Windows machine
     share_name = record_user_obj['server_share_folder_name']           # Name of the Windows share
-    username =record_user_obj['server_user_name']       # Username for network share
+    username =(record_user_obj['server_user_name']).replace("\\\\","\\")    # Username for network share
     password = record_user_obj['server_password']       
     file_upload_thread = threading.Thread(target=create_and_copy_to_network_share, args=(local_file_path,remote_folder,server_address, share_name, username, password))
     file_upload_thread.start()
