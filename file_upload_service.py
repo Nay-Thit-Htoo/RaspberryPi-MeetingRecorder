@@ -19,7 +19,7 @@ def create_and_copy_to_network_share(local_folder, remote_folder, server_address
     print(f"[File Upload To Server]:[Share Name]:{share_name}")
     print(f"[File Upload To Server]:[User Name]:{username}")
     print(f"[File Upload To Server]:[Password]:{password}")
-
+    print(f"[File Upload To Server]:[Remote Folder]:{remote_folder}")
 
     try:
         subprocess.run(create_folder_command, check=True, capture_output=True, text=True)
