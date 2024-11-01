@@ -15,7 +15,12 @@ def create_and_copy_to_network_share(local_folder, remote_folder, server_address
         "smbclient", f"//{server_address}/{share_name}", "-U", f"{username}%{password}", "-c",
         f'mkdir "{remote_folder}"'
     ]
-    
+    print(f"[File Upload To Server]:[Local Folder Name]:{local_folder}")
+    print(f"[File Upload To Server]:[Share Name]:{share_name}")
+    print(f"[File Upload To Server]:[User Name]:{username}")
+    print(f"[File Upload To Server]:[Password]:{password}")
+
+
     try:
         subprocess.run(create_folder_command, check=True, capture_output=True, text=True)
         print(f"[File Upload To Server]: Created folder '{remote_folder}' on network share.")
