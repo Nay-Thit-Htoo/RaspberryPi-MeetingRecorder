@@ -57,7 +57,7 @@ class MeetingRecord(tk.Frame):
                         }        
         # Get Meeting Status & Confirm Dialog for Discussion
         meeting_status=self.meeting_status_label.cget('text')
-        if(meeting_status is not None or meeting_status !=""):
+        if(meeting_status is not None and meeting_status !=""):
             if(self.logged_user_info['usertype'].lower()==UserType.CLIENT.value):                
                 discuss_result = messagebox.askyesno("Request for Discussion", f'Do you want to join Discussion?')
                 if discuss_result: 
