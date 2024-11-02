@@ -18,6 +18,7 @@ class AudioRecorder:
         
         self.audio = pyaudio.PyAudio()
         self.stream = None
+        self.output_stream=None
         self.frames = []
         self.recording = False
         self.record_thread=None
@@ -37,13 +38,21 @@ class AudioRecorder:
                                           frames_per_buffer=self.chunk,
                                           input_device_index=1
                                           )
+        
+            self.output_stream=self.audio.open(format=self.format,
+                        channels=self.channels,
+                        rate=self.rate,
+                        output=True)
             print(f"[Audio Record Service]:[Start Audio Record]")
             while self.recording:
                 data = self.stream.read(self.chunk)
+                self.output_stream.write(data)
                 self.frames.append(data)
             
             self.stream.stop_stream()
             self.stream.close()
+            self.output_stream.stop_stream()
+            self.output_stream.close()
             self.save_wave()
         
         self.record_thread = threading.Thread(target=record)
