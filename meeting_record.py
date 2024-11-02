@@ -131,7 +131,7 @@ class MeetingRecord(tk.Frame):
                    self.reject_discuss(response_message)       
                 elif(action_type==ActionType.MUTE_ALL.name):     
                   user_type=response_message['usertype']
-                  if(user_type.lower()!=UserType.CHAIRMAN.value):  
+                  if(user_type.lower()==UserType.CHAIRMAN.value):  
                       self.change_chairman_mute_meeting_status()                                   
                       self.stop_audio_record() 
                   else:
