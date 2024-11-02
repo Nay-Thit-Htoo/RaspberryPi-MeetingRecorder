@@ -38,8 +38,20 @@ def update_serverInfo(new_object):
     write_all_clientInfo(org_setting_data)
     return org_setting_data
 
+# update free discuss
+def update_free_discuss_status(is_start_free_disucss):
+     print(f"Update Free Discuss Status : {is_start_free_disucss}")
+     org_setting_data=read_clientInfo() 
+     if(is_start_free_disucss):
+       org_setting_data['is_free_discuss']="true"
+     else:
+       org_setting_data['is_free_discuss']="false"
+     write_all_clientInfo(org_setting_data)         
+          
+
 # Write All Client Information
 def write_all_clientInfo(app_setting_data):
     with open(file_path, 'w') as file:
         json.dump(app_setting_data, file, indent=4)   
+
 

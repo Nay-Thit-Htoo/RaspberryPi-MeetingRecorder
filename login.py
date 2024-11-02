@@ -89,7 +89,8 @@ class Login(tk.Frame):
                     'server_port':int(client_info['server_port']),
                     'usercode':username,
                     'usertype':user_type,
-                    'actiontype': ActionType.LOGIN.name                    
+                    'actiontype': ActionType.LOGIN.name,
+                    'is_free_discuss':"false"                    
                 }
                 print(f"[Login][Login Request] : {user_login_object}")
                 check_server_thread=threading.Thread(target=self.check_server_status,args=(user_login_object,))                 
