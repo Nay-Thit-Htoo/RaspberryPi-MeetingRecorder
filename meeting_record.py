@@ -62,9 +62,11 @@ class MeetingRecord(tk.Frame):
                 discuss_result = messagebox.askyesno("Request for Discussion", f'Do you want to join Discussion?')
                 if discuss_result: 
                     self.startBtn.config(text="Please Wait...")
-                    meeting_record_obj["actiontype"]=ActionType.DISCUSS_REQUEST.name                
-            print(f"[Meeting Record][Start Record] : {meeting_record_obj}")
-            self.start_client(meeting_record_obj)
+                    meeting_record_obj["actiontype"]=ActionType.DISCUSS_REQUEST.name 
+                else:
+                    return               
+        print(f"[Meeting Record][Start Record] : {meeting_record_obj}")
+        self.start_client(meeting_record_obj)
     
     #start meeting
     def start_meeting(self):       
