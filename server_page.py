@@ -27,7 +27,7 @@ class ServerPage(tk.Tk):
         self.title("Meeting Record (Server)")
         self.image = Image.open("Assets/icon.png")
         self.icon = ImageTk.PhotoImage(self.image)    
-        self.iconphoto(True,self.icon)   
+        self.iconphoto(True,self.icon)
 
         width=600
         height=400        
@@ -160,7 +160,7 @@ class ServerPage(tk.Tk):
                 call_server_socket_thread=threading.Thread(target=self.call_server_socket)
                 call_server_socket_thread.start()
              
-    def stop_server(self):   
+    def stop_server(self):      
         self.server_start_btn.config(text="Start")
         self.server_start_btn.config(state='normal')
         self.server_socket.stop_server(self.logs_txt)  
