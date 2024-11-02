@@ -131,11 +131,11 @@ class MeetingRecord(tk.Frame):
                    self.reject_discuss(response_message)       
                 elif(action_type==ActionType.MUTE_ALL.name):     
                   user_type=response_message['usertype']
-                  if(user_type=="chairman"):
-                    self.change_chairman_mute_meeting_status()            
+                  if(user_type.lower()!=UserType.CHAIRMAN.value):  
+                      self.change_chairman_mute_meeting_status()                                   
+                      self.stop_audio_record() 
                   else:
-                    self.clear_meeting_status_enable_buttons()                  
-                    self.stop_audio_record()                    
+                       self.change_action_status_after_mute_for_client(response_message)
                 
             except Exception as err:
                 print(f"[Meeting Record]:[Exception Error] : {err}")                
@@ -277,6 +277,30 @@ class MeetingRecord(tk.Frame):
        if(self.startBtn.cget("text").lower() in 'discussing'): 
             self.meeting_status_label.config(text=f"{self.logged_user_info['usercode']} recording......")  
        
+    # Change Status after mute 
+    def change_action_status_after_mute_for_client(self,response): 
+        self.startBtn.config(state='normal')
+        self.stopBtn.config(state='normal')
+        self.startBtn.config(text="Discuss")
+        record_user_lst=response['recording_users'] 
+        if(record_user_lst is not None and (len(record_user_lst)>0)):
+            new_image = Image.open("Assets/recording-mic.png")
+            new_image_tk = ImageTk.PhotoImage(new_image)
+
+            self.image_label.config(image=new_image_tk)
+            self.image_label.image = new_image_tk
+            
+            recording_users=", ".join(record_user_lst)
+            self.meeting_status_label.config(text=f"{recording_users} recording......")
+        else:
+            new_image = Image.open("Assets/mic.png")
+            new_image_tk = ImageTk.PhotoImage(new_image)
+
+            self.image_label.config(image=new_image_tk)
+            self.image_label.image = new_image_tk
+            self.meeting_status_label.config(text="")
+            
+
     # On Show 
     def on_show(self):     
         self.logged_user_info=clientservice.read_clientInfo()

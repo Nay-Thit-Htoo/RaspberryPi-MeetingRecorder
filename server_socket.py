@@ -97,6 +97,7 @@ class ServerSocket:
                         client_messsage_json['usertype']=user_type
                     elif(action_type==ActionType.STOP_RECORD.name):
                         server_service.update_recording_client_info(client_messsage_json,is_start_recording=False)
+                        client_messsage_json["recording_users"]=self.get_current_recording_user_list()
                     elif(action_type==ActionType.MUTE_ALL.name):
                         server_service.update_recording_client_info(client_messsage_json,is_start_recording=False,is_mute_all=True)
                     elif(action_type==ActionType.START_MEETING.name):  

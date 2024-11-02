@@ -6,14 +6,5 @@
     "server_password": "Galanthus123!@#",
     "is_starting_meeting": "true",
     "background_image": "Assets/background.jpg",
-    "clients": [
-        {
-            "usercode": "CHE",
-            "login_date": "2024-11-02 12:16:24.164475",
-            "usertype": "chairman",
-            "message": "Login Success",
-            "message_code": "success",
-            "is_recording": "false"
-        }
-    ]
+    "clients": []
 }
