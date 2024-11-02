@@ -1,6 +1,8 @@
 import json
 from datetime import datetime
 
+from Enum.usertype import UserType
+
 # Define server_setting.json file path
 file_path = 'server_setting.json'
 
@@ -72,8 +74,9 @@ def update_recording_client_info(update_client_data,is_start_recording,is_mute_a
     org_client_data=org_data['clients']
     for obj in org_client_data:
         if is_mute_all:
-            new_obj={'is_recording':"false"}
-            obj.update(new_obj)
+            if((obj.get('usertype')).lower()==UserType.CLIENT.value):
+                new_obj={'is_recording':"false"}
+                obj.update(new_obj)
         elif obj.get('usercode')==update_client_data['usercode']:            
             new_obj={'is_recording':"true"} if(is_start_recording) else {'is_recording':"false"}
             obj.update(new_obj)
