@@ -42,6 +42,7 @@ class AudioRecorder:
             self.output_stream=self.audio.open(format=self.format,
                         channels=self.channels,
                         rate=self.rate,
+                        frames_per_buffer=self.chunk,
                         output=True)
             print(f"[Audio Record Service]:[Start Audio Record]")
             while self.recording:
