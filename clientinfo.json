@@ -6,5 +6,6 @@
     "server_password": "Galanthus123!@#",
     "background_image": "Assets/background.jpg",
     "usercode": "CH",
-    "usertype": "chairman"
+    "usertype": "chairman",
+    "is_free_discuss": "false"
 }

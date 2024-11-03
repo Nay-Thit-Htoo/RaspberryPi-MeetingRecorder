@@ -184,6 +184,7 @@ class MeetingRecord(tk.Frame):
         self.startBtn.config(state='disabled')
         self.stopBtn.config(state='disabled')                   
         self.muteBtn.pack_forget()
+        self.freeDiscussBtn.pack_forget()
         self.change_recording_icon_status_to_original()
         self.stop_audio_record()
 

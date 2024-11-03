@@ -75,7 +75,7 @@ class ServerSocket:
                         'usercode':client_messsage_json['usercode'],
                         'usertype':client_messsage_json['usertype']
                     })  
-                    login_result['actiontype']=ActionType.LOGIN.name
+                    login_result['actiontype']=ActionType.LOGIN.name                    
                     self.write_logtext(server_log_panel,f"[Server][Login Result]: {login_result}")            
                     print(f"[Server][Login Result]: {login_result}")                
                     clients[addr].sendall(str(login_result).encode('utf-8'))  

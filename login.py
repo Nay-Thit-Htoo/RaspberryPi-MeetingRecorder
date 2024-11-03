@@ -89,8 +89,7 @@ class Login(tk.Frame):
                     'server_port':int(client_info['server_port']),
                     'usercode':username,
                     'usertype':user_type,
-                    'actiontype': ActionType.LOGIN.name,
-                    'is_free_discuss':"false"                    
+                    'actiontype': ActionType.LOGIN.name                                      
                 }
                 print(f"[Login][Login Request] : {user_login_object}")
                 check_server_thread=threading.Thread(target=self.check_server_status,args=(user_login_object,))                 
@@ -117,6 +116,7 @@ class Login(tk.Frame):
                 message_json=(json.loads(str(message).replace("'", '"')))                  
                 if(message_json['actiontype']==ActionType.LOGIN.name):      
                     if(message_json['message_code']=='success'):
+                        message_json['is_free_discuss']='false'
                         clientservice.update_clientInfo(message_json)
                         print(f"[Login]: {message_json['message']}")
                         self.controller.show_frame('MeetingRecord')
