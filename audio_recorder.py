@@ -12,7 +12,7 @@ class AudioRecorder:
         self.record_user_obj=record_user_obj
         self.output_audio_path = os.path.join(record_user_obj['usercode'],f"{record_user_obj['usercode']}_{datetime.now().strftime('%d_%m_%Y_%H_%M_%S')}.wav")
         self.channels = 1
-        self.rate = 20250
+        self.rate = 22050
         self.chunk = 1024
         self.format = pyaudio.paInt16
         
