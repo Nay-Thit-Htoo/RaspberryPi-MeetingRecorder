@@ -16,7 +16,7 @@ class AudioRecorder:
             f"{record_user_obj['usercode']}_{datetime.now().strftime('%d_%m_%Y_%H_%M_%S')}.wav"
         )
         self.channels = 1
-        self.rate = 16000  # Lower sample rate for Raspberry Pi
+        self.rate = 44100  # Lower sample rate for Raspberry Pi
         self.chunk = 1024  # Reduced chunk size for quicker processing
         self.format = pyaudio.paInt16
 
