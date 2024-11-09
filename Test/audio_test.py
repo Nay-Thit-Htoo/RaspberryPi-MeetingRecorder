@@ -2,6 +2,8 @@ import tkinter as tk
 import pyaudio
 import wave
 import threading
+import scipy.signal
+import numpy as np
 
 # Audio recording configuration
 CHUNK = 1024  # Frames per buffer
@@ -51,13 +53,29 @@ class AudioRecorder:
         self.save_recording()
 
     def save_recording(self):
+        # Concatenate frames into a single bytes object
+        audio_data = np.frombuffer(b''.join(self.frames), dtype=np.int16)
+        
+        # Apply high-pass filter
+        filtered_audio_data = self.high_pass_filter(audio_data)
+
+        # Save filtered audio to a .wav file
         wf = wave.open(OUTPUT_FILE, 'wb')
         wf.setnchannels(CHANNELS)
         wf.setsampwidth(self.p.get_sample_size(FORMAT))
         wf.setframerate(RATE)
-        wf.writeframes(b''.join(self.frames))
+        
+        # Convert the filtered data back to bytes and write to file
+        wf.writeframes(filtered_audio_data.astype(np.int16).tobytes())
         wf.close()
         print("Recording saved as", OUTPUT_FILE)
+        
+    def high_pass_filter(self, data, cutoff=50, fs=44100, order=5):
+        nyquist = 0.5 * fs
+        normal_cutoff = cutoff / nyquist
+        b, a = scipy.signal.butter(order, normal_cutoff, btype='high', analog=False)
+        return scipy.signal.filtfilt(b, a, data)
+        
 
 class RecorderApp:
     def __init__(self, root):
