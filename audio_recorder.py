@@ -4,9 +4,7 @@ import threading
 import wave
 import queue
 import pyaudio
-
 import file_upload_service
-
 
 class AudioRecorder:
     def __init__(self, record_user_obj):

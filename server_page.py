@@ -6,6 +6,7 @@ from tkinter import Canvas, PhotoImage, messagebox
 from tkinter import filedialog
 import tkinter.font as tkFont
 from PIL import Image, ImageTk
+from meeting_vote_configuration import MeetingVoteConfiguration
 from reset_server_configuration import ResetServerConfiguration
 import server_service
 from server_socket import ServerSocket
@@ -138,7 +139,7 @@ class ServerPage(tk.Tk):
         self.background_label.config(image=self.tk_image)    
 
     # Reset Server Configuration Label Click   
-    def on_label_click(self,event):
+    def on_label_click(self,event):       
         ResetServerConfiguration(self)
 
     def start_server(self):
