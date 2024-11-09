@@ -32,7 +32,6 @@ class Login(tk.Frame):
 
         main_frame=tk.Frame(self,relief='raised')
         main_frame.pack(padx=50,pady=10)  
-           
           
         # Title 
         title_label = tk.Label(main_frame, text='Meeting Recorder',font=title_font)
@@ -90,13 +89,13 @@ class Login(tk.Frame):
                     'server_port':int(client_info['server_port']),
                     'usercode':username,
                     'usertype':user_type,
-                    'actiontype': ActionType.LOGIN.name                    
+                    'actiontype': ActionType.LOGIN.name                                      
                 }
                 print(f"[Login][Login Request] : {user_login_object}")
                 check_server_thread=threading.Thread(target=self.check_server_status,args=(user_login_object,))                 
                 check_server_thread.start()              
 
-    # Check your server ip and port are correct and server is running or not
+  # Check your server ip and port are correct and server is running or not
     def check_server_status(self,login_user_obj):
         if(self.login_button.cget("text").lower()=='login'):# check button name is login or not
             self.login_button.config(text="Please Wait...") 
@@ -117,6 +116,7 @@ class Login(tk.Frame):
                 message_json=(json.loads(str(message).replace("'", '"')))                  
                 if(message_json['actiontype']==ActionType.LOGIN.name):      
                     if(message_json['message_code']=='success'):
+                        message_json['is_free_discuss']='false'
                         clientservice.update_clientInfo(message_json)
                         print(f"[Login]: {message_json['message']}")
                         self.controller.show_frame('MeetingRecord')

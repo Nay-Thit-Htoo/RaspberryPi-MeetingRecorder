@@ -2,7 +2,7 @@ import socket
 import threading
 import json
 from Enum.actiontype import ActionType
-from Settings import server_service
+import server_service
 from file_service import FileService
 from userloginservice import user_login
 from datetime import datetime
@@ -16,6 +16,7 @@ class ServerSocket:
         self.port = port
         self.server_socket = None
         self.server_is_running=False
+        self.server_info=server_service.read_setting_data()
     
     # Set up the server socket
     def start_server(self,server_log_panel):
@@ -74,15 +75,15 @@ class ServerSocket:
                         'usercode':client_messsage_json['usercode'],
                         'usertype':client_messsage_json['usertype']
                     })  
-                    login_result['actiontype']=ActionType.LOGIN.name     
+                    login_result['actiontype']=ActionType.LOGIN.name                    
                     self.write_logtext(server_log_panel,f"[Server][Login Result]: {login_result}")            
                     print(f"[Server][Login Result]: {login_result}")                
                     clients[addr].sendall(str(login_result).encode('utf-8'))  
-
                 if(action_type==ActionType.OPEN_RECORD.name): 
                     user_code=client_messsage_json['usercode']                               
                     self.write_logtext(server_log_panel,f"[Server][Open Meeting Record Page By]: {user_code}")
                     current_record_user=self.get_current_recording_users(ActionType.OPEN_RECORD.name)
+                    print(f"[Server][Get Current Recording Users] {current_record_user}")
                     client_messsage_json=client_messsage_json if current_record_user is None else current_record_user
                     client_messsage_json['usercode']=user_code
                     clients[addr].sendall(str(client_messsage_json).encode('utf-8'))  
@@ -96,8 +97,10 @@ class ServerSocket:
                         client_messsage_json['usertype']=user_type
                     elif(action_type==ActionType.STOP_RECORD.name):
                         server_service.update_recording_client_info(client_messsage_json,is_start_recording=False)
+                        client_messsage_json["recording_users"]=self.get_current_recording_user_list()
                     elif(action_type==ActionType.MUTE_ALL.name):
                         server_service.update_recording_client_info(client_messsage_json,is_start_recording=False,is_mute_all=True)
+                        client_messsage_json["recording_users"]=self.get_current_recording_user_list()
                     elif(action_type==ActionType.START_MEETING.name):  
                         self.update_meeting_status("true")
                     elif(action_type==ActionType.STOP_MEETING.name):  
@@ -131,30 +134,21 @@ class ServerSocket:
         self.server_is_running=False
         self.server_socket.close()
         self.write_logtext(server_log_panel,"[Server]Server stopped....")
-        print("[Server]Server stopped....")       
-        
-    # Create Folder When Client's Meeting Record Page Open
-    def create_folder_with_usercode(usercode):
-        server_setting_data=server_service.read_setting_data()
-        if(server_setting_data is None or server_setting_data['upload_file_path'] is None):
-            print(f'Server Upload Folder Path Not Found!')
-            return False           
-        server_folder_path=server_setting_data['upload_file_path']    
-        file_service = FileService(usercode, server_folder_path)
-        file_service.create_folder()
-        return True   
+        print("[Server]Server stopped....")  
+        server_service.clean_clients()  
 
     # Get Current Recording User List
     def get_current_recording_users(self,actionType):
        recording_user={"message_code":'success',
                     "is_starting_meeting":server_service.get_meeting_status(),
-                    "actiontype":actionType                      
+                    "actiontype":actionType,
+                    "message":""                      
                     };     
        current_record_userLst=self.get_current_recording_user_list()
        if(len(current_record_userLst)>0 and current_record_userLst is not None):  
            recording_user['message']=", ".join(current_record_userLst)             
            return recording_user
-       return None 
+       return recording_user 
 
     # Get Recording User List
     def get_current_recording_user_list(self):

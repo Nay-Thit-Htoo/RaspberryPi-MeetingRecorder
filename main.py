@@ -18,7 +18,7 @@ class Main(tk.Tk):
 
         self.image = Image.open("Assets/icon.png")
         self.icon = ImageTk.PhotoImage(self.image)    
-        self.iconphoto(True,self.icon)
+        self.iconphoto(True,self.icon)        
 
         self.change_background_button =tk.Button(self,text="Change Background",bg="#006989", fg="white",width=16,height=1,font=self.button_font,command=self.change_background_image)  
         self.start_meeting_button =tk.Button(self,text="Start Meeting",bg="#2185D5", fg="white",width=14,height=1,font=self.button_font,command=self.start_meeting_button_click)  

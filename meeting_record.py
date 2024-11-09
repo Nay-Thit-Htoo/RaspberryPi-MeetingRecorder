@@ -17,7 +17,6 @@ class MeetingRecord(tk.Frame):
         self.controller = controller 
         self.logged_user_info=None      
         self.audio_record_service=None 
-        self.logged_user_info=None 
 
         main_frame=tk.Frame(self,relief='raised')
         main_frame.pack(padx=50,pady=10)  
@@ -47,7 +46,12 @@ class MeetingRecord(tk.Frame):
         
         self.muteBtn=tk.Button(main_frame,text="Mute All",bg="#7C00FE", fg="white",width=15,height=2,font=button_font,command=self.mute_action)
         self.muteBtn.pack(side=tk.LEFT,padx=5, pady=5)    
-        self.muteBtn.pack_forget()        
+        self.muteBtn.pack_forget()  
+
+        self.freeDiscussBtn=tk.Button(main_frame,text="Free Discuss",bg="#1A4D2E", fg="white",width=16,height=2,font=button_font,command=self.free_disucss_action)
+        self.freeDiscussBtn.pack(side=tk.LEFT,padx=5, pady=5)    
+        self.freeDiscussBtn.pack_forget() 
+        
   
     # start recording
     def start_recording(self): 
@@ -58,12 +62,14 @@ class MeetingRecord(tk.Frame):
                         }        
         # Get Meeting Status & Confirm Dialog for Discussion
         meeting_status=self.meeting_status_label.cget('text')
-        if(meeting_status is not None or meeting_status !=""):
-            discuss_result = messagebox.askyesno("Request for Discussion", f'Do you want to join Discussion?')
-            if discuss_result: 
-                self.startBtn.config(text="Please Wait...")
-                meeting_record_obj["actiontype"]=ActionType.DISCUSS_REQUEST.name
-                
+        if(meeting_status is not None and meeting_status !=""):
+            if(self.logged_user_info['usertype'].lower()==UserType.CLIENT.value):                
+                discuss_result = messagebox.askyesno("Request for Discussion", f'Do you want to join Discussion?')
+                if discuss_result: 
+                    self.startBtn.config(text="Please Wait...")
+                    meeting_record_obj["actiontype"]=ActionType.DISCUSS_REQUEST.name 
+                else:
+                    return               
         print(f"[Meeting Record][Start Record] : {meeting_record_obj}")
         self.start_client(meeting_record_obj)
     
@@ -85,10 +91,33 @@ class MeetingRecord(tk.Frame):
                     }
         print(f"[Meeting Record][Stop Meeting] : {meeting_record_obj}")
         self.start_client(meeting_record_obj)
+
+    #free Discuss Action
+    def free_disucss_action(self):      
+        free_discuss_btn_txt=self.freeDiscussBtn.cget("text").lower().replace(" ","")
+        self.logged_user_info=clientservice.read_clientInfo()
+        free_discuss_obj={"usercode":self.logged_user_info['usercode'],
+                    "usertype":self.logged_user_info['usertype'],
+                    "actiontype":ActionType.START_FREE_DISCUSS.name                      
+                    }               
+        if(free_discuss_btn_txt=='freediscuss'):  
+          meeting_status=self.meeting_status_label.cget('text')
+          if(self.startBtn.cget("text").lower()=='discuss' and meeting_status==""):
+             print(f"[Meeting Record][Start Free Discuss] : {free_discuss_obj}")
+             free_discuss_obj['actiontype']=ActionType.START_FREE_DISCUSS.name
+             self.freeDiscussBtn.config(text="Stop Free Discuss")
+             self.freeDiscussBtn.config(bg="#FF8343")
+        else:
+            print(f"[Meeting Record][Stop Free Discuss] : {free_discuss_obj}")
+            free_discuss_obj['actiontype']=ActionType.STOP_FREE_DISCUSS.name
+            self.freeDiscussBtn.config(text="Free Discuss")
+            self.freeDiscussBtn.config(bg="#1A4D2E")
+    
+        self.start_client(free_discuss_obj)
         
     # stop recording
     def stop_recording(self):
-       if(self.startBtn.cget("text").lower() in 'discussing'):      
+       if(self.startBtn.cget("text").lower() =='discussing'):      
             self.meeting_status_label.config(text="")
             self.logged_user_info=clientservice.read_clientInfo()
             meeting_record_obj={"usercode":self.logged_user_info['usercode'],
@@ -128,14 +157,12 @@ class MeetingRecord(tk.Frame):
                    self.check_discuss_request_confirmation(response_message)
                 elif(action_type==ActionType.REJECT_DISCUSS.name):            
                    self.reject_discuss(response_message)       
-                elif(action_type==ActionType.MUTE_ALL.name):     
-                  user_type=response_message['usertype']
-                  if(user_type=="chairman"):
-                    self.change_chairman_mute_meeting_status()            
-                  else:
-                    self.clear_meeting_status_enable_buttons()                  
-                    self.stop_audio_record()                    
-                
+                elif(action_type==ActionType.MUTE_ALL.name):
+                  self.change_action_status_after_mute(response_message)       
+                elif(action_type==ActionType.START_FREE_DISCUSS.name):          
+                    clientservice.update_free_discuss_status(True)
+                elif(action_type==ActionType.STOP_FREE_DISCUSS.name):          
+                    clientservice.update_free_discuss_status(False)                
             except Exception as err:
                 print(f"[Meeting Record]:[Exception Error] : {err}")                
                 break
@@ -148,14 +175,16 @@ class MeetingRecord(tk.Frame):
         current_logged_user_type=self.logged_user_info['usertype']
         self.startBtn.config(state='normal')
         self.stopBtn.config(state='normal')
-        if(current_logged_user_type.lower()=="chairman"):
+        if(current_logged_user_type.lower()=="chairman"):            
             self.muteBtn.pack(side=tk.LEFT,padx=5, pady=5)
+            self.freeDiscussBtn.pack(side=tk.LEFT,padx=5, pady=5)
  
     # Stop Meeting 
     def stop_meeting_action(self):
         self.startBtn.config(state='disabled')
         self.stopBtn.config(state='disabled')                   
         self.muteBtn.pack_forget()
+        self.freeDiscussBtn.pack_forget()
         self.change_recording_icon_status_to_original()
         self.stop_audio_record()
 
@@ -173,21 +202,21 @@ class MeetingRecord(tk.Frame):
     # Change Meeting Status and Disable or Enable Start and Stop Buttons 
     def change_meeting_status_after_startrecord(self,response):
        print(f"[Meeting Recording][Meeting Status]: {response}")
-       if(response['is_starting_meeting']=="true"):         
-            new_image = Image.open("Assets/recording-mic.png")
-            new_image_tk = ImageTk.PhotoImage(new_image)
+       if(response['is_starting_meeting']=="true"): 
+            self.startBtn.config(state='normal')
+            self.stopBtn.config(state='normal')        
+            if(response['message']!=""):
+                new_image = Image.open("Assets/recording-mic.png")
+                new_image_tk = ImageTk.PhotoImage(new_image)
 
-            self.image_label.config(image=new_image_tk)
-            self.image_label.image = new_image_tk
-            self.meeting_status_label.config(text=f"{response['message']} recording......")
+                self.image_label.config(image=new_image_tk)
+                self.image_label.image = new_image_tk
+                self.meeting_status_label.config(text=f"{response['message']} recording......")
                   
-            if(self.logged_user_info['usercode']==response['usercode']):
-                self.startBtn.config(state='disabled') 
-                self.startBtn.config(text="Discussing")
-                self.start_audio_record()      
-            else:
-                self.startBtn.config(state='normal')
-                self.stopBtn.config(state='normal')
+                if(self.logged_user_info['usercode']==response['usercode']):
+                    self.startBtn.config(state='disabled') 
+                    self.startBtn.config(text="Discussing")
+                    self.start_audio_record()  
    
     # Audio Record Start
     def start_audio_record(self):
@@ -275,6 +304,33 @@ class MeetingRecord(tk.Frame):
     def change_chairman_mute_meeting_status(self):
        if(self.startBtn.cget("text").lower() in 'discussing'): 
             self.meeting_status_label.config(text=f"{self.logged_user_info['usercode']} recording......")  
+       
+    # Change Status after mute 
+    def change_action_status_after_mute(self,response): 
+        user_type=self.logged_user_info['usertype']   
+        record_user_lst=response['recording_users'] 
+        if(record_user_lst is not None and (len(record_user_lst)>0)):
+            new_image = Image.open("Assets/recording-mic.png")
+            new_image_tk = ImageTk.PhotoImage(new_image)
+
+            self.image_label.config(image=new_image_tk)
+            self.image_label.image = new_image_tk
+            
+            recording_users=", ".join(record_user_lst)
+            self.meeting_status_label.config(text=f"{recording_users} recording......")
+        else:
+            new_image = Image.open("Assets/mic.png")
+            new_image_tk = ImageTk.PhotoImage(new_image)
+
+            self.image_label.config(image=new_image_tk)
+            self.image_label.image = new_image_tk
+            self.meeting_status_label.config(text="")
+
+        if(user_type.lower()==UserType.CLIENT.value):
+            self.startBtn.config(state='normal')
+            self.stopBtn.config(state='normal')
+            self.startBtn.config(text="Discuss")
+            self.stop_audio_record()
        
     # On Show 
     def on_show(self):     
