@@ -22,31 +22,19 @@ class MeetingRecord(tk.Frame):
         self.controller = controller 
         self.logged_user_info=None      
         self.audio_record_service=None 
-       
+
+        main_frame=tk.Frame(self,relief='raised')
+        main_frame.pack(padx=0,pady=0)  
+
         # Font Style for Label
         title_font=tkFont.Font(family="Helvetica", size=14, weight="bold")
         label_font=tkFont.Font(family="Helvetica", size=12)    
         button_font=tkFont.Font(family="Helvetica", size=12)  
-        label_sm_font=tkFont.Font(family="Helvetica", size=11) 
-
-        root_frame = tk.Frame(self)
-        root_frame.pack(fill=tk.BOTH, expand=True)
-
-        canvas = tk.Canvas(root_frame)
-        canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-
-        scrollbar = tk.Scrollbar(root_frame, orient="vertical", command=canvas.yview)
-        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-        canvas.configure(yscrollcommand=scrollbar.set)
-       
-
-        main_frame=tk.Frame(canvas,relief='raised')
-        # main_frame.pack(padx=0,pady=0)           
-        canvas.create_window((0, 0), window=main_frame, anchor="nw")
+        label_sm_font=tkFont.Font(family="Helvetica", size=11)   
          
         # Meeting Vote Result
         self.meeting_vote_result_frame=tk.Frame(main_frame)    
-        self.meeting_vote_result_frame.pack(fill='x',pady=(0,40))          
+        self.meeting_vote_result_frame.pack(fill='x',pady=(0,10))          
 
         self.meeting_title_label = tk.Label(self.meeting_vote_result_frame,bg="#45474B",fg='white',font=title_font)
         self.meeting_title_label.pack(padx=5, pady=(10,0))
@@ -81,7 +69,7 @@ class MeetingRecord(tk.Frame):
         self.image = Image.open("Assets/mic.png")
         self.photo = ImageTk.PhotoImage(self.image)       
         self.image_label = tk.Label(main_frame, image=self.photo)
-        self.image_label.pack(padx=5, pady=10)
+        self.image_label.pack(padx=5, pady=5)
         
         self.meeting_status_label = tk.Label(main_frame,fg='Black',font=label_font)
         self.meeting_status_label.pack(padx=5, pady=5) 
@@ -121,9 +109,6 @@ class MeetingRecord(tk.Frame):
         self.startVoteBtn.pack(side=tk.LEFT,padx=5, pady=5)   
         self.startVoteBtn.pack_forget()         
     
-        main_frame.update_idletasks()
-        canvas.config(scrollregion=canvas.bbox("all"))
-        
     #Show Meeting Vote Frame
     def show_meeting_vote_info(self,meeting_vote_title):      
         self.logged_user_info=clientservice.read_clientInfo()
