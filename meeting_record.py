@@ -107,7 +107,7 @@ class MeetingRecord(tk.Frame):
 
         self.startVoteBtn=tk.Button(other_actions_frame,text="Meeting Vote",bg="#1A4D2E", fg="white",width=16,height=2,font=button_font,command=self.upload_meeting_vote_result_to_server)
         self.startVoteBtn.pack(side=tk.LEFT,padx=5, pady=5)   
-        # self.startVoteBtn.pack_forget()         
+        self.startVoteBtn.pack_forget()         
     
     #Show Meeting Vote Frame
     def show_meeting_vote_info(self,meeting_vote_title):      
@@ -164,12 +164,11 @@ class MeetingRecord(tk.Frame):
         current_logged_user=self.logged_user_info
         print(f"[Meeting Record]:[Meeting Vote Result File Upload]")
         current_logged_user['usercode']=f"Meeting_Vote_Result_{datetime.now().strftime('%d_%m_%Y')}"
-        vote_result_file_path=os.path.join(
-            "Meeting_Vote_Result",
-            "meeting_vote_result.json"
-        )
+        vote_result_file_path="Meeting_Vote_Result"
         print(f'[Meeting Record]:[Vote Result File Path] {vote_result_file_path}')
-        file_upload_service.file_upload_to_server(vote_result_file_path,current_logged_user)
+        vote_result_file_upload_thread = threading.Thread(target=file_upload_service.file_upload_to_server, args=(vote_result_file_path,current_logged_user))
+        vote_result_file_upload_thread.start()    
+        
 
     # Show Client Meeting Vote Btn
     def show_client_meeting_vote_btn(self):         
