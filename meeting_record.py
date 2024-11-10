@@ -1,3 +1,4 @@
+from datetime import datetime
 import tkinter as tk
 from tkinter import messagebox
 import tkinter.font as tkFont
@@ -10,6 +11,7 @@ import threading
 import json
 
 from Enum.actiontype import ActionType
+import file_upload_service
 from meeting_vote_configuration import MeetingVoteConfiguration
 import meeting_vote_service
 
@@ -87,7 +89,7 @@ class MeetingRecord(tk.Frame):
         self.client_like_btn.pack(side=tk.LEFT,padx=5, pady=5)
         self.client_like_btn.pack_forget()
 
-        self.client_unlike_btn=tk.Button(record_frame,text="Unlike",bg="#1AACAC", fg="black",width=15,height=2,font=button_font,command=self.give_meeting_vote_unlike)
+        self.client_unlike_btn=tk.Button(record_frame,text="Unlike",bg="#1AACAC", fg="white",width=15,height=2,font=button_font,command=self.give_meeting_vote_unlike)
         self.client_unlike_btn.pack(side=tk.LEFT,padx=5, pady=5)    
         self.client_unlike_btn.pack_forget()
         
@@ -102,9 +104,9 @@ class MeetingRecord(tk.Frame):
         self.freeDiscussBtn.pack(side=tk.LEFT,padx=5, pady=5)    
         self.freeDiscussBtn.pack_forget() 
 
-        self.startVoteBtn=tk.Button(other_actions_frame,text="Meeting Vote",bg="#1A4D2E", fg="white",width=16,height=2,font=button_font,command=self.meeting_start_vote_btn_click)
+        self.startVoteBtn=tk.Button(other_actions_frame,text="Meeting Vote",bg="#1A4D2E", fg="white",width=16,height=2,font=button_font,command=self.upload_meeting_vote_result_to_server)
         self.startVoteBtn.pack(side=tk.LEFT,padx=5, pady=5)   
-        self.startVoteBtn.pack_forget()         
+        # self.startVoteBtn.pack_forget()         
     
     #Show Meeting Vote Frame
     def show_meeting_vote_info(self,meeting_vote_title):      
@@ -153,9 +155,17 @@ class MeetingRecord(tk.Frame):
          MeetingVoteConfiguration(self)        
       else:
          self.startVoteBtn.config(text="Meeting Vote")
-         self.hide_meeting_vote_info()
+         self.stop_meeting_vote_btn_click()
          meeting_vote_service.reset_meeting_vote_result()
          
+    # Upload Meeting Vote Result to File Server
+    def upload_meeting_vote_result_to_server(self):
+        current_logged_user=self.logged_user_info
+        print(f"[Meeting Record]:[Meeting Vote Result File Upload]")
+        current_logged_user['usercode']=f"Meeting_Vote_Result_{datetime.now().strftime('%d_%m_%Y')}"
+        vote_result_file_path="meeting_vote_result.json"
+        file_upload_service.file_upload_to_server(vote_result_file_path,current_logged_user)
+
     # Show Client Meeting Vote Btn
     def show_client_meeting_vote_btn(self):         
         current_logged_user_type=self.logged_user_info['usertype']
@@ -169,7 +179,7 @@ class MeetingRecord(tk.Frame):
         if(current_logged_user_type.lower()==UserType.CLIENT.value):  
             self.client_like_btn.pack_forget()
             self.client_unlike_btn.pack_forget()
-
+            
     # Update Meeting Vote Count
     def update_meeting_voute_count(self):
         meeting_title=self.meeting_title_label.cget("text")
