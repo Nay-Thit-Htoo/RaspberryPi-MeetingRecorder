@@ -28,20 +28,21 @@ class MeetingRecord(tk.Frame):
         label_font=tkFont.Font(family="Helvetica", size=12)    
         button_font=tkFont.Font(family="Helvetica", size=12)  
         label_sm_font=tkFont.Font(family="Helvetica", size=11) 
-      
 
-        canvas = tk.Canvas(self)
-        canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)   
+        root_frame = tk.Frame(self)
+        root_frame.pack(fill=tk.BOTH, expand=True)
 
-        scrollbar = tk.Scrollbar(self, orient="vertical", command=canvas.yview)
-        scrollbar.pack(side="right", fill="y")     
+        canvas = tk.Canvas(root_frame)
+        canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-        canvas.config(yscrollcommand=scrollbar.set)
+        scrollbar = tk.Scrollbar(root_frame, orient="vertical", command=canvas.yview)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        canvas.configure(yscrollcommand=scrollbar.set)
+       
 
-
-        main_frame=tk.Frame(self,relief='raised')
+        main_frame=tk.Frame(canvas,relief='raised')
+        # main_frame.pack(padx=0,pady=0)           
         canvas.create_window((0, 0), window=main_frame, anchor="nw")
-        # main_frame.pack(padx=0,pady=0)
          
         # Meeting Vote Result
         self.meeting_vote_result_frame=tk.Frame(main_frame)    
@@ -119,13 +120,10 @@ class MeetingRecord(tk.Frame):
         self.startVoteBtn=tk.Button(other_actions_frame,text="Meeting Vote",bg="#1A4D2E", fg="white",width=16,height=2,font=button_font,command=self.meeting_start_vote_btn_click)
         self.startVoteBtn.pack(side=tk.LEFT,padx=5, pady=5)   
         self.startVoteBtn.pack_forget()         
-       
-        self.bind("<Configure>", lambda event, canvas=canvas, frame=main_frame: self.on_resize(event, canvas, frame))
-   # Frame Scrollbar
-    def on_resize(self,event, canvas, frame):
-     # Update the scroll region when the window is resized
-     canvas.config(scrollregion=canvas.bbox("all"))
-
+    
+        main_frame.update_idletasks()
+        canvas.config(scrollregion=canvas.bbox("all"))
+        
     #Show Meeting Vote Frame
     def show_meeting_vote_info(self,meeting_vote_title):      
         self.logged_user_info=clientservice.read_clientInfo()
