@@ -57,7 +57,7 @@ class Main(tk.Tk):
             self.frame.grid(row=0, column=0, sticky="nsew")         
 
         # Show the first page
-        self.show_frame("MeetingRecord")     
+        self.show_frame("Login")     
         
         # Bind the window resizing event
         self.bind("<Configure>", self.resize_background)

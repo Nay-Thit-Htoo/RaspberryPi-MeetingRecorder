@@ -30,9 +30,9 @@ class MeetingRecord(tk.Frame):
         label_sm_font=tkFont.Font(family="Helvetica", size=11)   
          
         # Meeting Vote Result
-        self.meeting_vote_result_frame=tk.Frame(main_frame,height=0)
+        self.meeting_vote_result_frame=tk.Frame(main_frame)    
         self.meeting_vote_result_frame.pack(fill='x',pady=(0,40))          
-      
+
         self.meeting_title_label = tk.Label(self.meeting_vote_result_frame,bg="#45474B",fg='white',font=title_font)
         self.meeting_title_label.pack(padx=5, pady=(10,0))
         self.meeting_title_label.pack_forget()
@@ -50,13 +50,16 @@ class MeetingRecord(tk.Frame):
         self.like_count_label.pack(side="top",padx=5)       
         self.like_count_label.pack_forget()
 
-        self.unlike_frame=tk.Frame(self.meeting_vote_result_frame,bg="#45474B")        
+        self.unlike_frame=tk.Frame(self.meeting_vote_result_frame,bg="#45474B") 
+        self.unlike_frame.pack(side="right",padx=5, pady=5,expand=True)       
         self.unlike_frame.pack_forget()
 
         self.unlike_count_number = tk.Label(self.unlike_frame,bg="#45474B",text="0",fg='white',font=title_font)        
+        self.unlike_count_number.pack(side="top",padx=5)
         self.unlike_count_number.pack_forget()
 
-        self.unlike_count_label = tk.Label(self.unlike_frame,bg="#45474B",text="Unlike",fg='#F4CE14',font=label_font)        
+        self.unlike_count_label = tk.Label(self.unlike_frame,bg="#45474B",text="Unlike",fg='#F4CE14',font=label_font)  
+        self.unlike_count_label.pack(side="top",padx=5)      
         self.unlike_count_label.pack_forget()
 
         # Create Image and Show on Label
@@ -93,27 +96,28 @@ class MeetingRecord(tk.Frame):
 
         self.muteBtn=tk.Button(other_actions_frame,text="Mute All",bg="#7C00FE", fg="white",width=15,height=2,font=button_font,command=self.mute_action)
         self.muteBtn.pack(side=tk.LEFT,padx=5, pady=5)    
-        # self.muteBtn.pack_forget()  
+        self.muteBtn.pack_forget()  
 
         self.freeDiscussBtn=tk.Button(other_actions_frame,text="Free Discuss",bg="#433878", fg="white",width=16,height=2,font=button_font,command=self.free_disucss_action)
         self.freeDiscussBtn.pack(side=tk.LEFT,padx=5, pady=5)    
-        # self.freeDiscussBtn.pack_forget() 
+        self.freeDiscussBtn.pack_forget() 
 
         self.startVoteBtn=tk.Button(other_actions_frame,text="Meeting Vote",bg="#1A4D2E", fg="white",width=16,height=2,font=button_font,command=self.meeting_start_vote_btn_click)
         self.startVoteBtn.pack(side=tk.LEFT,padx=5, pady=5)   
-        # self.startVoteBtn.pack_forget()         
+        self.startVoteBtn.pack_forget()         
     
     #Show Meeting Vote Frame
     def show_meeting_vote_info(self,meeting_vote_title):      
-        # self.logged_user_info=clientservice.read_clientInfo()
-        # meeting_vote_obj={"usercode":self.logged_user_info['usercode'],
-        #             "usertype":self.logged_user_info['usertype'],
-        #             "actiontype":ActionType.START_MEETING_VOTE.name                      
-        #             }
-        # print(f"[Meeting Record][Start Meeting Vote] : {meeting_vote_obj}")
-        # self.start_client(meeting_vote_obj)
+        self.logged_user_info=clientservice.read_clientInfo()
+        meeting_vote_obj={"usercode":self.logged_user_info['usercode'],
+                    "usertype":self.logged_user_info['usertype'],
+                    "actiontype":ActionType.START_MEETING_VOTE.name                      
+                    }
+        print(f"[Meeting Record][Start Meeting Vote] : {meeting_vote_obj}")
+        self.start_client(meeting_vote_obj)
         self.startVoteBtn.config(text="Stop Vote") 
         self.meeting_vote_result_frame.config(bg="#45474B")
+        self.meeting_vote_result_frame.pack(fill='x',pady=(0,40),side="top")  
         self.meeting_title_label.pack(padx=5, pady=(10,0)) 
         self.meeting_title_label.config(text=meeting_vote_title)
         self.like_frame.pack(side="left",padx=5, pady=(0,0),expand=True)
@@ -126,18 +130,19 @@ class MeetingRecord(tk.Frame):
         self.unlike_count_label.pack(side="top",padx=5)
 
     #Hide Meeting Vote Frame
-    def hide_meeting_vote_info(self):   
-       self.meeting_vote_result_frame.config(height=0,bg="")
-       self.meeting_title_label.pack_forget()
-    #    self.like_frame.pack_forget()
-    #    self.like_count_number.pack_forget()   
-    #    self.like_count_label.pack_forget()
-    #    self.unlike_frame.pack_forget()
-    #    self.unlike_count_number.pack_forget()
-    #    self.unlike_count_label.pack_forget() 
+    def hide_meeting_vote_info(self): 
+        for widget in self.meeting_vote_result_frame.winfo_children():
+          widget.pack_forget() 
+        self.logged_user_info=clientservice.read_clientInfo()
+        meeting_vote_obj={"usercode":self.logged_user_info['usercode'],
+                    "usertype":self.logged_user_info['usertype'],
+                    "actiontype":ActionType.STOP_MEETING_VOTE.name                      
+                    }
+        print(f"[Meeting Record][Stop Meeting Vote] : {meeting_vote_obj}")
+        self.start_client(meeting_vote_obj)
     
     # Meeting Start Vote Btn Click
-    def meeting_start_vote_btn_click(self):    
+    def meeting_start_vote_btn_click(self): 
       if(self.startVoteBtn.cget("text")=='Meeting Vote'):    
          MeetingVoteConfiguration(self)        
       else:
