@@ -105,7 +105,7 @@ class MeetingRecord(tk.Frame):
         self.freeDiscussBtn.pack(side=tk.LEFT,padx=5, pady=5)    
         self.freeDiscussBtn.pack_forget() 
 
-        self.startVoteBtn=tk.Button(other_actions_frame,text="Meeting Vote",bg="#1A4D2E", fg="white",width=16,height=2,font=button_font,command=self.upload_meeting_vote_result_to_server)
+        self.startVoteBtn=tk.Button(other_actions_frame,text="Meeting Vote",bg="#1A4D2E", fg="white",width=16,height=2,font=button_font,command=self.meeting_start_vote_btn_click)
         self.startVoteBtn.pack(side=tk.LEFT,padx=5, pady=5)   
         self.startVoteBtn.pack_forget()         
     
@@ -134,14 +134,17 @@ class MeetingRecord(tk.Frame):
 
     # Stop Meeting Vote Btn Click
     def stop_meeting_vote_btn_click(self):
-        self.hide_meeting_vote_info()
-        self.logged_user_info=clientservice.read_clientInfo()
-        meeting_vote_obj={"usercode":self.logged_user_info['usercode'],
-                    "usertype":self.logged_user_info['usertype'],
-                    "actiontype":ActionType.STOP_MEETING_VOTE.name                      
-                    }
-        print(f"[Meeting Record][Stop Meeting Vote] : {meeting_vote_obj}")
-        self.start_client(meeting_vote_obj)
+        current_logged_user_type=self.logged_user_info['usertype']
+        if(current_logged_user_type==UserType.CHAIRMAN.value):
+            self.upload_meeting_vote_result_to_server()
+            self.hide_meeting_vote_info()
+            self.logged_user_info=clientservice.read_clientInfo()
+            meeting_vote_obj={"usercode":self.logged_user_info['usercode'],
+                        "usertype":self.logged_user_info['usertype'],
+                        "actiontype":ActionType.STOP_MEETING_VOTE.name                      
+                        }
+            print(f"[Meeting Record][Stop Meeting Vote] : {meeting_vote_obj}")
+            self.start_client(meeting_vote_obj)
 
 
     #Hide Meeting Vote Frame
@@ -158,6 +161,7 @@ class MeetingRecord(tk.Frame):
          self.startVoteBtn.config(text="Meeting Vote")
          self.stop_meeting_vote_btn_click()
          meeting_vote_service.reset_meeting_vote_result()
+         
          
     # Upload Meeting Vote Result to File Server
     def upload_meeting_vote_result_to_server(self):
