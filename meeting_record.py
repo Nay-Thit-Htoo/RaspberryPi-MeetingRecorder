@@ -1,4 +1,5 @@
 from datetime import datetime
+import os
 import tkinter as tk
 from tkinter import messagebox
 import tkinter.font as tkFont
@@ -163,7 +164,11 @@ class MeetingRecord(tk.Frame):
         current_logged_user=self.logged_user_info
         print(f"[Meeting Record]:[Meeting Vote Result File Upload]")
         current_logged_user['usercode']=f"Meeting_Vote_Result_{datetime.now().strftime('%d_%m_%Y')}"
-        vote_result_file_path="meeting_vote_result.json"
+        vote_result_file_path=os.path.join(
+            "Meeting_Vote_Result",
+            "meeting_vote_result.json"
+        )
+        print(f'[Meeting Record]:[Vote Result File Path] {vote_result_file_path}')
         file_upload_service.file_upload_to_server(vote_result_file_path,current_logged_user)
 
     # Show Client Meeting Vote Btn
