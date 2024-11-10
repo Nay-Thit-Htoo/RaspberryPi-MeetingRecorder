@@ -22,15 +22,26 @@ class MeetingRecord(tk.Frame):
         self.controller = controller 
         self.logged_user_info=None      
         self.audio_record_service=None 
-
-        main_frame=tk.Frame(self,relief='raised')
-        main_frame.pack(padx=0,pady=0)  
-
+       
         # Font Style for Label
         title_font=tkFont.Font(family="Helvetica", size=14, weight="bold")
         label_font=tkFont.Font(family="Helvetica", size=12)    
         button_font=tkFont.Font(family="Helvetica", size=12)  
-        label_sm_font=tkFont.Font(family="Helvetica", size=11)   
+        label_sm_font=tkFont.Font(family="Helvetica", size=11) 
+      
+
+        canvas = tk.Canvas(self)
+        canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)   
+
+        scrollbar = tk.Scrollbar(self, orient="vertical", command=canvas.yview)
+        scrollbar.pack(side="right", fill="y")     
+
+        canvas.config(yscrollcommand=scrollbar.set)
+
+
+        main_frame=tk.Frame(self,relief='raised')
+        canvas.create_window((0, 0), window=main_frame, anchor="nw")
+        # main_frame.pack(padx=0,pady=0)
          
         # Meeting Vote Result
         self.meeting_vote_result_frame=tk.Frame(main_frame)    
@@ -108,7 +119,13 @@ class MeetingRecord(tk.Frame):
         self.startVoteBtn=tk.Button(other_actions_frame,text="Meeting Vote",bg="#1A4D2E", fg="white",width=16,height=2,font=button_font,command=self.meeting_start_vote_btn_click)
         self.startVoteBtn.pack(side=tk.LEFT,padx=5, pady=5)   
         self.startVoteBtn.pack_forget()         
-    
+       
+        self.bind("<Configure>", lambda event, canvas=canvas, frame=main_frame: self.on_resize(event, canvas, frame))
+   # Frame Scrollbar
+    def on_resize(self,event, canvas, frame):
+     # Update the scroll region when the window is resized
+     canvas.config(scrollregion=canvas.bbox("all"))
+
     #Show Meeting Vote Frame
     def show_meeting_vote_info(self,meeting_vote_title):      
         self.logged_user_info=clientservice.read_clientInfo()
@@ -146,13 +163,11 @@ class MeetingRecord(tk.Frame):
             print(f"[Meeting Record][Stop Meeting Vote] : {meeting_vote_obj}")
             self.start_client(meeting_vote_obj)
 
-
     #Hide Meeting Vote Frame
     def hide_meeting_vote_info(self): 
         for widget in self.meeting_vote_result_frame.winfo_children():
           widget.pack_forget() 
-       
-    
+
     # Meeting Start Vote Btn Click
     def meeting_start_vote_btn_click(self): 
       if(self.startVoteBtn.cget("text")=='Meeting Vote'):    
@@ -161,8 +176,7 @@ class MeetingRecord(tk.Frame):
          self.startVoteBtn.config(text="Meeting Vote")
          self.stop_meeting_vote_btn_click()
          meeting_vote_service.reset_meeting_vote_result()
-         
-         
+   
     # Upload Meeting Vote Result to File Server
     def upload_meeting_vote_result_to_server(self):
         current_logged_user=self.logged_user_info
@@ -171,8 +185,8 @@ class MeetingRecord(tk.Frame):
         vote_result_file_path="Meeting_Vote_Result"
         print(f'[Meeting Record]:[Vote Result File Path] {vote_result_file_path}')
         vote_result_file_upload_thread = threading.Thread(target=file_upload_service.file_upload_to_server, args=(vote_result_file_path,current_logged_user))
-        vote_result_file_upload_thread.start()    
-        
+        vote_result_file_upload_thread.start() 
+        vote_result_file_path.join()   
 
     # Show Client Meeting Vote Btn
     def show_client_meeting_vote_btn(self):         
