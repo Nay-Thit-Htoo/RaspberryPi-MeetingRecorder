@@ -19,8 +19,7 @@ class AudioRecorder:
         self.format = pyaudio.paInt16
 
         self.audio = pyaudio.PyAudio()
-        self.stream = None
-        self.output_stream = None
+        self.stream = None     
         self.frames = queue.Queue()  # Use a queue to buffer audio data
         self.recording = False
         self.record_thread = None
@@ -40,19 +39,13 @@ class AudioRecorder:
                                               input=True,
                                               frames_per_buffer=self.chunk,
                                               input_device_index=1)
-
-                self.output_stream = self.audio.open(format=self.format,
-                                                     channels=self.channels,
-                                                     rate=self.rate,
-                                                     frames_per_buffer=self.chunk,
-                                                     output=True)
+               
 
                 print("[Audio Record Service]:[Start Audio Record]")
 
                 while self.recording:
                     try:
-                        data = self.stream.read(self.chunk, exception_on_overflow=False)
-                        self.output_stream.write(data)
+                        data = self.stream.read(self.chunk, exception_on_overflow=False)                       
                         if self.record_user_obj['is_free_discuss'] == "false":
                             self.frames.put(data)  # Add data to the queue
                     except IOError as e:
@@ -62,11 +55,7 @@ class AudioRecorder:
             finally:
                 if self.stream is not None:
                     self.stream.stop_stream()
-                    self.stream.close()
-                if self.output_stream is not None:
-                    self.output_stream.stop_stream()
-                    self.output_stream.close()
-                
+                    self.stream.close()           
                 if self.record_user_obj['is_free_discuss'] == "false":
                     self.save_wave()
 
