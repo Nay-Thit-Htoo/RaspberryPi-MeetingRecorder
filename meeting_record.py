@@ -137,8 +137,7 @@ class MeetingRecord(tk.Frame):
         current_logged_user_type=self.logged_user_info['usertype']
         if(current_logged_user_type==UserType.CHAIRMAN.value):
             self.upload_meeting_vote_result_to_server()
-            self.hide_meeting_vote_info()
-            meeting_vote_service.reset_meeting_vote_result()
+            self.hide_meeting_vote_info()            
             self.logged_user_info=clientservice.read_clientInfo()
             meeting_vote_obj={"usercode":self.logged_user_info['usercode'],
                         "usertype":self.logged_user_info['usertype'],
@@ -154,7 +153,8 @@ class MeetingRecord(tk.Frame):
 
     # Meeting Start Vote Btn Click
     def meeting_start_vote_btn_click(self): 
-      if(self.startVoteBtn.cget("text")=='Meeting Vote'):    
+      if(self.startVoteBtn.cget("text")=='Meeting Vote'):
+         meeting_vote_service.reset_meeting_vote_result()    
          MeetingVoteConfiguration(self)        
       else:
          self.startVoteBtn.config(text="Meeting Vote")
