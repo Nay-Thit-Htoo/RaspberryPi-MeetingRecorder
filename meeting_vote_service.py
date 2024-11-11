@@ -69,23 +69,23 @@ def reset_meeting_vote_result():
         write_all_meeting_vote_result(org_meeting_vote_result)   
 
 # Main function to demonstrate the process
-def main(): 
-    # Add Meeting Vote Result 
-    #add_new_meeting_vote("Testing Meeting Vote 2")
+# def main(): 
+#     # Add Meeting Vote Result 
+#     #add_new_meeting_vote("Testing Meeting Vote 2")
 
-    # Update Meeting Vote Result
-    #update_vote_result("Testing Meeting Vote 2",False)
+#     # Update Meeting Vote Result
+#     #update_vote_result("Testing Meeting Vote 2",False)
 
-    # Get Meeting Vote Result
-    # meeting_vote_result=get_meeting_vote_result_by_title("Testing Meeting Vote 2")
-    # print(f'[Meeting Result]:{meeting_vote_result['like']}')
+#     # Get Meeting Vote Result
+#     # meeting_vote_result=get_meeting_vote_result_by_title("Testing Meeting Vote 2")
+#     # print(f'[Meeting Result]:{meeting_vote_result['like']}')
 
-    # Read the meeting vote
-    vote_result = read_meeting_vote()
-    print("Original Meeting Vote Result:")
-    print(json.dumps(vote_result, indent=4))
+#     # Read the meeting vote
+#     vote_result = read_meeting_vote()
+#     print("Original Meeting Vote Result:")
+#     print(json.dumps(vote_result, indent=4))
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
 
 

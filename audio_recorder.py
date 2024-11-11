@@ -37,6 +37,7 @@ class AudioRecorder:
                                               channels=self.channels,
                                               rate=self.rate,
                                               input=True,
+                                              output=False,
                                               frames_per_buffer=self.chunk,
                                               input_device_index=1)
                
