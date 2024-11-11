@@ -89,9 +89,9 @@ class AudioRecorder:
             wf.setsampwidth(p.get_sample_size(self.format))
             wf.setframerate(self.rate)
 
-            while self.is_processing or not self.audio_queue.empty():
-                if not self.audio_queue.empty():
-                    audio_chunk = self.audio_queue.get()
+            while self.is_processing or not self.frames.empty():
+                if not self.frames.empty():
+                    audio_chunk = self.frames.get()
 
                     # Process the audio chunk with SoX (e.g., reducing gain)
                     process = subprocess.Popen(
