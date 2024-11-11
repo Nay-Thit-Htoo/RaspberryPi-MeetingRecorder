@@ -1,81 +1,115 @@
+import os
+import queue
+import subprocess
 import tkinter as tk
 import pyaudio
 import wave
 import threading
-import scipy.signal
-import numpy as np
-
-# Audio recording configuration
-CHUNK = 1024  # Frames per buffer
-FORMAT = pyaudio.paInt16  # Audio format
-CHANNELS = 1  # Mono audio
-RATE = 16000  # Sample rate (Hz)
-OUTPUT_FILE = "output.wav"  # Output file name
 
 class AudioRecorder:
-    def __init__(self):
-        self.p = pyaudio.PyAudio()
+    def __init__(self):        
+        self.output_audio_path ="Audio_With_Sox.wav"
+        self.channels = 1
+        self.rate = 48000  # Lower sample rate for Raspberry Pi
+        self.chunk = 1024  # Reduced chunk size for quicker processing
+        self.format = pyaudio.paInt16
+
+        self.audio = pyaudio.PyAudio()
         self.stream = None
-        self.frames = []
-        self.is_recording = False
+        self.frames = queue.Queue()  # Use a queue to buffer audio data
+        self.recording = False
+        self.record_thread = None        
+        self.process_thread = None
+        self.is_processing = False        
 
     def start_recording(self):
-        # Start a new audio stream
-        self.stream = self.p.open(format=FORMAT,
-                                  channels=CHANNELS,
-                                  rate=RATE,
-                                  input=True,
-                                  input_device_index=1,
-                                  frames_per_buffer=CHUNK)
-        self.frames = []
-        self.is_recording = True
+        if self.recording:
+            print("Recording is already in progress.")
+            return
 
-        # Start recording in a separate thread
-        threading.Thread(target=self.record).start()
+        self.recording = True
 
-    def record(self):
-        while self.is_recording:
+        def record():
             try:
-                data = self.stream.read(CHUNK, exception_on_overflow=False)
-                self.frames.append(data)
-            except OSError as e:
-                print(f"Error: {e}")
-                break
+                self.stream = self.audio.open(format=self.format,
+                                              channels=self.channels,
+                                              rate=self.rate,
+                                              input=True,
+                                              frames_per_buffer=self.chunk,
+                                              input_device_index=1)
+              
+                print("[Audio Record Service]:[Start Audio Record]")
+
+                while self.recording:
+                    try:
+                        data = self.stream.read(self.chunk, exception_on_overflow=False)                      
+                        self.frames.put(data)  # Add data to the queue
+                    except IOError as e:
+                        print("Input overflowed:", e)
+                        continue
+
+            finally:
+                if self.stream is not None:
+                    self.stream.stop_stream()
+                    self.stream.close()                   
+                    self.save_wave()
+
+        self.record_thread = threading.Thread(target=record)
+        self.record_thread.start()
+
+        # Start audio processing in another thread
+        self.is_processing = True
+        self.process_thread = threading.Thread(target=self.process_audio)
+        self.process_thread.start()
 
     def stop_recording(self):
-        self.is_recording = False
-        if self.stream:
-            self.stream.stop_stream()
-            self.stream.close()
-        self.p.terminate()
+        self.recording = False
+        if self.record_thread is not None:
+            self.record_thread.join()
+        
+         # Stop the processing thread if recording has stopped
+        self.is_processing = False
+        if self.process_thread is not None:
+            self.process_thread.join()
+        
+    def process_audio(self):
+        p = pyaudio.PyAudio()
 
-        # Save the recorded frames to a .wav file
-        self.save_recording()
+        # Open wave file for output
+        with wave.open(self.output_audio_path, 'wb') as wf:
+            wf.setnchannels(self.channels)
+            wf.setsampwidth(p.get_sample_size(self.format))
+            wf.setframerate(self.rate)
 
-    def save_recording(self):
-        # Concatenate frames into a single bytes object
-        audio_data = np.frombuffer(b''.join(self.frames), dtype=np.int16)
-        
-        # Apply high-pass filter
-        filtered_audio_data = self.high_pass_filter(audio_data)
+            while self.is_processing or not self.frames.empty():
+                if not self.frames.empty():
+                    audio_chunk = self.frames.get()
 
-        # Save filtered audio to a .wav file
-        wf = wave.open(OUTPUT_FILE, 'wb')
-        wf.setnchannels(CHANNELS)
-        wf.setsampwidth(self.p.get_sample_size(FORMAT))
-        wf.setframerate(RATE)
-        
-        # Convert the filtered data back to bytes and write to file
-        wf.writeframes(filtered_audio_data.astype(np.int16).tobytes())
-        wf.close()
-        print("Recording saved as", OUTPUT_FILE)
-        
-    def high_pass_filter(self, data, cutoff=50, fs=44100, order=5):
-        nyquist = 0.5 * fs
-        normal_cutoff = cutoff / nyquist
-        b, a = scipy.signal.butter(order, normal_cutoff, btype='high', analog=False)
-        return scipy.signal.filtfilt(b, a, data)
-        
+                    # Process the audio chunk with SoX (e.g., reducing gain)
+                    process = subprocess.Popen(
+                        ["sox", "-t", "raw", "-b", "16", "-e", "signed-integer", "-r", str(self.rate), "-c", str(self.channels), "-",
+                         "-t", "raw", "-", "gain", "-3"],  # Example effect: reduce gain by 3 dB
+                        stdin=subprocess.PIPE, stdout=subprocess.PIPE
+                    )
+
+                    processed_audio, _ = process.communicate(audio_chunk)
+
+                    # Write the processed audio to the wave file
+                    wf.writeframes(processed_audio)
+
+        print(f"[Audio] Audio saved to {self.output_audio_path}")
+
+    def save_wave(self):        
+        with wave.open(self.output_audio_path, 'wb') as wf:
+            wf.setnchannels(self.channels)
+            wf.setsampwidth(self.audio.get_sample_size(self.format))
+            wf.setframerate(self.rate)
+            # Retrieve all data from the queue and save it
+            while not self.frames.empty():
+                wf.writeframes(self.frames.get())
+
+        print(f"[Audio Record Service]:[Saved Audio Record] ", os.path.basename(self.output_audio_path))
+
 
 class RecorderApp:
     def __init__(self, root):
