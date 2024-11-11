@@ -9,7 +9,7 @@ import numpy as np
 CHUNK = 1024  # Frames per buffer
 FORMAT = pyaudio.paInt16  # Audio format
 CHANNELS = 1  # Mono audio
-RATE = 44100  # Sample rate (Hz)
+RATE = 16000  # Sample rate (Hz)
 OUTPUT_FILE = "output.wav"  # Output file name
 
 class AudioRecorder:
