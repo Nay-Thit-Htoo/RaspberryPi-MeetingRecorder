@@ -169,7 +169,6 @@ class MeetingRecord(tk.Frame):
         print(f'[Meeting Record]:[Vote Result File Path] {vote_result_file_path}')
         vote_result_file_upload_thread = threading.Thread(target=file_upload_service.file_upload_to_server, args=(vote_result_file_path,current_logged_user))
         vote_result_file_upload_thread.start() 
-        vote_result_file_path.join()   
 
     # Show Client Meeting Vote Btn
     def show_client_meeting_vote_btn(self):         
