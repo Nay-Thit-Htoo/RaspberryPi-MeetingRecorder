@@ -85,11 +85,11 @@ class MeetingRecord(tk.Frame):
         self.stopBtn.pack(side=tk.LEFT,padx=5, pady=5)    
         self.stopBtn.config(state='disabled') 
        
-        self.client_like_btn=tk.Button(record_frame,text="Like",bg="#525CEB", fg="white",width=15,height=2,font=button_font,command=self.give_meeting_vote_like)
+        self.client_like_btn=tk.Button(record_frame,text="Agree",bg="#525CEB", fg="white",width=15,height=2,font=button_font,command=self.give_meeting_vote_like)
         self.client_like_btn.pack(side=tk.LEFT,padx=5, pady=5)
         self.client_like_btn.pack_forget()
 
-        self.client_unlike_btn=tk.Button(record_frame,text="Unlike",bg="#1AACAC", fg="white",width=15,height=2,font=button_font,command=self.give_meeting_vote_unlike)
+        self.client_unlike_btn=tk.Button(record_frame,text="Disagree",bg="#1AACAC", fg="white",width=15,height=2,font=button_font,command=self.give_meeting_vote_unlike)
         self.client_unlike_btn.pack(side=tk.LEFT,padx=5, pady=5)    
         self.client_unlike_btn.pack_forget()
         
