@@ -4,20 +4,23 @@ import tkinter as tk
 from tkinter import messagebox
 from tkinter import filedialog
 import tkinter.font as tkFont
-from Settings import server_service
+import server_service
+from datetime import datetime
 
 class ResetServerConfiguration:
     def __init__(self, parent_app):  
         self.parent_app=parent_app     
 
         self.selected_audio_file_path = tk.StringVar()
+        self.os_user_name=tk.StringVar(value=self.get_full_username())
+        self.share_folder_name=""
 
-        title_font=tkFont.Font(family="Helvetica", size=13, weight="bold")
-        label_font=tkFont.Font(family="Helvetica", size=10)  
-        label_sm_font=tkFont.Font(family="Helvetica", size=9)   
+        title_font=tkFont.Font(family="Helvetica", size=14, weight="bold")
+        label_font=tkFont.Font(family="Helvetica", size=11) 
+        button_font=tkFont.Font(family="Helvetica", size=12)            
       
-        width=400
-        height=200 
+        width=420
+        height=300 
         screen_width = self.parent_app.winfo_screenwidth()
         screen_height = self.parent_app.winfo_screenheight()
 
@@ -48,20 +51,41 @@ class ResetServerConfiguration:
         self.portnumber_entry = tk.Entry(frame,font=label_font,validate='key',width=30,validatecommand=validate_keypress)
         self.portnumber_entry.grid(row=1,column=1,padx=5, pady=5,columnspan=2)
 
+         # Server User Name 
+        username_label = tk.Label(frame, text="User Name",font=label_font)
+        username_label.grid(row=2,column=0,padx=5, pady=5)
+        self.username_entry = tk.Entry(frame,font=label_font,width=30,textvariable=self.os_user_name)
+        self.username_entry.grid(row=2,column=1,padx=5, pady=5,columnspan=2)
+        self.username_entry.config(state='readonly')
+
+        # Server Password
+        password_label = tk.Label(frame, text="Password",font=label_font)
+        password_label.grid(row=3,column=0,padx=5, pady=5)
+        self.password_entry = tk.Entry(frame,font=label_font,width=30)
+        self.password_entry.grid(row=3,column=1,padx=5, pady=5,columnspan=2)
+
         # Audio Store File Path label and entry
         audio_studio_file_path_label = tk.Label(frame, text="Audio Store File Path",font=label_font)
-        audio_studio_file_path_label.grid(row=2,column=0,padx=5, pady=5)
+        audio_studio_file_path_label.grid(row=4,column=0,padx=5, pady=5)
         self.audio_studio_file_path_entry = tk.Entry(frame,font=label_font,textvariable=self.selected_audio_file_path)
-        self.audio_studio_file_path_entry.grid(row=2,column=1,padx=5, pady=5)
-        self.audio_studio_file_path_entry.config(state='readonly')
-    
+        self.audio_studio_file_path_entry.grid(row=4,column=1,padx=5, pady=5)
+        self.audio_studio_file_path_entry.config(state='readonly')   
+        
         # File Choose
-        file_choose_button =tk.Button(frame,text="Choose",bg="#0E46A3", fg="white",width=6,height=1,font=label_font,command=self.file_choose_btn_click)
-        file_choose_button.grid(row=2,column=2,padx=5, pady=5)   
-
-        # Login button
-        save_button =tk.Button(frame,text="Save",bg="#121212", fg="white",width=15,height=1,font=label_font,command=self.save_server_configuration)
-        save_button.grid(row=3,column=0,pady=15,columnspan=3)       
+        file_choose_button =tk.Button(frame,text="Choose",bg="#0E46A3", fg="white",width=6,height=1,font=button_font,command=self.file_choose_btn_click)
+        file_choose_button.grid(row=4,column=2,padx=5, pady=5)   
+       
+        # Save button
+        save_button =tk.Button(frame,text="Save",bg="#121212", fg="white",width=15,height=1,font=button_font,command=self.save_server_configuration)
+        save_button.grid(row=5,column=0,pady=15,columnspan=3)  
+            
+    def get_full_username(self):
+        try:
+            org_full_username = rf'{subprocess.check_output("whoami", shell=True, text=True).strip()}'
+            full_username=org_full_username.replace("\\","\\\\")
+            return full_username
+        except subprocess.CalledProcessError:
+            return None
 
     def validate_number_input(self,char):
         # Allow only digits
@@ -77,20 +101,26 @@ class ResetServerConfiguration:
             command = f'net share {share_name}="{folder_path}" /grant:Everyone,full'        
             try:
                 # Run the net share command using subprocess
-                result = subprocess.run(command, shell=True, capture_output=True, text=True)
+                result = subprocess.run(command, shell=True, capture_output=True, text=True)                
                 
-                print(f"[Reset Server Configuration] Result : {result}")               
+                self.write_logtext(f"[Reset Server Configuration] [Result] : {result}")
+                print(f"[Reset Server Configuration] [Result] : {result}")               
 
                 # Check the result of the command
                 if result.returncode == 0 or result.returncode == 2:
+                    self.write_logtext(f"[Reset Server Configuration] Share Name : {share_name}")
                     print(f"[Reset Server Configuration] Share Name : {share_name}")
-                    print(f'[Reset Server Configuration] Successfully shared {folder_path} as {share_name}')
-                    self.selected_audio_file_path.set(f'\\\\{os.environ['COMPUTERNAME']}\\{share_name}') 
+                    self.write_logtext(f"[Reset Server Configuration] : Successfully shared {folder_path} as {share_name}")
+                    print(f'[Reset Server Configuration] : Successfully shared {folder_path} as {share_name}')                    
+                    self.selected_audio_file_path.set(f"\\\\{os.environ['COMPUTERNAME']}\\{share_name}")
+                    self.share_folder_name=share_name 
                 else:
-                    print(f'[Reset Server Configuration] Error: {result.stderr}')
+                    self.write_logtext(f"[Reset Server Configuration] [Error] : {result.stderr}\n")
+                    print(f'[Reset Server Configuration] [Error] : {result.stderr}')
                     self.selected_audio_file_path.set("") 
-            except Exception as e:
-                print(f"[Reset Server Configuration] An error occurred: {e}")
+            except Exception as e:                
+                self.write_logtext(f"[Reset Server Configuration] [An error occurred] : {e}")
+                print(f"[Reset Server Configuration] [File Choose Error] : {e}")
                 self.selected_audio_file_path.set("")
             
     def save_server_configuration(self):
@@ -112,21 +142,40 @@ class ResetServerConfiguration:
             self.dialog.attributes('-topmost', False)
             messagebox.showerror("File Permission",f"{audio_record_file_path} don't have Write Permission!")
             self.dialog.attributes('-topmost', True)  
-            return self.audio_studio_file_path_entry.focus()                
+            return self.audio_studio_file_path_entry.focus()    
+
+        # Server user name entry
+        server_user_name = self.username_entry.get()
+        if(not server_user_name):
+            return self.username_entry.focus()                 
+
+        # Server user name entry
+        server_user_password = self.password_entry.get()
+        if(not server_user_password):
+            return self.password_entry.focus()  
 
         server_service.update_server_info({
-            "port_number": int(port_number),
-            "upload_file_path": audio_record_file_path
+            "server_port_number": int(port_number),
+            "server_share_folder_path":audio_record_file_path,
+            "server_share_folder_name": self.share_folder_name,
+            "server_user_name":server_user_name,
+            "server_password":server_user_password
         })         
         # Change Server Page port Number and Audio Store File Path
         self.parent_app.audio_store_file_txt.config(text=audio_record_file_path)
         self.parent_app.server_port_number_txt.config(text=port_number)
-
+        self.parent_app.server_user_name_txt.config(text=server_user_name)
+        self.parent_app.server_user_password_txt.config(text=server_user_password)
         
         self.dialog.destroy()
         self.dialog.update()
     
-    def check_world_writable(self,file_path):       
+    def write_logtext(self,log_text):
+          logDate=f"{datetime.now().strftime('%d-%m-%Y %H:%M:%S')}"
+          self.parent_app.logs_txt.insert(tk.END,f"[{logDate}]{log_text}\n")
+  
+    def check_world_writable(self,file_path):      
+        self.write_logtext(f"[Reset Server Configuration] [Check Folder Writeable]: {file_path}") 
         print(f"[Reset Server Configuration] [Check Folder Writeable]: {file_path}")
         test_file = os.path.join(file_path, "test_write.txt")
         try:
@@ -135,8 +184,10 @@ class ResetServerConfiguration:
                 file.write("This is a test to check if the folder is writable.")
              # Optionally, clean up by removing the test file
             os.remove(test_file)
+            self.write_logtext(f"[Reset Server Configuration] [Check Folder Writeable]: {file_path} can write!")
             print(f"[Reset Server Configuration] [Check Folder Writeable]: {file_path} can write!")
             return True
         except Exception as e:
+           self.write_logtext(f"[Reset Server Configuration] [Check Folder Writeable]: {e}")
            print(f"[Reset Server Configuration] [Check Folder Writeable]: {e}")
            return False

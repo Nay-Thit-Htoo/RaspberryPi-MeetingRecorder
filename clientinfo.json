@@ -1,7 +1,11 @@
 {
     "server_ip": "192.168.43.157",
     "server_port": "8090",
-    "upload_file_path": "\\\\NAYTHITHTOO\\TestNTHShare",
-    "usercode": "NTH",
-    "usertype": "Client"
+    "server_share_folder_name": "NTHShare",
+    "server_user_name": "abank\\\\naythithtoo",
+    "server_password": "Galanthus123!@#",
+    "background_image": "Assets/background.jpg",
+    "usercode": "CH",
+    "usertype": "chairman",
+    "is_free_discuss": "false"
 }
