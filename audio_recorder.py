@@ -76,12 +76,8 @@ class AudioRecorder:
     def stop_recording(self):
         self.recording = False
         if self.record_thread is not None:
-            self.record_thread.join()
-        
-         # Stop the processing thread if recording has stopped
-        self.is_processing = False
-        if self.process_thread is not None:
-            self.process_thread.join()
+            self.record_thread.join()       
+       
     
     def save_wave(self):
         self.create_folder_record_user()
