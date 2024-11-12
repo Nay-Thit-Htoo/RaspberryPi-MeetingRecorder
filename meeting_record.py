@@ -145,10 +145,11 @@ class MeetingRecord(tk.Frame):
             self.start_client(meeting_vote_obj)
 
     #Hide Meeting Vote Frame
-    def hide_meeting_vote_info(self): 
-        self.meeting_title_label.config(text="Meeting Recording")
+    def hide_meeting_vote_info(self):         
         for widget in self.meeting_vote_result_frame.winfo_children():
           widget.pack_forget() 
+        self.meeting_title_label.pack(padx=5, pady=(10,10))
+        self.meeting_title_label.config(text="Meeting Recording")
 
     # Meeting Start Vote Btn Click
     def meeting_start_vote_btn_click(self): 
