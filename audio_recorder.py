@@ -23,10 +23,8 @@ class AudioRecorder:
         self.stream = None
         self.frames = queue.Queue()  # Use a queue to buffer audio data
         self.recording = False
-        self.record_thread = None        
-        self.process_thread = None
-        self.is_processing = False
-        
+        self.record_thread = None 
+        self.sox_process=None        
 
     def start_recording(self):
         if self.recording:
@@ -41,14 +39,21 @@ class AudioRecorder:
                                               channels=self.channels,
                                               rate=self.rate,
                                               input=True,
+                                              output=False,
                                               frames_per_buffer=self.chunk,
                                               input_device_index=1)
+                
+                self.sox_process = subprocess.Popen(
+                    ["sox", "-t", "raw", "-b", "16", "-e", "signed-integer", "-r", str(self.rate), "-c", str(self.channels), "-", "-d"],
+                    stdin=subprocess.PIPE
+                )
               
                 print("[Audio Record Service]:[Start Audio Record]")
 
                 while self.recording:
                     try:
                         data = self.stream.read(self.chunk, exception_on_overflow=False)                       
+                        self.sox_process.stdin.write(data)
                         if self.record_user_obj['is_free_discuss'] == "false":
                             self.frames.put(data)  # Add data to the queue
                     except IOError as e:
@@ -59,16 +64,14 @@ class AudioRecorder:
                 if self.stream is not None:
                     self.stream.stop_stream()
                     self.stream.close()   
+                    self.sox_process.stdin.close()
+                    self.sox_process.wait()
                 if self.record_user_obj['is_free_discuss'] == "false":
                     self.save_wave()
 
         self.record_thread = threading.Thread(target=record)
         self.record_thread.start()
-
-        # Start audio processing in another thread
-        self.is_processing = True
-        self.process_thread = threading.Thread(target=self.process_audio)
-        self.process_thread.start()
+    
 
     def stop_recording(self):
         self.recording = False
@@ -79,34 +82,7 @@ class AudioRecorder:
         self.is_processing = False
         if self.process_thread is not None:
             self.process_thread.join()
-        
-    def process_audio(self):
-        p = pyaudio.PyAudio()
-
-        # Open wave file for output
-        with wave.open(self.output_audio_path, 'wb') as wf:
-            wf.setnchannels(self.channels)
-            wf.setsampwidth(p.get_sample_size(self.format))
-            wf.setframerate(self.rate)
-
-            while self.is_processing or not self.frames.empty():
-                if not self.frames.empty():
-                    audio_chunk = self.frames.get()
-
-                    # Process the audio chunk with SoX (e.g., reducing gain)
-                    process = subprocess.Popen(
-                        ["sox", "-t", "raw", "-b", "16", "-e", "signed-integer", "-r", str(self.rate), "-c", str(self.channels), "-",
-                         "-t", "raw", "-", "gain", "-3"],  # Example effect: reduce gain by 3 dB
-                        stdin=subprocess.PIPE, stdout=subprocess.PIPE
-                    )
-
-                    processed_audio, _ = process.communicate(audio_chunk)
-
-                    # Write the processed audio to the wave file
-                    wf.writeframes(processed_audio)
-
-        print(f"[Audio] Audio saved to {self.output_audio_path}")
-
+    
     def save_wave(self):
         self.create_folder_record_user()
         with wave.open(self.output_audio_path, 'wb') as wf:
