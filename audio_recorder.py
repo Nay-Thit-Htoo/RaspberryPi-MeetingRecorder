@@ -1,65 +1,103 @@
 from datetime import datetime
 import os
+import subprocess
 import threading
 import wave
+import queue
 import pyaudio
-
 import file_upload_service
 
-
 class AudioRecorder:
-    def __init__(self,record_user_obj):
-        self.record_user_obj=record_user_obj
-        self.output_audio_path = os.path.join(record_user_obj['usercode'],f"{record_user_obj['usercode']}_{datetime.now().strftime('%d_%m_%Y_%H_%M_%S')}.wav")
-        self.channels = 2
-        self.rate = 44100
-        self.chunk = 1024
+    def __init__(self, record_user_obj):
+        self.record_user_obj = record_user_obj
+        self.output_audio_path = os.path.join(
+            record_user_obj['usercode'],
+            f"{record_user_obj['usercode']}_{datetime.now().strftime('%d_%m_%Y_%H_%M_%S')}.wav"
+        )
+        self.channels = 1
+        self.rate = 48000  # Lower sample rate for Raspberry Pi
+        self.chunk = 1024  # Reduced chunk size for quicker processing
         self.format = pyaudio.paInt16
-        
+
         self.audio = pyaudio.PyAudio()
         self.stream = None
-        self.frames = []
+        self.frames = queue.Queue()  # Use a queue to buffer audio data
         self.recording = False
-    
+        self.record_thread = None 
+        self.sox_process=None        
+
     def start_recording(self):
         if self.recording:
+            print("Recording is already in progress.")
             return
-        
+
         self.recording = True
-        self.frames = []
-        
+
         def record():
-            self.stream = self.audio.open(format=self.format,
-                                          channels=self.channels,
-                                          rate=self.rate,
-                                          input=True,
-                                          frames_per_buffer=self.chunk)
-            print(f"[Audio Record Service]:[Start Audio Record]")
-            while self.recording:
-                data = self.stream.read(self.chunk)
-                self.frames.append(data)
-            
-            self.stream.stop_stream()
-            self.stream.close()
-            self.save_wave()
-        
+            try:
+                self.stream = self.audio.open(format=self.format,
+                                              channels=self.channels,
+                                              rate=self.rate,
+                                              input=True,
+                                              output=False,
+                                              frames_per_buffer=self.chunk,
+                                              input_device_index=1)
+                
+                self.sox_process = subprocess.Popen(
+                    ["sox", "-t", "raw", "-b", "16", "-e", "signed-integer", "-r", str(self.rate), "-c", str(self.channels), "-", "-d"],
+                    stdin=subprocess.PIPE
+                )
+              
+                print("[Audio Record Service]:[Start Audio Record]")
+
+                while self.recording:
+                    try:
+                        data = self.stream.read(self.chunk, exception_on_overflow=False)                       
+                        self.sox_process.stdin.write(data)
+                        if self.record_user_obj['is_free_discuss'] == "false":
+                            self.frames.put(data)  # Add data to the queue
+                    except IOError as e:
+                        print("Input overflowed:", e)
+                        continue
+
+            finally:
+                if self.stream is not None:
+                    self.stream.stop_stream()
+                    self.stream.close()   
+                    self.sox_process.stdin.close()
+                    self.sox_process.wait()
+                if self.record_user_obj['is_free_discuss'] == "false":
+                    self.save_wave()
+
         self.record_thread = threading.Thread(target=record)
         self.record_thread.start()
     
+
     def stop_recording(self):
         self.recording = False
-        self.record_thread.join()  # Wait for the recording thread to finish
+        if self.record_thread is not None:
+            self.record_thread.join()       
+       
     
-    def save_wave(self): 
+    def save_wave(self):
+        self.create_folder_record_user()
         with wave.open(self.output_audio_path, 'wb') as wf:
             wf.setnchannels(self.channels)
             wf.setsampwidth(self.audio.get_sample_size(self.format))
             wf.setframerate(self.rate)
-            wf.writeframes(b''.join(self.frames))
-        
+            # Retrieve all data from the queue and save it
+            while not self.frames.empty():
+                wf.writeframes(self.frames.get())
+
         print(f"[Audio Record Service]:[Saved Audio Record] ", os.path.basename(self.output_audio_path))
-    
+
+    def create_folder_record_user(self):
+        user_code = self.record_user_obj['usercode']
+        os.makedirs(user_code, exist_ok=True)
+
     def terminate(self):
-        self.audio.terminate()   
-        file_upload_service.file_upload_to_server(self.output_audio_path,self.record_user_obj)   
-        file_upload_service.delete_file_after_upload(self.output_audio_path)
+        self.audio.terminate()
+        if os.path.exists(self.output_audio_path) and self.record_user_obj['is_free_discuss'] == "false":
+            file_upload_service.file_upload_to_server(self.record_user_obj['usercode'], self.record_user_obj)
+            file_upload_service.delete_file_after_upload(self.output_audio_path)
+            file_upload_service.delete_file_after_upload(self.record_user_obj['usercode'])
