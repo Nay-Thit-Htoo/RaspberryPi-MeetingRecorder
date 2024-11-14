@@ -162,7 +162,9 @@ class MeetingRecord(tk.Frame):
                 elif(action_type==ActionType.START_FREE_DISCUSS.name):          
                     clientservice.update_free_discuss_status(True)
                 elif(action_type==ActionType.STOP_FREE_DISCUSS.name):          
-                    clientservice.update_free_discuss_status(False)                
+                    clientservice.update_free_discuss_status(False)    
+                    self.clear_meeting_status_enable_buttons()                  
+                    self.stop_audio_record()              
             except Exception as err:
                 print(f"[Meeting Record]:[Exception Error] : {err}")                
                 break
