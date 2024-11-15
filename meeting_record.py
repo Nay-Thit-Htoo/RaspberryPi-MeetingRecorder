@@ -332,7 +332,9 @@ class MeetingRecord(tk.Frame):
                 elif(action_type==ActionType.START_FREE_DISCUSS.name):          
                     clientservice.update_free_discuss_status(True)
                 elif(action_type==ActionType.STOP_FREE_DISCUSS.name):          
-                    clientservice.update_free_discuss_status(False)
+                    clientservice.update_free_discuss_status(False)                    
+                    self.clear_meeting_status_enable_buttons()                  
+                    self.stop_audio_record()              
                 elif(action_type==ActionType.START_MEETING_VOTE.name or action_type==ActionType.STOP_MEETING_VOTE.name):          
                     self.update_meeting_vote_info_for_client(response_message)
                 elif(action_type==ActionType.LIKE_MEETING_VOTE.name):          
