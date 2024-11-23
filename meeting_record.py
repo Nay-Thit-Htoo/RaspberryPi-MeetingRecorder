@@ -179,7 +179,7 @@ class MeetingRecord(tk.Frame):
     def upload_meeting_vote_result_to_server(self):
         current_logged_user=self.logged_user_info
         print(f"[Meeting Record]:[Meeting Vote Result File Upload]")
-        current_logged_user['usercode']=f"Meeting_Vote_Result_{datetime.now().strftime('%d_%m_%Y')}"
+        current_logged_user['usercode']=f"Meeting_Vote_Result_{datetime.now().strftime('%d_%m_%Y_%H_%M_%S')}"
         vote_result_file_path="Meeting_Vote_Result"
         print(f'[Meeting Record]:[Vote Result File Path] {vote_result_file_path}')
         vote_result_file_upload_thread = threading.Thread(target=file_upload_service.file_upload_to_server, args=(vote_result_file_path,current_logged_user))
