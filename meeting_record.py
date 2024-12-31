@@ -85,11 +85,15 @@ class MeetingRecord(tk.Frame):
         self.stopBtn.pack(side=tk.LEFT,padx=5, pady=5)    
         self.stopBtn.config(state='disabled') 
        
-        self.client_like_btn=tk.Button(record_frame,text="Agree",bg="#525CEB", fg="white",width=15,height=2,font=button_font,command=self.give_meeting_vote_like)
+        self.like_image = Image.open("Assets/check.png")
+        self.like_photo = ImageTk.PhotoImage(self.like_image)  
+        self.client_like_btn=tk.Button(record_frame,bg="#0D9276", image=self.like_photo,compound="center",width=125,height=45,font=button_font,command=self.give_meeting_vote_like)
         self.client_like_btn.pack(side=tk.LEFT,padx=5, pady=5)
         self.client_like_btn.pack_forget()
 
-        self.client_unlike_btn=tk.Button(record_frame,text="Disagree",bg="#1AACAC", fg="white",width=15,height=2,font=button_font,command=self.give_meeting_vote_unlike)
+        self.unlike_image = Image.open("Assets/close.png")
+        self.unlike_photo = ImageTk.PhotoImage(self.unlike_image)  
+        self.client_unlike_btn=tk.Button(record_frame,bg="#FF6868", image=self.unlike_photo,compound="center",width=125,height=45,font=button_font,command=self.give_meeting_vote_unlike)
         self.client_unlike_btn.pack(side=tk.LEFT,padx=5, pady=5)    
         self.client_unlike_btn.pack_forget()
         
@@ -231,16 +235,17 @@ class MeetingRecord(tk.Frame):
                         "actiontype":ActionType.START_RECORD.name                      
                         }        
         # Get Meeting Status & Confirm Dialog for Discussion
-        meeting_status=self.meeting_status_label.cget('text')
-        if(meeting_status is not None and meeting_status !=""):
-            if(self.logged_user_info['usertype'].lower()==UserType.CLIENT.value):                
-                discuss_result = messagebox.askyesno("Request for Discussion", f'Do you want to join Discussion?')
-                if discuss_result: 
-                    self.startBtn.config(text="Please Wait...")
-                    meeting_record_obj["actiontype"]=ActionType.DISCUSS_REQUEST.name 
-                else:
-                    return               
+        # meeting_status=self.meeting_status_label.cget('text')
+        # if(meeting_status is not None and meeting_status !=""):
+        #     if(self.logged_user_info['usertype'].lower()==UserType.CLIENT.value):                
+        #         discuss_result = messagebox.askyesno("Request for Discussion", f'Do you want to join Discussion?')
+        #         if discuss_result:                     
+        #             meeting_record_obj["actiontype"]=ActionType.DISCUSS_REQUEST.name 
+        #         else:
+        #             return     
+                         
         print(f"[Meeting Record][Start Record] : {meeting_record_obj}")
+        self.startBtn.config(text="Please Wait...") 
         self.start_client(meeting_record_obj)
     
     #start meeting
