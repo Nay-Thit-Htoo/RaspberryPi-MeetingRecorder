@@ -11,6 +11,9 @@ class Main(tk.Tk):
     def __init__(self,):
         super().__init__()
         self.title("Recorder Project")
+        # for full screen
+        self.state("zoomed")  
+
         # Font Style for Label
         self.label_font=tkFont.Font(family="Helvetica", size=12)
         self.button_font=tkFont.Font(family="Helvetica", size=12)
@@ -23,20 +26,7 @@ class Main(tk.Tk):
         self.change_background_button =tk.Button(self,text="Change Background",bg="#006989", fg="white",width=16,height=1,font=self.button_font,command=self.change_background_image)  
         self.start_meeting_button =tk.Button(self,text="Start Meeting",bg="#2185D5", fg="white",width=14,height=1,font=self.button_font,command=self.start_meeting_button_click)  
         self.stop_meeting_button =tk.Button(self,text="Stop Meeting",bg="#50717B", fg="white",width=14,height=1,font=self.button_font,command=self.stop_meeting_button_click)  
-
-        width=600
-        height=300        
-        # Get the screen width and height        
-        screen_width = self.winfo_screenwidth()
-        screen_height = self.winfo_screenheight()
-
-         # Calculate the position to center the window
-        x = (screen_width // 2) - (width // 2)
-        y = (screen_height // 2) - (height // 2)
-
-        # Set the geometry of the window
-        self.geometry(f'{width}x{height}+{x}+{y}')   
-
+        
         self.original_image = Image.open(self.logged_user_info["background_image"])
 
         # Create a label to display the background image

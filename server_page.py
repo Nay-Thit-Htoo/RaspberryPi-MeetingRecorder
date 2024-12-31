@@ -17,6 +17,8 @@ from datetime import datetime
 class ServerPage(tk.Tk):
     def __init__(self): 
         super().__init__()
+        # for full screen
+        self.state("zoomed")  
         self.server_setting_info=server_service.read_setting_data()  
         self.server_socket=None
 
@@ -29,19 +31,9 @@ class ServerPage(tk.Tk):
         self.image = Image.open("Assets/icon.png")
         self.icon = ImageTk.PhotoImage(self.image)    
         self.iconphoto(True,self.icon)
-
-        width=600
-        height=400        
-        # Get the screen width and height        
-        screen_width = self.winfo_screenwidth()
-        screen_height = self.winfo_screenheight()
-
-         # Calculate the position to center the window
-        x = (screen_width // 2) - (width // 2)
-        y = (screen_height // 2) - (height // 2)
-
-        # Set the geometry of the window
-        self.geometry(f'{width}x{height}+{x}+{y}')     
+         
+        # # Get the screen width and height        
+        screen_width = self.winfo_screenwidth()          
        
         # Load the image
         self.original_image = Image.open(self.server_setting_info['background_image'])
