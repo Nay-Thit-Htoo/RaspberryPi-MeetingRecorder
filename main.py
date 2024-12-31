@@ -11,13 +11,17 @@ class Main(tk.Tk):
     def __init__(self,):
         super().__init__()
         self.title("Recorder Project")
-        # for full screen
-        self.state("zoomed")  
-
+     
         # Font Style for Label
         self.label_font=tkFont.Font(family="Helvetica", size=12)
         self.button_font=tkFont.Font(family="Helvetica", size=12)
         self.logged_user_info=clientservice.read_clientInfo()   
+
+        # Get the screen width and height        
+        screen_width = self.winfo_screenwidth()
+        screen_height=self.winfo_screenheight()
+
+        self.geometry(f"{screen_width}x{screen_height}+0+0")  
 
         self.image = Image.open("Assets/icon.png")
         self.icon = ImageTk.PhotoImage(self.image)    
