@@ -97,11 +97,15 @@ class Main(tk.Tk):
            self.frame.start_meeting()
 
     def stop_meeting_button_click(self):   
+        #hide recording user list frame & remove all recording users
+        self.recording_frame_hide_remove_children()
         self.stop_meeting_button.place_forget() 
         self.start_meeting_button.place(relx=1.0, rely=0.0, anchor='ne', x=-10, y=10)
         self.start_meeting_button.tkraise()  
         if hasattr(self.frame, "stop_meeting"):          
            self.frame.stop_meeting()
+        self.remove_recording_user()
+
     
     def hide_change_background_btn(self):
          print(f"Reach Change Background Btn Hide")
@@ -176,6 +180,11 @@ class Main(tk.Tk):
             widget.destroy()
         new_clients = list(filter(lambda p: p!=clientObj, clients))
         self.show_recording_user_frame(new_clients)
+
+    def recording_frame_hide_remove_children(self):
+        self.record_user_main_frame.place_forget()
+        for widget in self.recording_user_frame.winfo_children():
+            widget.destroy()
 
 if __name__ == "__main__":
     app = Main()

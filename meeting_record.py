@@ -397,7 +397,7 @@ class MeetingRecord(tk.Frame):
                 if(self.logged_user_info['usercode']==response['usercode']):
                     self.startBtn.config(state='disabled') 
                     self.startBtn.config(text="Discussing")
-                    self.start_audio_record()  
+                    #self.start_audio_record()  
 
                 if(self.logged_user_info['usertype']==UserType.CHAIRMAN.value):
                      self.controller.show_recording_user_frame(response['recording_clients'])
