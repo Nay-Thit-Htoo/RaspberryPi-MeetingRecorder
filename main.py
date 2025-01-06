@@ -161,13 +161,15 @@ class Main(tk.Tk):
             self.blc_user_frame=tk.Frame(self.recording_user_frame)
             self.blc_user_frame.pack(pady=(5,10))
 
-            self.recorder_name_label = tk.Label(self.blc_user_frame, text=client.usercode,width=14)
+            self.recorder_name_label = tk.Label(self.blc_user_frame, text=client["usercode"],width=14)
             self.recorder_name_label.grid(row=0, column=0, padx=10)
 
-            self.remove_btn = tk.Button(self.blc_user_frame, text=f"Remove",bg="#E90074",fg="#FFFFFF",command=self.remove_recording_user(clients,client))
+            
+            self.remove_btn = tk.Button(self.blc_user_frame, text=f"Remove",bg="#E90074",fg="#FFFFFF",command=lambda: self.remove_recording_user(clients,client))
             self.remove_btn.grid(row=0, column=1,padx=10)
   
     def show_recording_user_frame(self,clients):
+        print(f"[Meeting Record][Recording Users] : {clients[0]}")  
         self.record_user_main_frame.place(relx=1.0, rely=0.5, anchor="e",relheight=0.7,x=-self.right_margin)              
         self.recorder_header_label = tk.Label(self.recording_user_frame, text=f"Clients",width=20,bg="#229799",fg='#FFFFFF',font=("Arial", 14),height=2)
         self.recorder_header_label.pack(padx=(2,0)) 
@@ -175,11 +177,14 @@ class Main(tk.Tk):
 
     def remove_recording_user(self,clients,clientObj):
         if hasattr(self.frame, "remove_recording_client"):           
-           self.frame.remove_recording_client()
+           self.frame.remove_recording_client(clientObj)
         for widget in self.recording_user_frame.winfo_children():
             widget.destroy()
         new_clients = list(filter(lambda p: p!=clientObj, clients))
-        self.show_recording_user_frame(new_clients)
+        if len(new_clients)==0:
+          self.recording_frame_hide_remove_children()
+        else:
+          self.show_recording_user_frame(new_clients)
 
     def recording_frame_hide_remove_children(self):
         self.record_user_main_frame.place_forget()

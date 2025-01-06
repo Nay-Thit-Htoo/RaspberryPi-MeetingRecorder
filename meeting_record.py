@@ -163,7 +163,6 @@ class MeetingRecord(tk.Frame):
       else:
          self.startVoteBtn.config(text="Meeting Vote")
          self.stop_meeting_vote_btn_click()
-         
    
     # Update Meeting Vote Title for Client
     def update_meeting_vote_info_for_client(self,meeting_vote_obj):
@@ -178,7 +177,6 @@ class MeetingRecord(tk.Frame):
                 self.client_like_btn.pack_forget()
                 self.client_unlike_btn.pack_forget()
              
-
     # Upload Meeting Vote Result to File Server
     def upload_meeting_vote_result_to_server(self):
         current_logged_user=self.logged_user_info
@@ -188,7 +186,6 @@ class MeetingRecord(tk.Frame):
         print(f'[Meeting Record]:[Vote Result File Path] {vote_result_file_path}')
         vote_result_file_upload_thread = threading.Thread(target=file_upload_service.file_upload_to_server, args=(vote_result_file_path,current_logged_user))
         vote_result_file_upload_thread.start() 
-
                
     # Update Meeting Vote Count
     def update_meeting_voute_count(self):
@@ -315,7 +312,8 @@ class MeetingRecord(tk.Frame):
                    self.change_meeting_status_after_startrecord(response_message)                 
                 elif(action_type==ActionType.OPEN_RECORD.name):                   
                     self.open_meeting_record_page(response_message)
-                elif(action_type==ActionType.STOP_RECORD.name or action_type==ActionType.REMOVE_CLIENT.name):                  
+                elif(action_type==ActionType.STOP_RECORD.name or action_type==ActionType.REMOVE_CLIENT.name):       
+                  self.change_meeting_status_after_stoprecord(response_message)
                   if(self.logged_user_info['usercode']==response_message['usercode']):
                     self.clear_meeting_status_enable_buttons()
                     self.stop_audio_record()                                   
@@ -380,6 +378,7 @@ class MeetingRecord(tk.Frame):
             print(f"[Meeting Record][Mute All] : {meeting_record_obj}")
             self.start_client(meeting_record_obj)
 
+
     # Change Meeting Status and Disable or Enable Start and Stop Buttons 
     def change_meeting_status_after_startrecord(self,response):
        print(f"[Meeting Recording][Meeting Status]: {response}")
@@ -401,7 +400,29 @@ class MeetingRecord(tk.Frame):
 
                 if(self.logged_user_info['usertype']==UserType.CHAIRMAN.value):
                      self.controller.show_recording_user_frame(response['recording_clients'])
-      
+
+    # Change Meeting Status and Disable or Enable Start and Stop Buttons After Stop
+    def change_meeting_status_after_stoprecord(self,response):     
+        user_code=self.logged_user_info['usercode']
+        record_user_lst=response['recording_users'] 
+        if(record_user_lst is not None and (len(record_user_lst)>0)):
+            new_image = Image.open("Assets/recording-mic.png") if (response["usercode"]!=user_code) else Image.open("Assets/mic.png")
+            new_image_tk = ImageTk.PhotoImage(new_image)
+
+            self.image_label.config(image=new_image_tk)
+            self.image_label.image = new_image_tk
+            
+            recording_users=", ".join(record_user_lst)
+            self.meeting_status_label.config(text=f"{recording_users} recording......")
+        else:
+            new_image = Image.open("Assets/mic.png")
+            new_image_tk = ImageTk.PhotoImage(new_image)
+
+            self.image_label.config(image=new_image_tk)
+            self.image_label.image = new_image_tk
+            self.meeting_status_label.config(text="")   
+        
+
     # Audio Record Start
     def start_audio_record(self):
         self.audio_record_service=AudioRecorder(self.logged_user_info)
@@ -436,8 +457,7 @@ class MeetingRecord(tk.Frame):
         self.startBtn.config(text="Discuss") 
 
    # Clean meeting status and enable start & stop buttons
-    def clear_meeting_status_enable_buttons(self):
-        self.change_recording_icon_status_to_original()
+    def clear_meeting_status_enable_buttons(self):       
         self.startBtn.config(state='normal')
         self.stopBtn.config(state='normal')
         
