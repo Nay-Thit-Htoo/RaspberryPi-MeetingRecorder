@@ -142,31 +142,23 @@ class ServerSocket:
        recording_user={"message_code":'success',
                     "is_starting_meeting":server_service.get_meeting_status(),
                     "actiontype":actionType,
-                    "message":""                      
+                    "message":"",
+                    "recording_clients":""                   
                     };     
        current_record_userLst=self.get_current_recording_user_list()
        if(len(current_record_userLst)>0 and current_record_userLst is not None):  
-           recording_user['message']=", ".join(current_record_userLst)             
+           recording_user['message']=", ".join([item['usercode'] for item in current_record_userLst]) 
+           recording_user['recording_clients']=current_record_userLst        
            return recording_user
        return recording_user 
 
     # Get Recording User List
     def get_current_recording_user_list(self):
-        current_record_userLst=server_service.get_current_recording_user() 
-        return [item['usercode'] for item in current_record_userLst]
+        return server_service.get_current_recording_user() 
+        #current_record_userLst=server_service.get_current_recording_user() 
+        #return [item['usercode'] for item in current_record_userLst]
 
-    # # Get current recording user
-    # def get_recording_user(self):
-    #     current_record_user=server_service.get_current_recording_user()
-    #     if(len(current_record_user)>0 and current_record_user is not None):
-    #         current_record_user=current_record_user[0]
-    #         current_record_user['actiontype']=ActionType.OPEN_RECORD.name
-    #         current_record_user['is_starting_meeting']=server_service.get_meeting_status()
-    #         current_record_user['message_code']='success'
-    #         current_record_user['message']=f"{current_record_user['usercode']} is recording...."
-    #         return current_record_user
-    #     return None
-    
+       
     def write_logtext(self,log_panel,log_text):
         logDate=f"{datetime.now().strftime('%d-%m-%Y %H:%M:%S')}"
         log_panel.insert(tk.END,f"[{logDate}]{log_text}\n")

@@ -233,17 +233,8 @@ class MeetingRecord(tk.Frame):
         meeting_record_obj={"usercode":self.logged_user_info['usercode'],
                         "usertype":self.logged_user_info['usertype'],
                         "actiontype":ActionType.START_RECORD.name                      
-                        }        
-        # Get Meeting Status & Confirm Dialog for Discussion
-        # meeting_status=self.meeting_status_label.cget('text')
-        # if(meeting_status is not None and meeting_status !=""):
-        #     if(self.logged_user_info['usertype'].lower()==UserType.CLIENT.value):                
-        #         discuss_result = messagebox.askyesno("Request for Discussion", f'Do you want to join Discussion?')
-        #         if discuss_result:                     
-        #             meeting_record_obj["actiontype"]=ActionType.DISCUSS_REQUEST.name 
-        #         else:
-        #             return     
-                         
+                        }       
+                                 
         print(f"[Meeting Record][Start Record] : {meeting_record_obj}")
         self.startBtn.config(text="Please Wait...") 
         self.start_client(meeting_record_obj)
@@ -324,10 +315,10 @@ class MeetingRecord(tk.Frame):
                    self.change_meeting_status_after_startrecord(response_message)                 
                 elif(action_type==ActionType.OPEN_RECORD.name):                   
                     self.open_meeting_record_page(response_message)
-                elif(action_type==ActionType.STOP_RECORD.name):
-                  self.clear_meeting_status_enable_buttons()
+                elif(action_type==ActionType.STOP_RECORD.name or action_type==ActionType.REMOVE_CLIENT.name):                  
                   if(self.logged_user_info['usercode']==response_message['usercode']):
-                        self.stop_audio_record()                   
+                    self.clear_meeting_status_enable_buttons()
+                    self.stop_audio_record()                                   
                 elif(action_type==ActionType.DISCUSS_REQUEST.name):            
                    self.check_discuss_request_confirmation(response_message)
                 elif(action_type==ActionType.REJECT_DISCUSS.name):            
@@ -407,6 +398,9 @@ class MeetingRecord(tk.Frame):
                     self.startBtn.config(state='disabled') 
                     self.startBtn.config(text="Discussing")
                     self.start_audio_record()  
+
+                if(self.logged_user_info['usertype']==UserType.CHAIRMAN.value):
+                     self.controller.show_recording_user_frame(response['recording_clients'])
       
     # Audio Record Start
     def start_audio_record(self):
@@ -528,3 +522,14 @@ class MeetingRecord(tk.Frame):
         self.controller.change_window_title(self.logged_user_info["usercode"])
         socket_thread = threading.Thread(target=self.start_client,args=(None,), daemon=True)
         socket_thread.start()
+
+    # Remove Recording Client
+    def remove_recording_client(self,client):
+        remove_client_obj={"usercode":client['usercode'],
+                        "usertype":client['usertype'],
+                        "actiontype":ActionType.REMOVE_CLIENT.name                      
+                        }       
+                                    
+        print(f"[Meeting Record][Remove Client] : {remove_client_obj}")        
+        self.start_client(remove_client_obj)
+        

@@ -1,5 +1,6 @@
 import os
 import tkinter as tk
+from tkinter import ttk
 from tkinter import filedialog
 from PIL import Image, ImageTk
 from login import Login 
@@ -35,8 +36,11 @@ class Main(tk.Tk):
 
         # Create a label to display the background image
         self.background_label = tk.Label(self)
-        self.background_label.place(relx=0, rely=0, relwidth=1, relheight=1)            
-    
+        self.background_label.place(relx=0, rely=0, relwidth=1, relheight=1)
+
+        self.recording_user_frame =self.create_recording_user_frame() 
+        
+
         # Create a container for the frames
         self.container = tk.Frame(self)
         self.container.pack(expand=True)        
@@ -116,6 +120,62 @@ class Main(tk.Tk):
           clientservice.update_background_image(file_path)
           self.original_image=Image.open(file_path)      
           self.resize_background()
+
+    def create_recording_user_frame(root):
+        root.right_margin = 40
+        # Create a main frame
+        root.record_user_main_frame =  tk.Frame(root,bg="#424242")
+        root.record_user_main_frame.place(relx=1.0, rely=0.5, anchor="e",relheight=0.7,x=-root.right_margin)
+        root.record_user_main_frame.place_forget()
+
+        # Create a canvas
+        canvas = tk.Canvas(root.record_user_main_frame,width=210,background="#424242")
+        canvas.pack(side="left", fill="both", expand=True)
+
+        # Add a scrollbar to the canvas
+        scrollbar = tk.Scrollbar(root.record_user_main_frame, orient="vertical", command=canvas.yview,background="#424242")
+        scrollbar.pack(side="right", fill="y")
+
+        # Configure the canvas to work with the scrollbar
+        canvas.configure(yscrollcommand=scrollbar.set)
+        canvas.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+
+        # Create a frame inside the canvas
+        scrollable_frame = tk.Frame(canvas)
+
+        # Add the frame to the canvas
+        canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+
+        root.auto_scroll(canvas)
+        return scrollable_frame
+
+    def auto_scroll(self,canvas):
+        canvas.yview_scroll(1, "units")  # Scroll by 1 unit
+
+    def create_recording_users(self,clients):
+        for client in clients:
+            self.blc_user_frame=tk.Frame(self.recording_user_frame)
+            self.blc_user_frame.pack(pady=(5,10))
+
+            self.recorder_name_label = tk.Label(self.blc_user_frame, text=client.usercode,width=14)
+            self.recorder_name_label.grid(row=0, column=0, padx=10)
+
+            self.remove_btn = tk.Button(self.blc_user_frame, text=f"Remove",bg="#E90074",fg="#FFFFFF",command=self.remove_recording_user(clients,client))
+            self.remove_btn.grid(row=0, column=1,padx=10)
+  
+    def show_recording_user_frame(self,clients):
+        self.record_user_main_frame.place(relx=1.0, rely=0.5, anchor="e",relheight=0.7,x=-self.right_margin)              
+        self.recorder_header_label = tk.Label(self.recording_user_frame, text=f"Clients",width=20,bg="#229799",fg='#FFFFFF',font=("Arial", 14),height=2)
+        self.recorder_header_label.pack(padx=(2,0)) 
+        self.create_recording_users(clients)
+
+    def remove_recording_user(self,clients,clientObj):
+        if hasattr(self.frame, "remove_recording_client"):           
+           self.frame.remove_recording_client()
+        for widget in self.recording_user_frame.winfo_children():
+            widget.destroy()
+        new_clients = list(filter(lambda p: p!=clientObj, clients))
+        self.show_recording_user_frame(new_clients)
 
 if __name__ == "__main__":
     app = Main()
