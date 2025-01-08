@@ -415,12 +415,7 @@ class MeetingRecord(tk.Frame):
             recording_users=", ".join(record_user_lst)
             self.meeting_status_label.config(text=f"{recording_users} recording......")
         else:
-            new_image = Image.open("Assets/mic.png")
-            new_image_tk = ImageTk.PhotoImage(new_image)
-
-            self.image_label.config(image=new_image_tk)
-            self.image_label.image = new_image_tk
-            self.meeting_status_label.config(text="")   
+            self.change_recording_icon_status_to_original() 
         
 
     # Audio Record Start

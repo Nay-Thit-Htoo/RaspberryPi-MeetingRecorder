@@ -95,7 +95,7 @@ class ServerSocket:
                         client_messsage_json=self.get_current_recording_users(ActionType.START_RECORD.name)
                         client_messsage_json['usercode']=user_code
                         client_messsage_json['usertype']=user_type
-                    elif(action_type==ActionType.STOP_RECORD.name):
+                    elif(action_type==ActionType.STOP_RECORD.name or action_type==ActionType.REMOVE_CLIENT.name):
                         server_service.update_recording_client_info(client_messsage_json,is_start_recording=False)
                         client_messsage_json["recording_users"]=self.get_current_recording_user_list()
                     elif(action_type==ActionType.MUTE_ALL.name):
