@@ -378,7 +378,6 @@ class MeetingRecord(tk.Frame):
             print(f"[Meeting Record][Mute All] : {meeting_record_obj}")
             self.start_client(meeting_record_obj)
 
-
     # Change Meeting Status and Disable or Enable Start and Stop Buttons 
     def change_meeting_status_after_startrecord(self,response):
        print(f"[Meeting Recording][Meeting Status]: {response}")
@@ -396,7 +395,7 @@ class MeetingRecord(tk.Frame):
                 if(self.logged_user_info['usercode']==response['usercode']):
                     self.startBtn.config(state='disabled') 
                     self.startBtn.config(text="Discussing")
-                    #self.start_audio_record()  
+                    self.start_audio_record()  
 
                 if(self.logged_user_info['usertype']==UserType.CHAIRMAN.value):
                      self.controller.show_recording_user_frame(response['recording_clients'])
@@ -417,7 +416,6 @@ class MeetingRecord(tk.Frame):
         else:
             self.change_recording_icon_status_to_original() 
         
-
     # Audio Record Start
     def start_audio_record(self):
         self.audio_record_service=AudioRecorder(self.logged_user_info)
