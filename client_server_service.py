@@ -1,7 +1,8 @@
 import json
-
+import os
 # Define appsettings.json file path
-file_path = 'clientinfo.json'
+script_dir = os.path.dirname(os.path.abspath(__file__))
+file_path = os.path.join(script_dir, "clientinfo.json")
 
 # Read Client Information
 def read_clientInfo():

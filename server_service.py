@@ -1,10 +1,12 @@
 import json
 from datetime import datetime
+import os
 
 from Enum.usertype import UserType
 
 # Define server_setting.json file path
-file_path = 'server_setting.json'
+script_dir = os.path.dirname(os.path.abspath(__file__))
+file_path = os.path.join(script_dir, "server_setting.json")
 
 # Read App Setting Data
 def read_setting_data():

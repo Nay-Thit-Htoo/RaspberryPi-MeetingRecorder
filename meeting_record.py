@@ -65,7 +65,9 @@ class MeetingRecord(tk.Frame):
         self.unlike_count_label.pack_forget()
 
         # Create Image and Show on Label
-        self.image = Image.open("Assets/mic.png")
+        self.script_dir = os.path.dirname(os.path.abspath(__file__))
+        self.mic_image_path = os.path.join(self.script_dir, "Assets", "mic.png")
+        self.image = Image.open(self.mic_image_path)
         self.photo = ImageTk.PhotoImage(self.image)       
         self.image_label = tk.Label(main_frame, image=self.photo)
         self.image_label.pack(padx=5, pady=5)
@@ -85,13 +87,15 @@ class MeetingRecord(tk.Frame):
         self.stopBtn.pack(side=tk.LEFT,padx=5, pady=5)    
         self.stopBtn.config(state='disabled') 
        
-        self.like_image = Image.open("Assets/check.png")
+        self.like_image_path = os.path.join(self.script_dir, "Assets", "check.png")
+        self.like_image = Image.open(self.like_image_path)
         self.like_photo = ImageTk.PhotoImage(self.like_image)  
         self.client_like_btn=tk.Button(record_frame,bg="#0D9276", image=self.like_photo,compound="center",width=125,height=45,font=button_font,command=self.give_meeting_vote_like)
         self.client_like_btn.pack(side=tk.LEFT,padx=5, pady=5)
         self.client_like_btn.pack_forget()
 
-        self.unlike_image = Image.open("Assets/close.png")
+        self.unlike_image_path = os.path.join(self.script_dir, "Assets", "close.png")
+        self.unlike_image = Image.open(self.unlike_image_path)
         self.unlike_photo = ImageTk.PhotoImage(self.unlike_image)  
         self.client_unlike_btn=tk.Button(record_frame,bg="#FF6868", image=self.unlike_photo,compound="center",width=125,height=45,font=button_font,command=self.give_meeting_vote_unlike)
         self.client_unlike_btn.pack(side=tk.LEFT,padx=5, pady=5)    
@@ -385,7 +389,8 @@ class MeetingRecord(tk.Frame):
             self.startBtn.config(state='normal')
             self.stopBtn.config(state='normal')        
             if(response['message']!=""):
-                new_image = Image.open("Assets/recording-mic.png")
+                new_image_path = os.path.join(self.script_dir, "Assets", "recording-mic.png")
+                new_image = Image.open(new_image_path)
                 new_image_tk = ImageTk.PhotoImage(new_image)
 
                 self.image_label.config(image=new_image_tk)
@@ -405,7 +410,8 @@ class MeetingRecord(tk.Frame):
         user_code=self.logged_user_info['usercode']
         record_user_lst=response['recording_users'] 
         if(record_user_lst is not None and (len(record_user_lst)>0)):
-            new_image = Image.open("Assets/recording-mic.png") if (response["usercode"]!=user_code) else Image.open("Assets/mic.png")
+            new_image_path = os.path.join(self.script_dir, "Assets", "recording-mic.png" if (response["usercode"]!=user_code) else "mic.png")
+            new_image = Image.open(new_image_path)
             new_image_tk = ImageTk.PhotoImage(new_image)
 
             self.image_label.config(image=new_image_tk)
@@ -440,7 +446,8 @@ class MeetingRecord(tk.Frame):
       
     # Change to Mic Icon and Meeting Status
     def change_recording_icon_status_to_original(self):
-        new_image = Image.open("Assets/mic.png")
+        new_image_path = os.path.join(self.script_dir, "Assets", "mic.png")
+        new_image = Image.open(new_image_path)
         new_image_tk = ImageTk.PhotoImage(new_image)
 
         self.image_label.config(image=new_image_tk)
@@ -507,7 +514,8 @@ class MeetingRecord(tk.Frame):
         user_type=self.logged_user_info['usertype']   
         record_user_lst=response['recording_users'] 
         if(record_user_lst is not None and (len(record_user_lst)>0)):
-            new_image = Image.open("Assets/recording-mic.png")
+            new_image_path = os.path.join(self.script_dir, "Assets", "recording-mic.png")
+            new_image = Image.open(new_image_path)
             new_image_tk = ImageTk.PhotoImage(new_image)
 
             self.image_label.config(image=new_image_tk)
@@ -516,7 +524,8 @@ class MeetingRecord(tk.Frame):
             recording_users=", ".join(record_user_lst)
             self.meeting_status_label.config(text=f"{recording_users} recording......")
         else:
-            new_image = Image.open("Assets/mic.png")
+            new_image_path = os.path.join(self.script_dir, "Assets", "mic.png")
+            new_image = Image.open(new_image_path)
             new_image_tk = ImageTk.PhotoImage(new_image)
 
             self.image_label.config(image=new_image_tk)

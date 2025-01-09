@@ -23,8 +23,10 @@ class Main(tk.Tk):
         screen_height=self.winfo_screenheight()
 
         self.geometry(f"{screen_width}x{screen_height}+0+0")  
-
-        self.image = Image.open("Assets/icon.png")
+  
+        self.script_dir = os.path.dirname(os.path.abspath(__file__))
+        self.image_path = os.path.join(self.script_dir, "Assets", "icon.png")
+        self.image = Image.open(self.image_path)
         self.icon = ImageTk.PhotoImage(self.image)    
         self.iconphoto(True,self.icon)        
 

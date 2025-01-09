@@ -27,7 +27,9 @@ class ServerPage(tk.Tk):
         label_sm_font=tkFont.Font(family="Helvetica", size=11)   
 
         self.title("Meeting Record (Server)")
-        self.image = Image.open("Assets/icon.png")
+        self.script_dir = os.path.dirname(os.path.abspath(__file__))
+        self.new_image_path = os.path.join(self.script_dir, "Assets", "icon.png")
+        self.image = Image.open(self.new_image_path)
         self.icon = ImageTk.PhotoImage(self.image)    
         self.iconphoto(True,self.icon)
          
