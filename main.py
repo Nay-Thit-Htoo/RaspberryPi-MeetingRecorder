@@ -34,7 +34,8 @@ class Main(tk.Tk):
         self.start_meeting_button =tk.Button(self,text="Start Meeting",bg="#2185D5", fg="white",width=14,height=1,font=self.button_font,command=self.start_meeting_button_click)  
         self.stop_meeting_button =tk.Button(self,text="Stop Meeting",bg="#50717B", fg="white",width=14,height=1,font=self.button_font,command=self.stop_meeting_button_click)  
         
-        self.original_image = Image.open(self.logged_user_info["background_image"])
+        self.original_image_path = os.path.join(self.script_dir,self.logged_user_info["background_image"])
+        self.original_image = Image.open(self.original_image_path)
 
         # Create a label to display the background image
         self.background_label = tk.Label(self)
