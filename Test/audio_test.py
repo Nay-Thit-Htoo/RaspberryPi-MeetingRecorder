@@ -5,6 +5,7 @@ import tkinter as tk
 import pyaudio
 import wave
 import threading
+import RPi.GPIO as GPIO # type: ignore
 
 class AudioRecorder:
     def __init__(self):        
@@ -21,7 +22,10 @@ class AudioRecorder:
         self.recording = False
         self.record_thread = None        
         self.process_thread = None
-        self.is_processing = False        
+        self.is_processing = False
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(18, GPIO.OUT)  # GPIO 18 as output
+        
 
     def start_recording(self):
         if self.recording:
@@ -45,6 +49,7 @@ class AudioRecorder:
                 )
               
                 print("[Audio Record Service]:[Start Audio Record]")
+                GPIO.output(18, GPIO.HIGH)  # Output 5V to GPIO pin 18
 
                 while self.recording:
                     try:
@@ -53,6 +58,7 @@ class AudioRecorder:
                         self.sox_process.stdin.write(data)
                     except IOError as e:
                         print("Input overflowed:", e)
+                        GPIO.cleanup()
                         continue
 
             finally:
@@ -62,6 +68,8 @@ class AudioRecorder:
                     self.sox_process.stdin.close()
                     self.sox_process.wait()
                     self.save_wave()
+                    GPIO.output(18, GPIO.LOW)
+                    GPIO.cleanup()
 
         self.record_thread = threading.Thread(target=record)
         self.record_thread.start()
@@ -69,7 +77,7 @@ class AudioRecorder:
     def stop_recording(self):
         self.recording = False
         if self.record_thread is not None:
-            self.record_thread.join()   
+            self.record_thread.join()             
            
     def save_wave(self):        
         with wave.open(self.output_audio_path, 'wb') as wf:
