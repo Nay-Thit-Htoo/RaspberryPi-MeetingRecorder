@@ -6,6 +6,7 @@ import wave
 import queue
 import pyaudio
 import file_upload_service
+import RPi.GPIO as GPIO # type: ignore
 
 class AudioRecorder:
     def __init__(self, record_user_obj):
@@ -18,6 +19,9 @@ class AudioRecorder:
         self.rate = 48000  # Lower sample rate for Raspberry Pi
         self.chunk = 1024  # Reduced chunk size for quicker processing
         self.format = pyaudio.paInt16
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(18, GPIO.OUT)  # GPIO 18 as output
+
 
         self.audio = pyaudio.PyAudio()
         self.stream = None
@@ -47,7 +51,7 @@ class AudioRecorder:
                     ["sox", "-t", "raw", "-b", "16", "-e", "signed-integer", "-r", str(self.rate), "-c", str(self.channels), "-", "-d"],
                     stdin=subprocess.PIPE
                 )
-              
+                GPIO.output(18, GPIO.HIGH)  # Output 5V to GPIO pin 18
                 print("[Audio Record Service]:[Start Audio Record]")
 
                 while self.recording:
@@ -58,6 +62,7 @@ class AudioRecorder:
                             self.frames.put(data)  # Add data to the queue
                     except IOError as e:
                         print("Input overflowed:", e)
+                        GPIO.cleanup()
                         continue
 
             finally:
@@ -66,17 +71,18 @@ class AudioRecorder:
                     self.stream.close()   
                     self.sox_process.stdin.close()
                     self.sox_process.wait()
+                    GPIO.output(18, GPIO.LOW)
                 if self.record_user_obj['is_free_discuss'] == "false":
                     self.save_wave()
 
         self.record_thread = threading.Thread(target=record)
-        self.record_thread.start()
-    
+        self.record_thread.start()        
 
     def stop_recording(self):
         self.recording = False
         if self.record_thread is not None:
-            self.record_thread.join()       
+            self.record_thread.join()
+            GPIO.cleanup()       
        
     
     def save_wave(self):

@@ -3,7 +3,7 @@ import os
 import pyaudio
 import wave
 import threading
-
+import RPi.GPIO as GPIO
 import file_upload_service
 
 # Parameters for audio recording
@@ -11,6 +11,8 @@ FORMAT = pyaudio.paInt16  # 16-bit resolution
 CHANNELS = 2 # 1 channel (mono)
 RATE = 44100  # 44.1kHz sampling rate
 CHUNK = 1024  # 2^10 samples for buffer
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(18, GPIO.OUT)  # GPIO 18 as output
 
 # Initialize PyAudio
 audio = pyaudio.PyAudio()
@@ -21,6 +23,7 @@ stop_recording = threading.Event()
 def record_audio(stream,record_user_obj):
     try:
         # Open audio stream       
+        GPIO.output(18, GPIO.HIGH)  # Output 5V to GPIO pin 18
         print(f"[Audio Recording] Start Audio Recording...")
         frames = []
         # Continue recording until stop_recording event is set
@@ -38,6 +41,7 @@ def record_audio(stream,record_user_obj):
             stream.close()
         stream=None
         audio.terminate()
+        GPIO.output(18, GPIO.LOW)  # Turn off GPIO pin 18
 
     # Stop and close the stream
     # stream.stop_stream()
@@ -61,6 +65,7 @@ def record_audio(stream,record_user_obj):
 def stop_audio_recording(record_user_obj):    
     # Set the flag to stop the recording
     stop_recording.set()   
+    GPIO.cleanup()
 
 
 def start_audio_record(record_user_obj):   
