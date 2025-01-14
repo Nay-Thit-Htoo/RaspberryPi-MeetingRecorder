@@ -37,7 +37,7 @@ def add_new_meeting_vote(meeting_title):
         org_vote_data=read_meeting_vote() 
         vote_obj={
             "title": meeting_title,
-            "created_date": datetime.now().strftime("%d-%m-%Y"),
+            "created_date": datetime.now().strftime("%d-%m-%Y %H:%M:%S"),
             "like":0,
             "unlike":0
         }    
@@ -66,7 +66,18 @@ def reset_meeting_vote_result():
     org_meeting_vote_result=read_meeting_vote()
     if(org_meeting_vote_result is not None):
         org_meeting_vote_result['meeting_vote_result']=[]
-        write_all_meeting_vote_result(org_meeting_vote_result)   
+        write_all_meeting_vote_result(org_meeting_vote_result)  
+
+# check can create new vote result
+def check_create_newvote_result():
+    vote_result=read_meeting_vote()
+    if(vote_result['meeting_vote_result'] is None or len(vote_result['meeting_vote_result'])==0):
+       reset_meeting_vote_result()
+    last_record=vote_result['meeting_vote_result'][-1]
+    last_record_date=datetime.strptime(last_record['created_date'], "%Y-%m-%d")
+    current_date=(datetime.now()).strftime("%Y-%m-%d")
+    if(last_record_date!=current_date):
+        reset_meeting_vote_result()
 
 # Main function to demonstrate the process
 # def main(): 

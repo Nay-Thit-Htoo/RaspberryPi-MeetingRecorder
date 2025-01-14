@@ -70,8 +70,7 @@ class AudioRecorder:
                     self.stream.stop_stream()
                     self.stream.close()   
                     self.sox_process.stdin.close()
-                    self.sox_process.wait()
-                    GPIO.output(18, GPIO.LOW)
+                    self.sox_process.wait()                    
                 if self.record_user_obj['is_free_discuss'] == "false":
                     self.save_wave()
 
@@ -79,11 +78,11 @@ class AudioRecorder:
         self.record_thread.start()        
 
     def stop_recording(self):
+        GPIO.output(18, GPIO.LOW)
+        GPIO.cleanup()
         self.recording = False
         if self.record_thread is not None:
             self.record_thread.join()
-            GPIO.cleanup()       
-       
     
     def save_wave(self):
         self.create_folder_record_user()

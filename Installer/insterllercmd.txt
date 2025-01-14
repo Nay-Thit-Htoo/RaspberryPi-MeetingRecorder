@@ -1,0 +1,16 @@
+Generate Python Application
+
+nano ~/Desktop/MR.desktop
+
+[Desktop Entry]
+Name=Meeting Recorder
+Comment=Launch Meeting Recorder
+Exec=python3 /home/pi/RaspberryPi-MeetingRecorder/main.py
+Path=/home/pi/RaspberryPi-MeetingRecorder
+Icon=/home/pi/RaspberryPi-MeetingRecorder/Assets/icon.png
+Terminal=false
+Type=Application
+StartupNotify=true
+
+Make Executeable App
+chmod +x ~/Desktop/my_tkinter_app.desktop

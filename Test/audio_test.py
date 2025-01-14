@@ -68,8 +68,7 @@ class AudioRecorder:
                     self.stream.close()                   
                     self.sox_process.stdin.close()
                     self.sox_process.wait()
-                    self.save_wave()
-                    
+                    self.save_wave()                    
 
         self.record_thread = threading.Thread(target=record)
         self.record_thread.start()
