@@ -24,7 +24,7 @@ class AudioRecorder:
         self.process_thread = None
         self.is_processing = False
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(18, GPIO.OUT)  # GPIO 18 as output
+       
         
 
     def start_recording(self):
@@ -49,6 +49,7 @@ class AudioRecorder:
                 )
               
                 print("[Audio Record Service]:[Start Audio Record]")
+                GPIO.setup(18, GPIO.OUT)  # GPIO 18 as output
                 GPIO.output(18, GPIO.HIGH)  # Output 5V to GPIO pin 18
 
                 while self.recording:
@@ -68,13 +69,14 @@ class AudioRecorder:
                     self.sox_process.stdin.close()
                     self.sox_process.wait()
                     self.save_wave()
-                    GPIO.output(18, GPIO.LOW)
-                    GPIO.cleanup()
+                    
 
         self.record_thread = threading.Thread(target=record)
         self.record_thread.start()
 
     def stop_recording(self):
+        GPIO.output(18, GPIO.LOW)
+        GPIO.cleanup()
         self.recording = False
         if self.record_thread is not None:
             self.record_thread.join()             
