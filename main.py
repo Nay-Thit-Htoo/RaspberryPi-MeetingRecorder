@@ -14,6 +14,7 @@ class Main(tk.Tk):
         super().__init__()
         self.title("Recorder Project")
         GPIO.setmode(GPIO.BOARD)
+        GPIO.setwarnings(False)
         GPIO.setup(32, GPIO.OUT)  # GPIO 18 as output    
 
         # Font Style for Label
@@ -195,7 +196,7 @@ class Main(tk.Tk):
         self.record_user_main_frame.place_forget()
         for widget in self.recording_user_frame.winfo_children():
             widget.destroy()
-    GPIO.cleanup()
+
 if __name__ == "__main__":
     app = Main()
     app.mainloop()

@@ -231,16 +231,17 @@ class MeetingRecord(tk.Frame):
     
     # start recording
     def start_recording(self): 
-    #  if(self.startBtn.cget("text").lower()=='discuss'):  
-    #     meeting_record_obj={"usercode":self.logged_user_info['usercode'],
-    #                     "usertype":self.logged_user_info['usertype'],
-    #                     "actiontype":ActionType.START_RECORD.name                      
-    #                     }       
-                                 
-    #     print(f"[Meeting Record][Start Record] : {meeting_record_obj}")
-    #     self.startBtn.config(text="Please Wait...") 
-    #     self.start_client(meeting_record_obj)
+     if(self.startBtn.cget("text").lower()=='discuss'):  
         GPIO.output(32, GPIO.HIGH)  # Output 5V to GPIO pin 18
+        meeting_record_obj={"usercode":self.logged_user_info['usercode'],
+                        "usertype":self.logged_user_info['usertype'],
+                        "actiontype":ActionType.START_RECORD.name                      
+                        }       
+                                 
+        print(f"[Meeting Record][Start Record] : {meeting_record_obj}")
+        self.startBtn.config(text="Please Wait...") 
+        self.start_client(meeting_record_obj)
+        
 
     #start meeting
     def start_meeting(self):       
@@ -285,17 +286,17 @@ class MeetingRecord(tk.Frame):
         self.start_client(free_discuss_obj)
         
     # stop recording
-    def stop_recording(self):
-        GPIO.output(32, GPIO.LOW)   
-    #    if(self.startBtn.cget("text").lower() =='discussing'):   
-    #         self.meeting_status_label.config(text="")
-    #         self.logged_user_info=clientservice.read_clientInfo()
-    #         meeting_record_obj={"usercode":self.logged_user_info['usercode'],
-    #                 "usertype":self.logged_user_info['usertype'],
-    #                 "actiontype":ActionType.STOP_RECORD.name                      
-    #                 }   
-    #         print(f"[Meeting Record][Stop Record] : {meeting_record_obj}")
-    #         self.start_client(meeting_record_obj)       
+    def stop_recording(self):          
+       if(self.startBtn.cget("text").lower() =='discussing'):
+            GPIO.output(32, GPIO.LOW)   
+            self.meeting_status_label.config(text="")
+            self.logged_user_info=clientservice.read_clientInfo()
+            meeting_record_obj={"usercode":self.logged_user_info['usercode'],
+                    "usertype":self.logged_user_info['usertype'],
+                    "actiontype":ActionType.STOP_RECORD.name                      
+                    }   
+            print(f"[Meeting Record][Stop Record] : {meeting_record_obj}")
+            self.start_client(meeting_record_obj)       
     
     # Receive Message via Client Socket
     def receive_messages(self,client_socket):
