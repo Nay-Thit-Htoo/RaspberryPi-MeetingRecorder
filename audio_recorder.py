@@ -6,7 +6,6 @@ import wave
 import queue
 import pyaudio
 import file_upload_service
-import RPi.GPIO as GPIO # type: ignore
 
 class AudioRecorder:
     def __init__(self, record_user_obj):
@@ -19,9 +18,6 @@ class AudioRecorder:
         self.rate = 48000  # Lower sample rate for Raspberry Pi
         self.chunk = 1024  # Reduced chunk size for quicker processing
         self.format = pyaudio.paInt16
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(32, GPIO.OUT)  # GPIO 18 as output
-
 
         self.audio = pyaudio.PyAudio()
         self.stream = None
@@ -51,7 +47,6 @@ class AudioRecorder:
                     ["sox", "-t", "raw", "-b", "16", "-e", "signed-integer", "-r", str(self.rate), "-c", str(self.channels), "-", "-d"],
                     stdin=subprocess.PIPE
                 )
-                GPIO.output(32, GPIO.HIGH)  # Output 5V to GPIO pin 18
                 print("[Audio Record Service]:[Start Audio Record]")
 
                 while self.recording:
@@ -74,10 +69,9 @@ class AudioRecorder:
                     self.save_wave()
 
         self.record_thread = threading.Thread(target=record)
-        self.record_thread.start()        
+        self.record_thread.start()
 
-    def stop_recording(self):
-        GPIO.output(32, GPIO.LOW)
+    def stop_recording(self):        
         self.recording = False
         if self.record_thread is not None:
             self.record_thread.join()
@@ -105,4 +99,4 @@ class AudioRecorder:
             file_upload_service.delete_file_after_upload(self.output_audio_path)
             file_upload_service.delete_file_after_upload(self.record_user_obj['usercode'])
     
-    GPIO.cleanup()
+    
