@@ -21,10 +21,7 @@ class MeetingRecord(tk.Frame):
         super().__init__(parent)
         self.controller = controller 
         self.logged_user_info=None      
-        self.audio_record_service=None 
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setwarnings(False)
-        GPIO.setup(32, GPIO.OUT)  # GPIO 18 as output
+        self.audio_record_service=None         
         
         main_frame=tk.Frame(self,relief='raised')
         main_frame.pack(padx=0,pady=0)  
@@ -117,7 +114,8 @@ class MeetingRecord(tk.Frame):
 
         self.startVoteBtn=tk.Button(other_actions_frame,text="Meeting Vote",bg="#1A4D2E", fg="white",width=16,height=2,font=button_font,command=self.meeting_start_vote_btn_click)
         self.startVoteBtn.pack(side=tk.LEFT,padx=5, pady=5)   
-        self.startVoteBtn.pack_forget()         
+        self.startVoteBtn.pack_forget()   
+          
     
     #Show Meeting Vote Frame
     def show_meeting_vote_info(self,meeting_vote_title):      
@@ -560,4 +558,3 @@ class MeetingRecord(tk.Frame):
         print(f"[Meeting Record][Remove Client] : {remove_client_obj}")        
         self.start_client(remove_client_obj)
         
-    GPIO.cleanup()

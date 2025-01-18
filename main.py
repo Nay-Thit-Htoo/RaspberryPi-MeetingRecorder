@@ -7,12 +7,15 @@ from login import Login
 from meeting_record import MeetingRecord
 import tkinter.font as tkFont
 import client_server_service as clientservice
+import RPi.GPIO as GPIO # type: ignore
 
 class Main(tk.Tk):
     def __init__(self,):
         super().__init__()
         self.title("Recorder Project")
-     
+        GPIO.setmode(GPIO.BOARD)
+        GPIO.setup(32, GPIO.OUT)  # GPIO 18 as output    
+
         # Font Style for Label
         self.label_font=tkFont.Font(family="Helvetica", size=12)
         self.button_font=tkFont.Font(family="Helvetica", size=12)
@@ -108,7 +111,6 @@ class Main(tk.Tk):
         if hasattr(self.frame, "stop_meeting"):          
            self.frame.stop_meeting()
         self.remove_recording_user()
-
     
     def hide_change_background_btn(self):
          print(f"Reach Change Background Btn Hide")
@@ -193,7 +195,7 @@ class Main(tk.Tk):
         self.record_user_main_frame.place_forget()
         for widget in self.recording_user_frame.winfo_children():
             widget.destroy()
-
+    GPIO.cleanup()
 if __name__ == "__main__":
     app = Main()
     app.mainloop()
