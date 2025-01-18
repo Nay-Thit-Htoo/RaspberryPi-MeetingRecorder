@@ -23,8 +23,8 @@ class AudioRecorder:
         self.record_thread = None        
         self.process_thread = None
         self.is_processing = False
-        GPIO.setmode(GPIO.BCM)
-       
+        GPIO.setmode(GPIO.BOARD)
+        GPIO.setup(32, GPIO.OUT)       
         
 
     def start_recording(self):
@@ -48,9 +48,8 @@ class AudioRecorder:
                     stdin=subprocess.PIPE
                 )
               
-                print("[Audio Record Service]:[Start Audio Record]")
-                GPIO.setup(18, GPIO.OUT)  # GPIO 18 as output
-                GPIO.output(18, GPIO.HIGH)  # Output 5V to GPIO pin 18
+                print("[Audio Record Service]:[Start Audio Record]")                
+                GPIO.output(32, GPIO.HIGH)  # Output 5V to GPIO pin 18
 
                 while self.recording:
                     try:
@@ -74,11 +73,11 @@ class AudioRecorder:
         self.record_thread.start()
 
     def stop_recording(self):
-        GPIO.output(18, GPIO.LOW)
-        GPIO.cleanup()
+        GPIO.output(32, GPIO.LOW)       
         self.recording = False
         if self.record_thread is not None:
-            self.record_thread.join()             
+            self.record_thread.join()  
+        GPIO.cleanup()                 
            
     def save_wave(self):        
         with wave.open(self.output_audio_path, 'wb') as wf:
