@@ -14,7 +14,6 @@ from Enum.actiontype import ActionType
 import file_upload_service
 from meeting_vote_configuration import MeetingVoteConfiguration
 import meeting_vote_service
-import RPi.GPIO as GPIO # type: ignore
 
 class MeetingRecord(tk.Frame):
     def __init__(self, parent, controller):
@@ -231,8 +230,7 @@ class MeetingRecord(tk.Frame):
     
     # start recording
     def start_recording(self): 
-     if(self.startBtn.cget("text").lower()=='discuss'):  
-        GPIO.output(32, GPIO.HIGH)  # Output 5V to GPIO pin 18
+     if(self.startBtn.cget("text").lower()=='discuss'):          
         meeting_record_obj={"usercode":self.logged_user_info['usercode'],
                         "usertype":self.logged_user_info['usertype'],
                         "actiontype":ActionType.START_RECORD.name                      
@@ -287,8 +285,7 @@ class MeetingRecord(tk.Frame):
         
     # stop recording
     def stop_recording(self):          
-       if(self.startBtn.cget("text").lower() =='discussing'):
-            GPIO.output(32, GPIO.LOW)   
+       if(self.startBtn.cget("text").lower() =='discussing'):            
             self.meeting_status_label.config(text="")
             self.logged_user_info=clientservice.read_clientInfo()
             meeting_record_obj={"usercode":self.logged_user_info['usercode'],

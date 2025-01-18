@@ -6,6 +6,7 @@ import wave
 import queue
 import pyaudio
 import file_upload_service
+import RPi.GPIO as GPIO # type: ignore
 
 class AudioRecorder:
     def __init__(self, record_user_obj):
@@ -48,6 +49,7 @@ class AudioRecorder:
                     stdin=subprocess.PIPE
                 )
                 print("[Audio Record Service]:[Start Audio Record]")
+                GPIO.output(32, GPIO.HIGH)  # Output 5V to GPIO pin 18
 
                 while self.recording:
                     try:
@@ -56,7 +58,8 @@ class AudioRecorder:
                         if self.record_user_obj['is_free_discuss'] == "false":
                             self.frames.put(data)  # Add data to the queue
                     except IOError as e:
-                        print("Input overflowed:", e)                       
+                        print("Input overflowed:", e)  
+                        GPIO.output(32, GPIO.LOW)                        
                         continue
 
             finally:
@@ -71,7 +74,8 @@ class AudioRecorder:
         self.record_thread = threading.Thread(target=record)
         self.record_thread.start()
 
-    def stop_recording(self):        
+    def stop_recording(self):      
+        GPIO.output(32, GPIO.LOW)     
         self.recording = False
         if self.record_thread is not None:
             self.record_thread.join()
