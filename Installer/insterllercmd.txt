@@ -14,3 +14,12 @@ StartupNotify=true
 
 Make Executeable App
 chmod +x ~/Desktop/my_tkinter_app.desktop
+
+Change IP Address
+
+sudo nano /etc/dhcpcd.conf
+
+interface eth0  # For wired Ethernet. If you're using Wi-Fi, replace eth0 with wlan0.
+static ip_address=192.168.1.100/24  # Set your static IP address (e.g., 192.168.1.100).
+static routers=192.168.1.1  # Set the gateway (usually your router's IP address).
+static domain_name_servers=8.8.8.8 8.8.4.4  # Set the DNS servers (e.g., Google's public DNS).
