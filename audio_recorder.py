@@ -20,7 +20,7 @@ class AudioRecorder:
         self.chunk = 1024  # Reduced chunk size for quicker processing
         self.format = pyaudio.paInt16
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(18, GPIO.OUT)  # GPIO 18 as output
+        GPIO.setup(32, GPIO.OUT)  # GPIO 18 as output
 
 
         self.audio = pyaudio.PyAudio()
@@ -51,7 +51,7 @@ class AudioRecorder:
                     ["sox", "-t", "raw", "-b", "16", "-e", "signed-integer", "-r", str(self.rate), "-c", str(self.channels), "-", "-d"],
                     stdin=subprocess.PIPE
                 )
-                GPIO.output(18, GPIO.HIGH)  # Output 5V to GPIO pin 18
+                GPIO.output(32, GPIO.HIGH)  # Output 5V to GPIO pin 18
                 print("[Audio Record Service]:[Start Audio Record]")
 
                 while self.recording:
@@ -61,8 +61,7 @@ class AudioRecorder:
                         if self.record_user_obj['is_free_discuss'] == "false":
                             self.frames.put(data)  # Add data to the queue
                     except IOError as e:
-                        print("Input overflowed:", e)
-                        GPIO.cleanup()
+                        print("Input overflowed:", e)                       
                         continue
 
             finally:
@@ -78,8 +77,7 @@ class AudioRecorder:
         self.record_thread.start()        
 
     def stop_recording(self):
-        GPIO.output(18, GPIO.LOW)
-        GPIO.cleanup()
+        GPIO.output(32, GPIO.LOW)
         self.recording = False
         if self.record_thread is not None:
             self.record_thread.join()
@@ -106,3 +104,5 @@ class AudioRecorder:
             file_upload_service.file_upload_to_server(self.record_user_obj['usercode'], self.record_user_obj)
             file_upload_service.delete_file_after_upload(self.output_audio_path)
             file_upload_service.delete_file_after_upload(self.record_user_obj['usercode'])
+    
+    GPIO.cleanup()

@@ -77,7 +77,7 @@ class AudioRecorder:
         self.recording = False
         if self.record_thread is not None:
             self.record_thread.join()  
-        GPIO.cleanup()                 
+                       
            
     def save_wave(self):        
         with wave.open(self.output_audio_path, 'wb') as wf:
@@ -114,6 +114,8 @@ class RecorderApp:
         self.recorder.stop_recording()
         self.record_button.config(state=tk.NORMAL)
         self.stop_button.config(state=tk.DISABLED)
+        
+    GPIO.cleanup()  
 
 # Run the Tkinter application
 root = tk.Tk()
