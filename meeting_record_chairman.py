@@ -594,16 +594,17 @@ class MeetingRecordChairman(tk.Frame):
         self.start_client(remove_client_obj)
 
     #region Recording User 
-    def create_recording_users(self,clients):       
+    def create_recording_users(self,clients): 
         for client in clients:
-            self.blc_user_frame=tk.Frame(self.scrl_recorders_frame,bg="#45474B")
-            self.blc_user_frame.pack(pady=(0,4),padx=(3))
+           if(client['usertype']!=UserType.CHAIRMAN.value):
+              self.blc_user_frame=tk.Frame(self.scrl_recorders_frame,bg="#45474B")
+              self.blc_user_frame.pack(pady=(0,4),padx=(3))
 
-            self.recorder_name_label = tk.Label(self.blc_user_frame, text=client["usercode"],width=18,fg="#FFFFFF",bg="#45474B")
-            self.recorder_name_label.pack()
+              self.recorder_name_label = tk.Label(self.blc_user_frame, text=client["usercode"],width=18,fg="#FFFFFF",bg="#45474B")
+              self.recorder_name_label.pack()
             
-            self.remove_btn = tk.Button(self.blc_user_frame, text=f"Remove",bg="#E90074",fg="#FFFFFF",width=13,font=("Arial", 11),command=lambda: self.remove_recording_user(clients,client))
-            self.remove_btn.pack(pady=(0,8))
+              self.remove_btn = tk.Button(self.blc_user_frame, text=f"Remove",bg="#E90074",fg="#FFFFFF",width=13,font=("Arial", 11),command=lambda: self.remove_recording_user(clients,client))
+              self.remove_btn.pack(pady=(0,8))
   
     def show_recording_users_frame(self,clients):
         self.recording_users_frame.pack(side="left", fill="y")         
