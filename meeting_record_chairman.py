@@ -441,7 +441,7 @@ class MeetingRecordChairman(tk.Frame):
                     self.start_audio_record()  
 
                 if(self.logged_user_info['usertype']==UserType.CHAIRMAN.value):
-                     self.controller.show_recording_users_frame(response['recording_clients'])
+                    self.show_recording_users_frame(response['recording_clients'])
 
     # Change Meeting Status and Disable or Enable Start and Stop Buttons After Stop
     def change_meeting_status_after_stoprecord(self,response):     
@@ -624,7 +624,7 @@ class MeetingRecordChairman(tk.Frame):
           self.show_recording_users_frame(new_clients)
 
     def recording_frame_hide_remove_children(self):
-        self.record_user_main_frame.place_forget()
+        self.recording_users_frame.place_forget()
         for widget in self.recording_users_frame.winfo_children():
             widget.destroy()
     #endregion
