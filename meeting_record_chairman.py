@@ -595,23 +595,25 @@ class MeetingRecordChairman(tk.Frame):
 
     #region Recording User 
     def create_recording_users(self,clients): 
-        for client in clients:
-           if(client['usertype']!=UserType.CHAIRMAN.value):
-              self.blc_user_frame=tk.Frame(self.scrl_recorders_frame,bg="#45474B")
-              self.blc_user_frame.pack(pady=(0,4),padx=(3))
+        for client in clients:           
+            self.blc_user_frame=tk.Frame(self.scrl_recorders_frame,bg="#45474B")
+            self.blc_user_frame.pack(pady=(0,4),padx=(3))
 
-              self.recorder_name_label = tk.Label(self.blc_user_frame, text=client["usercode"],width=18,fg="#FFFFFF",bg="#45474B")
-              self.recorder_name_label.pack()
+            self.recorder_name_label = tk.Label(self.blc_user_frame, text=client["usercode"],width=18,fg="#FFFFFF",bg="#45474B")
+            self.recorder_name_label.pack()
             
-              self.remove_btn = tk.Button(self.blc_user_frame, text=f"Remove",bg="#E90074",fg="#FFFFFF",width=13,font=("Arial", 11),command=lambda: self.remove_recording_user(clients,client))
-              self.remove_btn.pack(pady=(0,8))
+            self.remove_btn = tk.Button(self.blc_user_frame, text=f"Remove",bg="#E90074",fg="#FFFFFF",width=13,font=("Arial", 11),command=lambda: self.remove_recording_user(clients,client))
+            self.remove_btn.pack(pady=(0,8))
   
     def show_recording_users_frame(self,clients):
-        self.recording_users_frame.pack(side="left", fill="y")         
-        print(f"[Meeting Record][Recording Users] : {clients[0]}") 
-        self.recorder_header_label = tk.Label(self.scrl_recorders_frame, text=f"Clients",fg='#FFFFFF',bg="#45474B",font=("Helvetica", 13),height=2)
-        self.recorder_header_label.pack(padx=(0,0)) 
-        self.create_recording_users(clients)
+        usertype_filter=lambda obj: (obj['usertype']).lower() !=UserType.CHAIRMAN.value
+        filtered_user_objects = [obj for obj in clients if usertype_filter(obj)]
+        if(filtered_user_objects):
+           self.recording_users_frame.pack(side="left", fill="y")         
+           print(f"[Meeting Record][Recording Users] : {filtered_user_objects[0]}") 
+           self.recorder_header_label = tk.Label(self.scrl_recorders_frame, text=f"Clients",fg='#FFFFFF',bg="#45474B",font=("Helvetica", 13),height=2)
+           self.recorder_header_label.pack(padx=(0,0)) 
+           self.create_recording_users(filtered_user_objects)
 
     def remove_recording_user(self,clients,clientObj):
         self.recording_users_frame.pack_forget()
