@@ -118,11 +118,13 @@ class Login(tk.Frame):
                     if(message_json['message_code']=='success'):
                         message_json['is_free_discuss']='false'
                         clientservice.update_clientInfo(message_json)
-                        print(f"[Login]: {message_json['message']}")
-                        self.controller.show_frame('MeetingRecord')
+                        print(f"[Login]: {message_json['message']}")                        
                         self.stop_receive_message_thread.set()   
-                        if(message_json['usertype']=="chairman"):                            
+                        if(message_json['usertype']=="chairman"):   
+                            self.controller.show_frame('MeetingRecordChairman')                         
                             self.controller.show_meeting_buttons() 
+                        else:
+                            self.controller.show_frame('MeetingRecord')
                         self.controller.hide_change_background_btn()                    
                     else:
                         self.login_button.config(text="Login")
