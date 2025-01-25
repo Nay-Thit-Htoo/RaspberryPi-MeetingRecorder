@@ -615,6 +615,7 @@ class MeetingRecordChairman(tk.Frame):
 
     def remove_recording_user(self,clients,clientObj):
         self.recording_users_frame.pack_forget()
+        self.remove_recording_client(clientObj)
         for widget in self.recording_users_frame.winfo_children():
             widget.destroy()
         new_clients = list(filter(lambda p: p!=clientObj, clients))
