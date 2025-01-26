@@ -162,7 +162,7 @@ class MeetingRecordChairman(tk.Frame):
                     "actiontype":ActionType.START_MEETING_VOTE.name,
                     "meeting_vote_title":meeting_vote_title                      
                     }
-        print(f"[Meeting Record][Start Meeting Vote] : {meeting_vote_obj}")
+        print(f"[Meeting Record Chairman][Start Meeting Vote] : {meeting_vote_obj}")
         self.start_client(meeting_vote_obj)
         self.startVoteBtn.config(text="Stop Vote")        
         self.meeting_title_label.pack(padx=5, pady=(10,0)) 
@@ -187,7 +187,7 @@ class MeetingRecordChairman(tk.Frame):
                         "usertype":self.logged_user_info['usertype'],
                         "actiontype":ActionType.STOP_MEETING_VOTE.name                                            
                         }
-            print(f"[Meeting Record][Stop Meeting Vote] : {meeting_vote_obj}")
+            print(f"[Meeting Record Chairman][Stop Meeting Vote] : {meeting_vote_obj}")
             self.start_client(meeting_vote_obj)
 
     #Hide Meeting Vote Frame
@@ -222,10 +222,10 @@ class MeetingRecordChairman(tk.Frame):
     # Upload Meeting Vote Result to File Server
     def upload_meeting_vote_result_to_server(self):
         current_logged_user=self.logged_user_info
-        print(f"[Meeting Record]:[Meeting Vote Result File Upload]")
+        print(f"[Meeting Record Chairman]:[Meeting Vote Result File Upload]")
         current_logged_user['usercode']=f"{datetime.now().strftime('%d_%m_%Y')}"
         vote_result_file_path="Meeting_Vote_Result"
-        print(f'[Meeting Record]:[Vote Result File Path] {vote_result_file_path}')
+        print(f'[Meeting Record Chairman]:[Vote Result File Path] {vote_result_file_path}')
         vote_result_file_upload_thread = threading.Thread(target=file_upload_service.file_upload_to_server, args=(vote_result_file_path,current_logged_user))
         vote_result_file_upload_thread.start() 
                
@@ -252,7 +252,7 @@ class MeetingRecordChairman(tk.Frame):
                 "actiontype":ActionType.LIKE_MEETING_VOTE.name                      
                 }
         self.start_client(meeting_vote_obj)
-        print(f"[Meeting Record][Give Meeting Vote(Like)] : {meeting_vote_obj}")
+        print(f"[Meeting Record Chairman][Give Meeting Vote(Like)] : {meeting_vote_obj}")
     
     # Client Give Meeting Vote ( UnLike )
     def give_meeting_vote_unlike(self):
@@ -264,7 +264,7 @@ class MeetingRecordChairman(tk.Frame):
                 "actiontype":ActionType.UNLIKE_MEETING_VOTE.name                      
                 }
         self.start_client(meeting_vote_obj)
-        print(f"[Meeting Record][Give Meeting Vote(UnLike)] : {meeting_vote_obj}")
+        print(f"[Meeting Record Chairman][Give Meeting Vote(UnLike)] : {meeting_vote_obj}")
     
     # start recording
     def start_recording(self): 
@@ -274,7 +274,7 @@ class MeetingRecordChairman(tk.Frame):
                         "actiontype":ActionType.START_RECORD.name                      
                         }       
                                  
-        print(f"[Meeting Record][Start Record] : {meeting_record_obj}")
+        print(f"[Meeting Record Chairman][Start Record] : {meeting_record_obj}")
         self.startBtn.config(text="Please Wait...") 
         self.start_client(meeting_record_obj)
         
@@ -285,7 +285,7 @@ class MeetingRecordChairman(tk.Frame):
                     "usertype":self.logged_user_info['usertype'],
                     "actiontype":ActionType.START_MEETING.name                      
                     }
-        print(f"[Meeting Record][Start Meeting] : {meeting_record_obj}")
+        print(f"[Meeting Record Chairman][Start Meeting] : {meeting_record_obj}")
         self.start_client(meeting_record_obj)
     
     #stop meeting
@@ -294,7 +294,7 @@ class MeetingRecordChairman(tk.Frame):
                     "usertype":self.logged_user_info['usertype'],
                     "actiontype":ActionType.STOP_MEETING.name                      
                     }
-        print(f"[Meeting Record][Stop Meeting] : {meeting_record_obj}")
+        print(f"[Meeting Record Chairman][Stop Meeting] : {meeting_record_obj}")
         self.start_client(meeting_record_obj)        
 
     #free Discuss Action
@@ -308,12 +308,12 @@ class MeetingRecordChairman(tk.Frame):
         if(free_discuss_btn_txt=='freediscuss'):  
           meeting_status=self.meeting_status_label.cget('text')
           if(self.startBtn.cget("text").lower()=='discuss' and meeting_status==""):
-             print(f"[Meeting Record][Start Free Discuss] : {free_discuss_obj}")
+             print(f"[Meeting Record Chairman][Start Free Discuss] : {free_discuss_obj}")
              free_discuss_obj['actiontype']=ActionType.START_FREE_DISCUSS.name
              self.freeDiscussBtn.config(text="Stop Free Discuss")
              self.freeDiscussBtn.config(bg="#FF8343")
         else:
-            print(f"[Meeting Record][Stop Free Discuss] : {free_discuss_obj}")
+            print(f"[Meeting Record Chairman][Stop Free Discuss] : {free_discuss_obj}")
             free_discuss_obj['actiontype']=ActionType.STOP_FREE_DISCUSS.name
             self.freeDiscussBtn.config(text="Free Discuss")
             self.freeDiscussBtn.config(bg="#1A4D2E")
@@ -329,12 +329,12 @@ class MeetingRecordChairman(tk.Frame):
                     "usertype":self.logged_user_info['usertype'],
                     "actiontype":ActionType.STOP_RECORD.name                      
                     }   
-            print(f"[Meeting Record][Stop Record] : {meeting_record_obj}")
+            print(f"[Meeting Record Chairman][Stop Record] : {meeting_record_obj}")
             self.start_client(meeting_record_obj)       
     
     # Receive Message via Client Socket
     def receive_messages(self,client_socket):
-        print(f"Meeting Record Chairman][Receive Message]: {client_socket}")
+        print(f"[Meeting Record Chairman][Receive Message]: {client_socket}")
         while True:
             try:
                 message = client_socket.recv(1024).decode('utf-8')
@@ -380,10 +380,10 @@ class MeetingRecordChairman(tk.Frame):
                     meeting_vote_service.update_vote_result(self.meeting_title_label.cget("text"),False)
                     self.update_meeting_voute_count()                                  
             except Exception as err:
-                print(f"[Meeting Record]:[Exception Error] : {err}")                
+                print(f"[Meeting Record Chairman]:[Exception Error] : {err}")                
                 break
             except ConnectionAbortedError as connError:
-               print(f"[Meeting Record]:[Connection Aborted Error] : {connError}")                
+               print(f"[Meeting Record Chairman]:[Connection Aborted Error] : {connError}")                
                break 
  
     # Start Meeting
@@ -417,7 +417,7 @@ class MeetingRecordChairman(tk.Frame):
                     "usertype":self.logged_user_info['usertype'],
                     "actiontype":ActionType.MUTE_ALL.name                      
                     }
-            print(f"[Meeting Record][Mute All] : {meeting_record_obj}")
+            print(f"[Meeting Record Chairman][Mute All] : {meeting_record_obj}")
             self.start_client(meeting_record_obj)
 
     # Change Meeting Status and Disable or Enable Start and Stop Buttons 
@@ -593,7 +593,7 @@ class MeetingRecordChairman(tk.Frame):
                         "actiontype":ActionType.REMOVE_CLIENT.name                      
                         }       
                                     
-        print(f"[Meeting Record][Remove Client] : {remove_client_obj}")        
+        print(f"[Meeting Record Chairman][Remove Client] : {remove_client_obj}")        
         self.start_client(remove_client_obj)
 
     #region Recording User 
@@ -616,7 +616,7 @@ class MeetingRecordChairman(tk.Frame):
         self.recording_frame_hide_remove_children()
         if(filtered_user_objects):
            self.recording_users_frame.pack(side="left", fill="y")         
-           print(f"[Meeting Record][Recording Users] : {filtered_user_objects[0]}") 
+           print(f"[Meeting Record Chairman][Recording Users] : {filtered_user_objects[0]}") 
            self.recorder_header_label = tk.Label(self.scrl_recorders_frame, text=f"Clients",fg='#FFFFFF',bg="#45474B",font=("Helvetica", 13),height=2)
            self.recorder_header_label.pack(padx=(0,0)) 
            self.create_recording_users(filtered_user_objects)
