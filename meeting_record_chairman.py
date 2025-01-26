@@ -446,7 +446,7 @@ class MeetingRecordChairman(tk.Frame):
     # Change Meeting Status and Disable or Enable Start and Stop Buttons After Stop
     def change_meeting_status_after_stoprecord(self,response):     
         user_code=self.logged_user_info['usercode']
-        record_user_lst=response['recording_users'] 
+        record_user_lst=response['recording_users']         
         print(f"[Meeting Record Chairman][After Stop Record]",record_user_lst)
         if(record_user_lst is not None and (len(record_user_lst)>0)):
             new_image_path = os.path.join(self.script_dir, "Assets", "recording-mic.png" if (response["usercode"]!=user_code) else "mic.png")
@@ -456,7 +456,7 @@ class MeetingRecordChairman(tk.Frame):
             self.image_label.config(image=new_image_tk)
             self.image_label.image = new_image_tk
             
-            recording_users=", ".join(record_user_lst)
+            recording_users=", ".join([item['usercode'] for item in record_user_lst])
             self.meeting_status_label.config(text=f"{recording_users} recording......")
             self.show_recording_users_frame(record_user_lst)
         else:
@@ -616,7 +616,7 @@ class MeetingRecordChairman(tk.Frame):
         self.recording_frame_hide_remove_children()
         if(filtered_user_objects):
            self.recording_users_frame.pack(side="left", fill="y")         
-           print(f"[Meeting Record Chairman][Recording Users] : {filtered_user_objects[0]}") 
+           print(f"[Meeting Record Chairman][Recording Users] : {filtered_user_objects}") 
            self.recorder_header_label = tk.Label(self.scrl_recorders_frame, text=f"Clients",fg='#FFFFFF',bg="#45474B",font=("Helvetica", 13),height=2)
            self.recorder_header_label.pack(padx=(0,0)) 
            self.create_recording_users(filtered_user_objects)

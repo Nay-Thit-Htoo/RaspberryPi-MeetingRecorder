@@ -418,7 +418,7 @@ class MeetingRecord(tk.Frame):
             self.image_label.config(image=new_image_tk)
             self.image_label.image = new_image_tk
             
-            recording_users=", ".join(record_user_lst)
+            recording_users=", ".join([item['usercode'] for item in record_user_lst])
             self.meeting_status_label.config(text=f"{recording_users} recording......")
         else:
             self.change_recording_icon_status_to_original() 
