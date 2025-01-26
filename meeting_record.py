@@ -287,6 +287,7 @@ class MeetingRecord(tk.Frame):
     def stop_recording(self):          
        if(self.startBtn.cget("text").lower() =='discussing'):            
             self.meeting_status_label.config(text="")
+            self.startBtn.config(text="Discuss")
             self.logged_user_info=clientservice.read_clientInfo()
             meeting_record_obj={"usercode":self.logged_user_info['usercode'],
                     "usertype":self.logged_user_info['usertype'],
