@@ -334,15 +334,15 @@ class MeetingRecordChairman(tk.Frame):
     
     # Receive Message via Client Socket
     def receive_messages(self,client_socket):
-        print(f"Meeting Record][Receive Message]: {client_socket}")
+        print(f"Meeting Record Chairman][Receive Message]: {client_socket}")
         while True:
             try:
                 message = client_socket.recv(1024).decode('utf-8')
                 if not message:
                     break
-                print(f"[Meeting Record][Receive Message Reply From Server] : {message}")
+                print(f"[Meeting Record Chairman][Receive Message Reply From Server] : {message}")
                 response_message=json.loads(message.replace("'", '"')) 
-                print(f"[Meeting Record][Action Type]: {response_message['actiontype']}") 
+                print(f"[Meeting Record Chairman][Action Type]: {response_message['actiontype']}") 
                 action_type=response_message['actiontype']  
              
                 # Filter Action Type              
@@ -391,7 +391,7 @@ class MeetingRecordChairman(tk.Frame):
         current_logged_user_type=self.logged_user_info['usertype']
         self.startBtn.config(state='normal')
         self.stopBtn.config(state='normal')
-        if(current_logged_user_type.lower()=="chairman"):            
+        if(current_logged_user_type==UserType.CHAIRMAN.value):            
             self.muteBtn.config(state='normal')
             self.freeDiscussBtn.config(state='normal')
             self.startVoteBtn.config(state='normal')
@@ -447,6 +447,7 @@ class MeetingRecordChairman(tk.Frame):
     def change_meeting_status_after_stoprecord(self,response):     
         user_code=self.logged_user_info['usercode']
         record_user_lst=response['recording_users'] 
+        print(f"[Meeting Record Chairman][After Stop Record]",record_user_lst)
         if(record_user_lst is not None and (len(record_user_lst)>0)):
             new_image_path = os.path.join(self.script_dir, "Assets", "recording-mic.png" if (response["usercode"]!=user_code) else "mic.png")
             new_image = Image.open(new_image_path)
@@ -476,7 +477,7 @@ class MeetingRecordChairman(tk.Frame):
     
     # Create Folder After PageLoaded
     def open_meeting_record_page(self,response):
-        print(f"[Meeting Record][Open Record]: {response}")
+        print(f"[Meeting Record Chairman][Open Record]: {response}")
         if("message_code" in response):
             if(response['message_code']=="fail"):
                 messagebox.showerror("Folder Creation Message",response['message'])
@@ -503,7 +504,7 @@ class MeetingRecordChairman(tk.Frame):
         
     # Function to send messages to the server
     def send_messages(self,client_socket,client_message): 
-        print(f"[Meeting Record][Send Client Message] : {client_message}")
+        print(f"[Meeting Record Chairman][Send Client Message] : {client_message}")
         recipient_ip = socket.gethostbyname(socket.gethostname())
         full_message=f"{recipient_ip}: {client_message}"
         client_socket.send(full_message.encode('utf-8'))
@@ -527,7 +528,7 @@ class MeetingRecordChairman(tk.Frame):
      
     # Check and Request Confirmation for Discussion
     def check_discuss_request_confirmation(self,response):
-        print(f"[Meeting Record][Show Confirm Dialog by Chairman]:{response}")
+        print(f"[Meeting Record Chairman][Show Confirm Dialog by Chairman]:{response}")
         current_user_type=self.logged_user_info['usertype']
         if(current_user_type is not None and current_user_type.lower()=="chairman"):
             record_user_lst=response['recording_users']        
@@ -607,7 +608,8 @@ class MeetingRecordChairman(tk.Frame):
             self.remove_btn = tk.Button(self.blc_user_frame, text=f"Remove",bg="#E90074",fg="#FFFFFF",width=13,font=("Arial", 11),command=lambda: self.remove_recording_user(clients,client))
             self.remove_btn.pack(pady=(0,8))
   
-    def show_recording_users_frame(self,clients):        
+    def show_recording_users_frame(self,clients):  
+        print(f"[Meeting Record Chairman][Show Recording User Frame]",clients)      
         self.recording_frame_hide_remove_children()
         usertype_filter=lambda obj: (obj['usertype']).lower() !=UserType.CHAIRMAN.value
         filtered_user_objects = [obj for obj in clients if usertype_filter(obj)]
