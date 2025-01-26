@@ -69,7 +69,7 @@ class MeetingRecordChairman(tk.Frame):
         
         self.muteBtn=tk.Button(other_actions_frame,text="Mute All",bg="#7C00FE", fg="white",width=15,height=2,font=button_font,command=self.mute_action)
         self.muteBtn.pack(padx=5, pady=5)    
-        self.muteBtn.config(state='disabled')  
+        # self.muteBtn.config(state='disabled')  
 
         self.freeDiscussBtn=tk.Button(other_actions_frame,text="Free Discuss",bg="#433878", fg="white",width=15,height=2,font=button_font,command=self.free_disucss_action)
         self.freeDiscussBtn.pack(padx=5, pady=5)    
@@ -410,7 +410,7 @@ class MeetingRecordChairman(tk.Frame):
         self.stop_audio_record()
 
     # Mute Btn
-    def mute_action(self): 
+    def mute_action(self):       
         meeting_status=self.meeting_status_label.cget('text')
         if(meeting_status is not None and meeting_status !="" and self.logged_user_info["usertype"].lower()=="chairman"):    
             meeting_record_obj={"usercode":self.logged_user_info['usercode'],
@@ -605,7 +605,8 @@ class MeetingRecordChairman(tk.Frame):
             self.remove_btn = tk.Button(self.blc_user_frame, text=f"Remove",bg="#E90074",fg="#FFFFFF",width=13,font=("Arial", 11),command=lambda: self.remove_recording_user(clients,client))
             self.remove_btn.pack(pady=(0,8))
   
-    def show_recording_users_frame(self,clients):
+    def show_recording_users_frame(self,clients):        
+        self.recording_frame_hide_remove_children()
         usertype_filter=lambda obj: (obj['usertype']).lower() !=UserType.CHAIRMAN.value
         filtered_user_objects = [obj for obj in clients if usertype_filter(obj)]
         if(filtered_user_objects):
@@ -618,16 +619,13 @@ class MeetingRecordChairman(tk.Frame):
     def remove_recording_user(self,clients,clientObj):
         self.recording_users_frame.pack_forget()
         self.remove_recording_client(clientObj)
-        for widget in self.recording_users_frame.winfo_children():
-            widget.destroy()
+        self.recording_frame_hide_remove_children()
         new_clients = list(filter(lambda p: p!=clientObj, clients))
-        if len(new_clients)==0:
-          self.recording_frame_hide_remove_children()
-        else:
+        if len(new_clients)>0:          
           self.show_recording_users_frame(new_clients)
 
     def recording_frame_hide_remove_children(self):
         self.recording_users_frame.place_forget()
-        for widget in self.recording_users_frame.winfo_children():
-            widget.destroy()
+        for widget in self.scrl_recorders_frame.winfo_children():
+            widget.destroy()        
     #endregion

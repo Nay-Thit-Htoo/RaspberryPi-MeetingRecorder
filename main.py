@@ -8,15 +8,15 @@ import tkinter.font as tkFont
 import client_server_service as clientservice
 from meeting_record import MeetingRecord
 from meeting_record_chairman import MeetingRecordChairman 
-# import RPi.GPIO as GPIO # type: ignore
+import RPi.GPIO as GPIO # type: ignore
 
 class Main(tk.Tk):
     def __init__(self,):
         super().__init__()
         self.title("Recorder Project") 
-        # GPIO.setmode(GPIO.BOARD)
-        # GPIO.setwarnings(False)
-        # GPIO.setup(32, GPIO.OUT)  # GPIO 18 as output         
+        GPIO.setmode(GPIO.BOARD)
+        GPIO.setwarnings(False)
+        GPIO.setup(32, GPIO.OUT)  # GPIO 18 as output         
 
         # Font Style for Label
         self.label_font=tkFont.Font(family="Helvetica", size=12)
