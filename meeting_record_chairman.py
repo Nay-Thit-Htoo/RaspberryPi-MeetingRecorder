@@ -69,7 +69,7 @@ class MeetingRecordChairman(tk.Frame):
         
         self.muteBtn=tk.Button(other_actions_frame,text="Mute All",bg="#7C00FE", fg="white",width=15,height=2,font=button_font,command=self.mute_action)
         self.muteBtn.pack(padx=5, pady=5)    
-        # self.muteBtn.config(state='disabled')  
+        self.muteBtn.config(state='disabled')  
 
         self.freeDiscussBtn=tk.Button(other_actions_frame,text="Free Discuss",bg="#433878", fg="white",width=15,height=2,font=button_font,command=self.free_disucss_action)
         self.freeDiscussBtn.pack(padx=5, pady=5)    
@@ -457,7 +457,9 @@ class MeetingRecordChairman(tk.Frame):
             
             recording_users=", ".join(record_user_lst)
             self.meeting_status_label.config(text=f"{recording_users} recording......")
+            self.show_recording_users_frame(record_user_lst)
         else:
+            self.recording_users_frame.pack_forget()
             self.change_recording_icon_status_to_original() 
         
     # Audio Record Start
@@ -609,6 +611,7 @@ class MeetingRecordChairman(tk.Frame):
         self.recording_frame_hide_remove_children()
         usertype_filter=lambda obj: (obj['usertype']).lower() !=UserType.CHAIRMAN.value
         filtered_user_objects = [obj for obj in clients if usertype_filter(obj)]
+        self.recording_frame_hide_remove_children()
         if(filtered_user_objects):
            self.recording_users_frame.pack(side="left", fill="y")         
            print(f"[Meeting Record][Recording Users] : {filtered_user_objects[0]}") 
