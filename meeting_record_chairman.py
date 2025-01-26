@@ -391,7 +391,7 @@ class MeetingRecordChairman(tk.Frame):
         current_logged_user_type=self.logged_user_info['usertype']
         self.startBtn.config(state='normal')
         self.stopBtn.config(state='normal')
-        if(current_logged_user_type.lower()=="chairman"):            
+        if(current_logged_user_type==UserType.CHAIRMAN.value):            
             self.muteBtn.config(state='normal')
             self.freeDiscussBtn.config(state='normal')
             self.startVoteBtn.config(state='normal')
