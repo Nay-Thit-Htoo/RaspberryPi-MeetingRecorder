@@ -79,9 +79,7 @@ class AudioRecorder:
         self.recording = False
         if self.record_thread is not None:
             self.record_thread.join()
-        self.sox_process.stdin.close()
-        self.sox_process.wait() 
-    
+           
     def save_wave(self):
         self.create_folder_record_user()
         with wave.open(self.output_audio_path, 'wb') as wf:
