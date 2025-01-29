@@ -112,16 +112,16 @@ class MeetingRecordChairman(tk.Frame):
         like_disklike_btn_frame.pack(padx=10, pady=5) 
 
         self.like_image_path = os.path.join(self.script_dir, "Assets", "check.png")
-        self.like_image = Image.open(self.like_image_path)
+        self.like_image = Image.open(self.like_image_path).resize((20, 20)) 
         self.like_photo = ImageTk.PhotoImage(self.like_image)  
-        self.client_like_btn=tk.Button(like_disklike_btn_frame,bg="#0D9276", image=self.like_photo,compound="center",width=125,height=45,font=button_font,command=self.give_meeting_vote_like)
+        self.client_like_btn=tk.Button(like_disklike_btn_frame,bg="#0D9276", image=self.like_photo,compound="center",width=125,height=30,font=button_font,command=self.give_meeting_vote_like)
         self.client_like_btn.pack(side=tk.LEFT,padx=5, pady=5)
         self.client_like_btn.pack_forget()
 
         self.unlike_image_path = os.path.join(self.script_dir, "Assets", "close.png")
-        self.unlike_image = Image.open(self.unlike_image_path)
+        self.unlike_image = Image.open(self.unlike_image_path).resize((20, 20)) 
         self.unlike_photo = ImageTk.PhotoImage(self.unlike_image)  
-        self.client_unlike_btn=tk.Button(like_disklike_btn_frame,bg="#FF6868", image=self.unlike_photo,compound="center",width=125,height=45,font=button_font,command=self.give_meeting_vote_unlike)
+        self.client_unlike_btn=tk.Button(like_disklike_btn_frame,bg="#FF6868", image=self.unlike_photo,compound="center",width=125,height=30,font=button_font,command=self.give_meeting_vote_unlike)
         self.client_unlike_btn.pack(side=tk.LEFT,padx=5, pady=5)    
         self.client_unlike_btn.pack_forget()
         #endregion      
