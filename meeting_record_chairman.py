@@ -279,7 +279,7 @@ class MeetingRecordChairman(tk.Frame):
         self.start_client(meeting_record_obj)
         
     #start meeting
-    def start_meeting(self):       
+    def start_meeting_chairman(self):       
         self.logged_user_info=clientservice.read_clientInfo()
         meeting_record_obj={"usercode":self.logged_user_info['usercode'],
                     "usertype":self.logged_user_info['usertype'],
@@ -289,7 +289,8 @@ class MeetingRecordChairman(tk.Frame):
         self.start_client(meeting_record_obj)
     
     #stop meeting
-    def stop_meeting(self): 
+    def stop_meeting_chairman(self): 
+        self.recording_frame_hide_remove_children()
         meeting_record_obj={"usercode":self.logged_user_info['usercode'],
                     "usertype":self.logged_user_info['usertype'],
                     "actiontype":ActionType.STOP_MEETING.name                      
