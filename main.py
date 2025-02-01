@@ -108,8 +108,7 @@ class Main(tk.Tk):
         self.start_meeting_button.place(relx=1.0, rely=0.0, anchor='ne', x=-10, y=10)
         self.start_meeting_button.tkraise()  
         if hasattr(self.frame, "stop_meeting"):          
-           self.frame.stop_meeting()
-        self.remove_recording_user()
+           self.frame.stop_meeting()        
     
     def hide_change_background_btn(self):
          print(f"Reach Change Background Btn Hide")
