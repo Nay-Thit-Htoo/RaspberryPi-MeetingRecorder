@@ -412,6 +412,7 @@ class MeetingRecordChairman(tk.Frame):
     # Mute Btn
     def mute_action(self):       
         meeting_status=self.meeting_status_label.cget('text')
+        self.recording_users_frame.pack_forget()
         if(meeting_status is not None and meeting_status !="" and self.logged_user_info["usertype"].lower()=="chairman"):    
             meeting_record_obj={"usercode":self.logged_user_info['usercode'],
                     "usertype":self.logged_user_info['usertype'],
@@ -612,8 +613,7 @@ class MeetingRecordChairman(tk.Frame):
         print(f"[Meeting Record Chairman][Show Recording User Frame]",clients)      
         self.recording_frame_hide_remove_children()
         usertype_filter=lambda obj: (obj['usertype']).lower() !=UserType.CHAIRMAN.value
-        filtered_user_objects = [obj for obj in clients if usertype_filter(obj)]
-        self.recording_frame_hide_remove_children()
+        filtered_user_objects = [obj for obj in clients if usertype_filter(obj)]        
         if(filtered_user_objects):
            self.recording_users_frame.pack(side="left", fill="y")         
            print(f"[Meeting Record Chairman][Recording Users] : {filtered_user_objects}") 
