@@ -290,7 +290,7 @@ class MeetingRecordChairman(tk.Frame):
     
     #stop meeting
     def stop_meeting_chairman(self): 
-        self.recording_frame_hide_remove_children()
+        self.recording_users_frame.pack_forget()
         meeting_record_obj={"usercode":self.logged_user_info['usercode'],
                     "usertype":self.logged_user_info['usertype'],
                     "actiontype":ActionType.STOP_MEETING.name                      
