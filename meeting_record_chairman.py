@@ -71,9 +71,9 @@ class MeetingRecordChairman(tk.Frame):
         self.muteBtn.pack(padx=5, pady=5)    
         self.muteBtn.config(state='disabled')  
 
-        self.freeDiscussBtn=tk.Button(other_actions_frame,text="Free Discuss",bg="#433878", fg="white",width=15,height=2,font=button_font,command=self.free_disucss_action)
-        self.freeDiscussBtn.pack(padx=5, pady=5)    
-        self.freeDiscussBtn.config(state='disabled')  
+        # self.freeDiscussBtn=tk.Button(other_actions_frame,text="Free Discuss",bg="#433878", fg="white",width=15,height=2,font=button_font,command=self.free_disucss_action)
+        # self.freeDiscussBtn.pack(padx=5, pady=5)    
+        # self.freeDiscussBtn.config(state='disabled')  
 
         self.startVoteBtn=tk.Button(other_actions_frame,text="Meeting Vote",bg="#1A4D2E", fg="white",width=15,height=2,font=button_font,command=self.meeting_start_vote_btn_click)
         self.startVoteBtn.pack(padx=5, pady=5)   
@@ -393,7 +393,7 @@ class MeetingRecordChairman(tk.Frame):
         self.stopBtn.config(state='normal')
         if(current_logged_user_type==UserType.CHAIRMAN.value):            
             self.muteBtn.config(state='normal')
-            self.freeDiscussBtn.config(state='normal')
+            # self.freeDiscussBtn.config(state='normal')
             self.startVoteBtn.config(state='normal')
  
     # Stop Meeting 
@@ -401,7 +401,7 @@ class MeetingRecordChairman(tk.Frame):
         self.startBtn.config(state='disabled')
         self.stopBtn.config(state='disabled')                   
         self.muteBtn.config(state='disabled')
-        self.freeDiscussBtn.config(state='disabled')
+        # self.freeDiscussBtn.config(state='disabled')
         self.startVoteBtn.config(state='disabled')
         self.client_like_btn.pack_forget()
         self.client_unlike_btn.pack_forget()
