@@ -103,10 +103,6 @@ class MeetingRecord(tk.Frame):
         other_actions_frame=tk.Frame(main_frame)
         other_actions_frame.pack(padx=60,pady=5)  
 
-        self.muteBtn=tk.Button(other_actions_frame,text="Mute All",bg="#7C00FE", fg="white",width=15,height=2,font=button_font,command=self.mute_action)
-        self.muteBtn.pack(side=tk.LEFT,padx=5, pady=5)    
-        self.muteBtn.pack_forget()  
-
         self.freeDiscussBtn=tk.Button(other_actions_frame,text="Free Discuss",bg="#433878", fg="white",width=16,height=2,font=button_font,command=self.free_disucss_action)
         self.freeDiscussBtn.pack(side=tk.LEFT,padx=5, pady=5)    
         self.freeDiscussBtn.pack_forget() 
@@ -239,8 +235,7 @@ class MeetingRecord(tk.Frame):
         print(f"[Meeting Record][Start Record] : {meeting_record_obj}")
         self.startBtn.config(text="Please Wait...") 
         self.start_client(meeting_record_obj)
-        
-
+  
     #start meeting
     def start_meeting(self):       
         self.logged_user_info=clientservice.read_clientInfo()
@@ -355,16 +350,14 @@ class MeetingRecord(tk.Frame):
         current_logged_user_type=self.logged_user_info['usertype']
         self.startBtn.config(state='normal')
         self.stopBtn.config(state='normal')
-        if(current_logged_user_type.lower()=="chairman"):            
-            self.muteBtn.pack(side=tk.LEFT,padx=5, pady=5)
+        if(current_logged_user_type.lower()=="chairman"):  
             self.freeDiscussBtn.pack(side=tk.LEFT,padx=5, pady=5)
             self.startVoteBtn.pack(side=tk.LEFT,padx=5, pady=5)
  
     # Stop Meeting 
     def stop_meeting_action(self):
         self.startBtn.config(state='disabled')
-        self.stopBtn.config(state='disabled')                   
-        self.muteBtn.pack_forget()
+        self.stopBtn.config(state='disabled')  
         self.freeDiscussBtn.pack_forget()
         self.startVoteBtn.pack_forget()
         self.client_like_btn.pack_forget()
@@ -372,17 +365,6 @@ class MeetingRecord(tk.Frame):
         self.stop_meeting_vote_btn_click()
         self.change_recording_icon_status_to_original()
         self.stop_audio_record()
-
-    # Mute Btn
-    def mute_action(self):   
-        meeting_status=self.meeting_status_label.cget('text')
-        if(meeting_status is not None and meeting_status !="" and self.logged_user_info["usertype"].lower()=="chairman"):    
-            meeting_record_obj={"usercode":self.logged_user_info['usercode'],
-                    "usertype":self.logged_user_info['usertype'],
-                    "actiontype":ActionType.MUTE_ALL.name                      
-                    }
-            print(f"[Meeting Record][Mute All] : {meeting_record_obj}")
-            self.start_client(meeting_record_obj)
 
     # Change Meeting Status and Disable or Enable Start and Stop Buttons 
     def change_meeting_status_after_startrecord(self,response):
@@ -461,6 +443,7 @@ class MeetingRecord(tk.Frame):
    # Clean meeting status and enable start & stop buttons
     def clear_meeting_status_enable_buttons(self):       
         self.startBtn.config(state='normal')
+        self.startBtn.config(text="Discuss") 
         self.stopBtn.config(state='normal')
         
     # Function to send messages to the server
