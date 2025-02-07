@@ -27,11 +27,27 @@ class AudioRecorder:
         self.record_thread = None 
         self.sox_process=None        
 
+    def check_recorder(self):
+        """Check if any recording device is available."""
+        for i in range(self.audio.get_device_count()):
+            device_info = self.audio.get_device_info_by_index(i)
+            if device_info.get("maxInputChannels", 0) > 0:
+                print(f"Found recording device: {device_info['name']} (Index: {i})")
+                return i
+        print("No recording device detected.")
+        return None
+    
     def start_recording(self):
         if self.recording:
             print("Recording is already in progress.")
             return
 
+        # Check if a recording device is available
+        input_device_index = self.check_recorder()
+        if input_device_index is None:
+            print("No microphone detected. Cannot start recording.")
+            return
+        
         self.recording = True
 
         def record():
