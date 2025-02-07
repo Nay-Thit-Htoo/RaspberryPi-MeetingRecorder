@@ -6,14 +6,5 @@
     "server_password": "Galanthus123!@#",
     "is_starting_meeting": "false",
     "background_image": "Assets/background.jpg",
-    "clients": [
-        {
-            "usercode": "TYHR",
-            "login_date": "2025-01-29 22:48:44.492174",
-            "usertype": "chairman",
-            "message": "Login Success",
-            "message_code": "success",
-            "is_recording": "false"
-        }
-    ]
+    "clients": []
 }

@@ -36,32 +36,7 @@ class MeetingRecord(tk.Frame):
         self.meeting_vote_result_frame.pack(fill='x',pady=(0,10))          
 
         self.meeting_title_label = tk.Label(self.meeting_vote_result_frame,bg="#45474B",fg='white',font=title_font,text="Meeting Recording")
-        self.meeting_title_label.pack(padx=5, pady=(10,10))
-        
-        # Region Like Frame
-        self.like_frame=tk.Frame(self.meeting_vote_result_frame,bg="#45474B")        
-        self.like_frame.pack(side="left",padx=5, pady=(0,0),expand=True)
-        self.like_frame.pack_forget()
-        
-        self.like_count_number = tk.Label(self.like_frame,bg="#45474B",text="0",fg='white',font=title_font) 
-        self.like_count_number.pack(side="top",padx=5)       
-        self.like_count_number.pack_forget()
-
-        self.like_count_label = tk.Label(self.like_frame,bg="#45474B",text="Like",fg='#F4CE14',font=label_font)
-        self.like_count_label.pack(side="top",padx=5)       
-        self.like_count_label.pack_forget()
-
-        self.unlike_frame=tk.Frame(self.meeting_vote_result_frame,bg="#45474B") 
-        self.unlike_frame.pack(side="right",padx=5, pady=5,expand=True)       
-        self.unlike_frame.pack_forget()
-
-        self.unlike_count_number = tk.Label(self.unlike_frame,bg="#45474B",text="0",fg='white',font=title_font)        
-        self.unlike_count_number.pack(side="top",padx=5)
-        self.unlike_count_number.pack_forget()
-
-        self.unlike_count_label = tk.Label(self.unlike_frame,bg="#45474B",text="Unlike",fg='#F4CE14',font=label_font)  
-        self.unlike_count_label.pack(side="top",padx=5)      
-        self.unlike_count_label.pack_forget()
+        self.meeting_title_label.pack(padx=5, pady=(10,10)) 
 
         # Create Image and Show on Label
         self.script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -75,7 +50,7 @@ class MeetingRecord(tk.Frame):
         self.meeting_status_label.pack(padx=5, pady=5) 
 
         record_frame=tk.Frame(main_frame)
-        record_frame.pack(padx=60,pady=5)  
+        record_frame.pack(padx=90,pady=5)  
 
         #start & stop buttons
         self.startBtn=tk.Button(record_frame,text="Discuss",bg="#121212", fg="white",width=15,height=2,font=button_font,command=self.start_recording)
@@ -98,19 +73,7 @@ class MeetingRecord(tk.Frame):
         self.unlike_photo = ImageTk.PhotoImage(self.unlike_image)  
         self.client_unlike_btn=tk.Button(record_frame,bg="#FF6868", image=self.unlike_photo,compound="center",width=125,height=45,font=button_font,command=self.give_meeting_vote_unlike)
         self.client_unlike_btn.pack(side=tk.LEFT,padx=5, pady=5)    
-        self.client_unlike_btn.pack_forget()
-        
-        other_actions_frame=tk.Frame(main_frame)
-        other_actions_frame.pack(padx=60,pady=5)  
-
-        self.freeDiscussBtn=tk.Button(other_actions_frame,text="Free Discuss",bg="#433878", fg="white",width=16,height=2,font=button_font,command=self.free_disucss_action)
-        self.freeDiscussBtn.pack(side=tk.LEFT,padx=5, pady=5)    
-        self.freeDiscussBtn.pack_forget() 
-
-        self.startVoteBtn=tk.Button(other_actions_frame,text="Meeting Vote",bg="#1A4D2E", fg="white",width=16,height=2,font=button_font,command=self.meeting_start_vote_btn_click)
-        self.startVoteBtn.pack(side=tk.LEFT,padx=5, pady=5)   
-        self.startVoteBtn.pack_forget()   
-          
+        self.client_unlike_btn.pack_forget()              
     
     #Show Meeting Vote Frame
     def show_meeting_vote_info(self,meeting_vote_title):      
