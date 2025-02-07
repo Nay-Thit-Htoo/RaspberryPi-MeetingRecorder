@@ -607,7 +607,7 @@ class MeetingRecordChairman(tk.Frame):
             self.recorder_name_label = tk.Label(self.blc_user_frame, text=client["usercode"],width=18,fg="#FFFFFF",bg="#45474B")
             self.recorder_name_label.pack()
             
-            self.remove_btn = tk.Button(self.blc_user_frame, text=f"Remove",bg="#E90074",fg="#FFFFFF",width=13,font=("Arial", 11),command=lambda: self.remove_recording_user(clients,client))
+            self.remove_btn = tk.Button(self.blc_user_frame, text=f"Remove",bg="#E90074",fg="#FFFFFF",width=13,font=("Arial", 11),command=lambda cLst=clients,cObj=client:self.remove_recording_user(cLst,cObj))
             self.remove_btn.pack(pady=(0,8))
   
     def show_recording_users_frame(self,clients):  
