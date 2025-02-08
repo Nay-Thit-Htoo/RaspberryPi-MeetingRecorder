@@ -30,6 +30,7 @@ class MeetingRecordChairman(tk.Frame):
         label_font=tkFont.Font(family="Helvetica", size=12)    
         button_font=tkFont.Font(family="Helvetica", size=12)  
         label_sm_font=tkFont.Font(family="Helvetica", size=11)   
+        self.script_dir = os.path.dirname(os.path.abspath(__file__))
          
         # Meeting Vote Result
         self.meeting_vote_result_frame=tk.Frame(main_frame,bg="#45474B")    
@@ -46,11 +47,15 @@ class MeetingRecordChairman(tk.Frame):
         self.like_count_number = tk.Label(self.like_frame,bg="#45474B",text="0",fg='white',font=title_font) 
         self.like_count_number.pack(side="top",padx=5)       
         self.like_count_number.pack_forget()
-
-        self.like_count_label = tk.Label(self.like_frame,bg="#45474B",text="Like",fg='#F4CE14',font=label_font)
-        self.like_count_label.pack(side="top",padx=5)       
+     
+        self.like_image_path = os.path.join(self.script_dir, "Assets", "check.png")
+        self.like_image = Image.open(self.like_image_path).resize((20, 20)) 
+        self.like_photo = ImageTk.PhotoImage(self.like_image)
+       
+        self.like_count_label = tk.Label(self.like_frame, image=self.like_photo,bg="#0D9276")
+        self.like_count_label.pack(side="top",padx=5)
         self.like_count_label.pack_forget()
-
+       
         self.unlike_frame=tk.Frame(self.meeting_vote_result_frame,bg="#45474B") 
         self.unlike_frame.pack(side="right",padx=5, pady=5,expand=True)       
         self.unlike_frame.pack_forget()
@@ -59,8 +64,12 @@ class MeetingRecordChairman(tk.Frame):
         self.unlike_count_number.pack(side="top",padx=5)
         self.unlike_count_number.pack_forget()
 
-        self.unlike_count_label = tk.Label(self.unlike_frame,bg="#45474B",text="Unlike",fg='#F4CE14',font=label_font)  
-        self.unlike_count_label.pack(side="top",padx=5)      
+        self.unlike_image_path = os.path.join(self.script_dir, "Assets", "close.png")
+        self.unlike_image = Image.open(self.unlike_image_path).resize((20, 20)) 
+        self.unlike_photo = ImageTk.PhotoImage(self.unlike_image)
+
+        self.unlike_count_label = tk.Label(self.unlike_frame, image=self.unlike_photo,bg="#FF6868")
+        self.unlike_count_label.pack(side="top",padx=5)
         self.unlike_count_label.pack_forget()
         
         #region Actions Buttons
@@ -84,7 +93,6 @@ class MeetingRecordChairman(tk.Frame):
         status_frame=tk.Frame(main_frame)
         status_frame.pack(side="left", fill="y",padx=8)
 
-        self.script_dir = os.path.dirname(os.path.abspath(__file__))
         self.mic_image_path = os.path.join(self.script_dir, "Assets", "mic.png")
         self.image = Image.open(self.mic_image_path)
         self.photo = ImageTk.PhotoImage(self.image)       
@@ -110,17 +118,11 @@ class MeetingRecordChairman(tk.Frame):
         #region like & dislike Btn
         like_disklike_btn_frame=tk.Frame(status_frame)
         like_disklike_btn_frame.pack(padx=10, pady=5) 
-
-        self.like_image_path = os.path.join(self.script_dir, "Assets", "check.png")
-        self.like_image = Image.open(self.like_image_path).resize((20, 20)) 
-        self.like_photo = ImageTk.PhotoImage(self.like_image)  
+       
         self.client_like_btn=tk.Button(like_disklike_btn_frame,bg="#0D9276", image=self.like_photo,compound="center",width=125,height=30,font=button_font,command=self.give_meeting_vote_like)
         self.client_like_btn.pack(side=tk.LEFT,padx=5, pady=5)
         self.client_like_btn.pack_forget()
 
-        self.unlike_image_path = os.path.join(self.script_dir, "Assets", "close.png")
-        self.unlike_image = Image.open(self.unlike_image_path).resize((20, 20)) 
-        self.unlike_photo = ImageTk.PhotoImage(self.unlike_image)  
         self.client_unlike_btn=tk.Button(like_disklike_btn_frame,bg="#FF6868", image=self.unlike_photo,compound="center",width=125,height=30,font=button_font,command=self.give_meeting_vote_unlike)
         self.client_unlike_btn.pack(side=tk.LEFT,padx=5, pady=5)    
         self.client_unlike_btn.pack_forget()
