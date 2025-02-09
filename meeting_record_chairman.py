@@ -20,7 +20,9 @@ class MeetingRecordChairman(tk.Frame):
         super().__init__(parent)
         self.controller = controller 
         self.logged_user_info=None      
-        self.audio_record_service=None         
+        self.audio_record_service=None 
+        self.parent=parent       
+        self.parent.protocol("WM_DELETE_WINDOW", self.on_close)        
         
         main_frame=tk.Frame(self,relief='raised')
         main_frame.pack(padx=0,pady=0)  
@@ -270,15 +272,17 @@ class MeetingRecordChairman(tk.Frame):
     
     # start recording
     def start_recording(self): 
-     if(self.startBtn.cget("text").lower()=='discuss'):          
-        meeting_record_obj={"usercode":self.logged_user_info['usercode'],
-                        "usertype":self.logged_user_info['usertype'],
-                        "actiontype":ActionType.START_RECORD.name                      
-                        }       
-                                 
-        print(f"[Meeting Record Chairman][Start Record] : {meeting_record_obj}")
+     if self.is_device_ready(1):
+        if(self.startBtn.cget("text").lower()=='discuss'):          
+            meeting_record_obj={"usercode":self.logged_user_info['usercode'],
+                            "usertype":self.logged_user_info['usertype'],
+                            "actiontype":ActionType.START_RECORD.name                      
+                            }       
+        print(f"[Meeting Record][Start Record] : {meeting_record_obj}")
         self.startBtn.config(text="Please Wait...") 
         self.start_client(meeting_record_obj)
+     else:
+         messagebox.showinfo("Device Not Found","There is no device to record!")
         
     #start meeting
     def start_meeting_chairman(self):       
@@ -637,3 +641,14 @@ class MeetingRecordChairman(tk.Frame):
         for widget in self.scrl_recorders_frame.winfo_children():
             widget.destroy()        
     #endregion
+
+    def on_close(self):
+        self.stop_recording()
+    
+    def is_device_ready(self, device_index):
+        try:
+            device_info = self.audio.get_device_info_by_index(device_index)
+            return device_info.get('maxInputChannels') > 0
+        except OSError as e:
+            print(f"Audio device check failed: {e}")
+            return False

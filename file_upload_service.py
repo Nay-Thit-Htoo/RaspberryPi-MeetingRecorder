@@ -27,7 +27,7 @@ def create_and_copy_to_network_share(local_folder, remote_folder, server_address
         subprocess.run(create_folder_command, check=True, capture_output=True, text=True)
         print(f"[File Upload To Server]: Created folder '{remote_folder}' on network share.")
     except subprocess.CalledProcessError as e:
-        print(f"[File Upload To Server]: Error creating remote folder:", e.stderr)
+        print(f"[File Upload To Server]: Error creating remote folder:", e)
         return
 
     # Step 2: Copy files from local folder to the network share
