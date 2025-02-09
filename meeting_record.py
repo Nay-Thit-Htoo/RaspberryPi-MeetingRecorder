@@ -23,8 +23,7 @@ class MeetingRecord(tk.Frame):
         self.logged_user_info=None      
         self.audio_record_service=None  
         self.parent=parent    
-        self.parent.protocol("WM_DELETE_WINDOW", self.on_close)
-        self.audio = pyaudio.PyAudio()
+        self.controller.protocol("WM_DELETE_WINDOW", self.on_close)      
 
         main_frame=tk.Frame(self,relief='raised')
         main_frame.pack(padx=0,pady=0)  
@@ -513,8 +512,9 @@ class MeetingRecord(tk.Frame):
         self.stop_recording()
     
     def is_device_ready(self, device_index):
+        audio_dev=pyaudio.PyAudio()
         try:
-            device_info = self.audio.get_device_info_by_index(device_index)
+            device_info = audio_dev.get_device_info_by_index(device_index)
             return device_info.get('maxInputChannels') > 0
         except OSError as e:
             print(f"Audio device check failed: {e}")
