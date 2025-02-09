@@ -16,7 +16,8 @@ class Main(tk.Tk):
         self.title("Recorder Project") 
         GPIO.setmode(GPIO.BOARD)
         GPIO.setwarnings(False)
-        GPIO.setup(32, GPIO.OUT)  # GPIO 18 as output         
+        GPIO.setup(32, GPIO.OUT)  # GPIO 18 as output     
+        GPIO.cleanup()
 
         # Font Style for Label
         self.label_font=tkFont.Font(family="Helvetica", size=12)
@@ -64,6 +65,7 @@ class Main(tk.Tk):
         
         # Bind the window resizing event
         self.bind("<Configure>", self.resize_background)
+
 
     def resize_background(self, event=None):
         # Get the current window dimensions
