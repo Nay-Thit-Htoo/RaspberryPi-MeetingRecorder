@@ -2,6 +2,7 @@ import os
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog
+from tkinter import messagebox
 from PIL import Image, ImageTk
 from login import Login 
 import tkinter.font as tkFont
@@ -18,6 +19,7 @@ class Main(tk.Tk):
         GPIO.setwarnings(False)
         GPIO.setup(32, GPIO.OUT)  # GPIO 18 as output     
         GPIO.cleanup()
+
 
         # Font Style for Label
         self.label_font=tkFont.Font(family="Helvetica", size=12)
@@ -65,7 +67,18 @@ class Main(tk.Tk):
         
         # Bind the window resizing event
         self.bind("<Configure>", self.resize_background)
+        
+        self.protocol("WM_DELETE_WINDOW", self.on_close)
 
+    def on_close(self):
+        if(self.frame.__class__.__name__=="MeetingRecordChairman"):
+            if hasattr(self.frame, "close_window_chairman"):           
+             self.frame.close_window_chairman()             
+             self.destroy()
+        elif(self.frame.__class__.__name__=="MeetingRecord"):
+            if hasattr(self.frame, "close_window_client"):           
+             self.frame.close_window_client()
+             self.destroy()
 
     def resize_background(self, event=None):
         # Get the current window dimensions

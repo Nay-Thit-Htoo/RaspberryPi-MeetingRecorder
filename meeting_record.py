@@ -23,7 +23,6 @@ class MeetingRecord(tk.Frame):
         self.logged_user_info=None      
         self.audio_record_service=None  
         self.parent=parent    
-        self.controller.protocol("WM_DELETE_WINDOW", self.on_close)      
 
         main_frame=tk.Frame(self,relief='raised')
         main_frame.pack(padx=0,pady=0)  
@@ -259,6 +258,11 @@ class MeetingRecord(tk.Frame):
             print(f"[Meeting Record][Stop Record] : {meeting_record_obj}")
             self.start_client(meeting_record_obj)       
     
+    # region close window event
+    def close_window_client(self):        
+        self.stop_recording()
+    # endregion
+
     # Receive Message via Client Socket
     def receive_messages(self,client_socket):
         print(f"Meeting Record][Receive Message]: {client_socket}")
@@ -506,10 +510,7 @@ class MeetingRecord(tk.Frame):
                         }       
                                     
         print(f"[Meeting Record][Remove Client] : {remove_client_obj}")        
-        self.start_client(remove_client_obj)
-    
-    def on_close(self):
-        self.stop_recording()
+        self.start_client(remove_client_obj)    
     
     def is_device_ready(self, device_index):
         audio_dev=pyaudio.PyAudio()

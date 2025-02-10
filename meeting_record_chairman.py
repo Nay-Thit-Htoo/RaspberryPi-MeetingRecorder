@@ -22,8 +22,7 @@ class MeetingRecordChairman(tk.Frame):
         self.controller = controller 
         self.logged_user_info=None      
         self.audio_record_service=None 
-        self.parent=parent       
-        self.controller.protocol("WM_DELETE_WINDOW", self.on_close)        
+        self.parent=parent      
         
         main_frame=tk.Frame(self,relief='raised')
         main_frame.pack(padx=0,pady=0)  
@@ -340,6 +339,12 @@ class MeetingRecordChairman(tk.Frame):
             print(f"[Meeting Record Chairman][Stop Record] : {meeting_record_obj}")
             self.start_client(meeting_record_obj)       
     
+
+    # region close window event
+    def close_window_chairman(self):       
+        self.stop_recording()
+    # endregion
+
     # Receive Message via Client Socket
     def receive_messages(self,client_socket):
         print(f"[Meeting Record Chairman][Receive Message]: {client_socket}")
@@ -641,10 +646,7 @@ class MeetingRecordChairman(tk.Frame):
         self.recording_users_frame.place_forget()
         for widget in self.scrl_recorders_frame.winfo_children():
             widget.destroy()        
-    #endregion
-
-    def on_close(self):
-        self.stop_recording()
+    #endregion   
     
     def is_device_ready(self, device_index):
         audio_dev=pyaudio.PyAudio()
