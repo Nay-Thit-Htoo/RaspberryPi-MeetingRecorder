@@ -25,7 +25,8 @@ class AudioRecorder:
         self.frames = queue.Queue()  # Use a queue to buffer audio data
         self.recording = False
         self.record_thread = None 
-        self.sox_process=None        
+        self.sox_process=None  
+        
     
     def start_recording(self):
         if self.recording:
@@ -49,6 +50,8 @@ class AudioRecorder:
                     stdin=subprocess.PIPE
                 )
                 print("[Audio Record Service]:[Start Audio Record]")
+                GPIO.setmode(GPIO.BOARD)
+                GPIO.setup(32, GPIO.OUT)  # GPIO 18 as output
                 GPIO.output(32, GPIO.HIGH)  # Output 5V to GPIO pin 18
 
                 while self.recording:
@@ -77,8 +80,8 @@ class AudioRecorder:
     def stop_recording(self):     
         self.recording = False
         if self.record_thread is not None:
-            GPIO.output(32, GPIO.LOW) 
-            self.record_thread.join()
+           GPIO.output(32, GPIO.LOW) 
+           self.record_thread.join()
            
     def save_wave(self):
         self.create_folder_record_user()
