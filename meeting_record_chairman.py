@@ -345,9 +345,9 @@ class MeetingRecordChairman(tk.Frame):
         self.logged_user_info=clientservice.read_clientInfo()
         meeting_record_obj={"usercode":self.logged_user_info['usercode'],
                 "usertype":self.logged_user_info['usertype'],
-                "actiontype":ActionType.STOP_RECORD.name                      
+                "actiontype":ActionType.MUTE_ALL.name                      
                 }   
-        print(f"[Meeting Record Chairman][Stop Record After Window Close] : {meeting_record_obj}")
+        print(f"[Meeting Record Chairman][Stop Record After Window Close][Mute All] : {meeting_record_obj}")
         self.start_client(meeting_record_obj)    
     # endregion
 
