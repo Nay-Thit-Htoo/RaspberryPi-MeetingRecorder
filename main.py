@@ -71,14 +71,13 @@ class Main(tk.Tk):
         self.protocol("WM_DELETE_WINDOW", self.on_close)
 
     def on_close(self):
+        self.destroy()
         if(self.frame.__class__.__name__=="MeetingRecordChairman"):
             if hasattr(self.frame, "close_window_chairman"):           
-             self.frame.close_window_chairman()             
-             self.destroy()
+             self.frame.close_window_chairman()
         elif(self.frame.__class__.__name__=="MeetingRecord"):
             if hasattr(self.frame, "close_window_client"):           
              self.frame.close_window_client()
-             self.destroy()
 
     def resize_background(self, event=None):
         # Get the current window dimensions
