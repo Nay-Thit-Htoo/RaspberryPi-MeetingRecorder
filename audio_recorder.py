@@ -74,10 +74,10 @@ class AudioRecorder:
         self.record_thread = threading.Thread(target=record)
         self.record_thread.start()
 
-    def stop_recording(self):      
-        GPIO.output(32, GPIO.LOW)     
+    def stop_recording(self):     
         self.recording = False
         if self.record_thread is not None:
+            GPIO.output(32, GPIO.LOW) 
             self.record_thread.join()
            
     def save_wave(self):
