@@ -76,28 +76,7 @@ class MeetingRecord(tk.Frame):
         self.client_unlike_btn=tk.Button(record_frame,bg="#FF6868", image=self.unlike_photo,compound="center",width=125,height=45,font=button_font,command=self.give_meeting_vote_unlike)
         self.client_unlike_btn.pack(side=tk.LEFT,padx=5, pady=5)    
         self.client_unlike_btn.pack_forget()              
-    
-    #Show Meeting Vote Frame
-    def show_meeting_vote_info(self,meeting_vote_title):      
-        self.logged_user_info=clientservice.read_clientInfo()
-        meeting_vote_obj={"usercode":self.logged_user_info['usercode'],
-                    "usertype":self.logged_user_info['usertype'],
-                    "actiontype":ActionType.START_MEETING_VOTE.name,
-                    "meeting_vote_title":meeting_vote_title                      
-                    }
-        print(f"[Meeting Record][Start Meeting Vote] : {meeting_vote_obj}")
-        self.start_client(meeting_vote_obj)
-        self.startVoteBtn.config(text="Stop Vote")        
-        self.meeting_title_label.pack(padx=5, pady=(10,0)) 
-        self.meeting_title_label.config(text=meeting_vote_title)
-        self.like_frame.pack(side="left",padx=5, pady=(0,0),expand=True)
-        self.like_count_number.pack(side="top",padx=5)
-        self.like_count_number.config(text=0)
-        self.like_count_label.pack(side="top",padx=5)
-        self.unlike_frame.pack(side="right",padx=5, pady=5,expand=True)
-        self.unlike_count_number.pack(side="top",padx=5)
-        self.unlike_count_number.config(text=0)
-        self.unlike_count_label.pack(side="top",padx=5)
+     
 
     # Stop Meeting Vote Btn Click
     def stop_meeting_vote_btn_click(self):
@@ -119,15 +98,6 @@ class MeetingRecord(tk.Frame):
           widget.pack_forget() 
         self.meeting_title_label.pack(padx=5, pady=(10,10))
         self.meeting_title_label.config(text="Meeting Recording")
-
-    # Meeting Start Vote Btn Click
-    def meeting_start_vote_btn_click(self): 
-      if(self.startVoteBtn.cget("text")=='Meeting Vote'):
-         meeting_vote_service.reset_meeting_vote_result()    
-         MeetingVoteConfiguration(self)        
-      else:
-         self.startVoteBtn.config(text="Meeting Vote")
-         self.stop_meeting_vote_btn_click()
    
     # Update Meeting Vote Title for Client
     def update_meeting_vote_info_for_client(self,meeting_vote_obj):
@@ -151,19 +121,7 @@ class MeetingRecord(tk.Frame):
         print(f'[Meeting Record]:[Vote Result File Path] {vote_result_file_path}')
         vote_result_file_upload_thread = threading.Thread(target=file_upload_service.file_upload_to_server, args=(vote_result_file_path,current_logged_user))
         vote_result_file_upload_thread.start() 
-               
-    # Update Meeting Vote Count
-    def update_meeting_voute_count(self):
-        meeting_title=self.meeting_title_label.cget("text")
-        if(meeting_title):
-            meeting_vote_result=meeting_vote_service.get_meeting_vote_result_by_title(meeting_title)
-            if(meeting_vote_result):
-                meeting_vote_result=meeting_vote_result[0]
-                self.like_count_number.config(text=meeting_vote_result['like'])
-                self.unlike_count_number.config(text=meeting_vote_result['unlike'])
-            else:
-                self.like_count_number.config(text=0)
-                self.unlike_count_number.config(text=0)
+     
 
     # Client Give Meeting Vote ( Like )
     def give_meeting_vote_like(self):
@@ -221,30 +179,7 @@ class MeetingRecord(tk.Frame):
                     }
         print(f"[Meeting Record][Stop Meeting] : {meeting_record_obj}")
         self.start_client(meeting_record_obj)        
-
-    #free Discuss Action
-    def free_disucss_action(self):      
-        free_discuss_btn_txt=self.freeDiscussBtn.cget("text").lower().replace(" ","")
-        self.logged_user_info=clientservice.read_clientInfo()
-        free_discuss_obj={"usercode":self.logged_user_info['usercode'],
-                    "usertype":self.logged_user_info['usertype'],
-                    "actiontype":ActionType.START_FREE_DISCUSS.name                      
-                    }               
-        if(free_discuss_btn_txt=='freediscuss'):  
-          meeting_status=self.meeting_status_label.cget('text')
-          if(self.startBtn.cget("text").lower()=='discuss' and meeting_status==""):
-             print(f"[Meeting Record][Start Free Discuss] : {free_discuss_obj}")
-             free_discuss_obj['actiontype']=ActionType.START_FREE_DISCUSS.name
-             self.freeDiscussBtn.config(text="Stop Free Discuss")
-             self.freeDiscussBtn.config(bg="#FF8343")
-        else:
-            print(f"[Meeting Record][Stop Free Discuss] : {free_discuss_obj}")
-            free_discuss_obj['actiontype']=ActionType.STOP_FREE_DISCUSS.name
-            self.freeDiscussBtn.config(text="Free Discuss")
-            self.freeDiscussBtn.config(bg="#1A4D2E")
-    
-        self.start_client(free_discuss_obj)
-        
+      
     # stop recording
     def stop_recording(self):          
        if(self.startBtn.cget("text").lower() =='discussing'):            
@@ -305,11 +240,9 @@ class MeetingRecord(tk.Frame):
                 elif(action_type==ActionType.START_MEETING_VOTE.name or action_type==ActionType.STOP_MEETING_VOTE.name):          
                     self.update_meeting_vote_info_for_client(response_message)
                 elif(action_type==ActionType.LIKE_MEETING_VOTE.name):          
-                    meeting_vote_service.update_vote_result(self.meeting_title_label.cget("text"),True)
-                    self.update_meeting_voute_count()
+                    meeting_vote_service.update_vote_result(self.meeting_title_label.cget("text"),True)                    
                 elif(action_type==ActionType.UNLIKE_MEETING_VOTE.name):          
-                    meeting_vote_service.update_vote_result(self.meeting_title_label.cget("text"),False)
-                    self.update_meeting_voute_count()                                  
+                    meeting_vote_service.update_vote_result(self.meeting_title_label.cget("text"),False)                                                
             except Exception as err:
                 print(f"[Meeting Record]:[Exception Error] : {err}")                
                 break
@@ -318,20 +251,14 @@ class MeetingRecord(tk.Frame):
                break 
  
     # Start Meeting
-    def start_meeting_action(self):
-        current_logged_user_type=self.logged_user_info['usertype']
+    def start_meeting_action(self):        
         self.startBtn.config(state='normal')
-        self.stopBtn.config(state='normal')
-        if(current_logged_user_type.lower()=="chairman"):  
-            self.freeDiscussBtn.pack(side=tk.LEFT,padx=5, pady=5)
-            self.startVoteBtn.pack(side=tk.LEFT,padx=5, pady=5)
+        self.stopBtn.config(state='normal')    
  
     # Stop Meeting 
     def stop_meeting_action(self):
         self.startBtn.config(state='disabled')
-        self.stopBtn.config(state='disabled')  
-        self.freeDiscussBtn.pack_forget()
-        self.startVoteBtn.pack_forget()
+        self.stopBtn.config(state='disabled') 
         self.client_like_btn.pack_forget()
         self.client_unlike_btn.pack_forget()
         self.stop_meeting_vote_btn_click()
