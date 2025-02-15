@@ -9,9 +9,10 @@ def create_and_copy_to_network_share(local_folder, remote_folder, server_address
 
     # Step 1: Create the target folder on the Windows network share
     create_folder_command = [
-        "smbclient", f"//{server_address}/{share_name}", "-U", f"{username}%{password}", "-c",
-        f'mkdir "{remote_folder}"'
-    ]
+    "smbclient", f"//{server_address}/{share_name}", "-U", f"{username}%{password}",
+    "--option='client min protocol=SMB2'", "--option='client max protocol=SMB3'",
+    "-c", f'mkdir "{remote_folder}"'
+   ]
     
     try:
         subprocess.run(create_folder_command, check=True, capture_output=True, text=True)
@@ -22,9 +23,10 @@ def create_and_copy_to_network_share(local_folder, remote_folder, server_address
 
     # Step 2: Copy files from local folder to the network share
     copy_command = [
-        "smbclient", f"//{server_address}/{share_name}", "-U", f"{username}%{password}", "-c",
-        f'lcd "{local_folder}"; cd "{remote_folder}"; prompt OFF; recurse ON; mput *'
-    ]
+    "smbclient", f"//{server_address}/{share_name}", "-U", f"{username}%{password}",
+    "--option='client min protocol=SMB2'", "--option='client max protocol=SMB3'",
+    "-c", f'lcd "{local_folder}"; cd "{remote_folder}"; prompt OFF; recurse ON; mput *'
+]
     
     try:
         subprocess.run(copy_command, check=True, capture_output=True, text=True)
