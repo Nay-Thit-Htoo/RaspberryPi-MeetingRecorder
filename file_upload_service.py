@@ -14,7 +14,7 @@ def create_and_copy_to_network_share(local_folder, remote_folder, server_address
     # Step 1: Create the target folder on the Windows network share
     create_folder_command = [
         "smbclient", f"//{server_address}/{share_name}", "-U", f"{username}%{password}", "-c",
-        "--timeout=60",
+        "--option=client min protocol=SMB2", "--option=client max protocol=SMB3",
         f'mkdir "{remote_folder}"'
     ]
     print(f"[File Upload To Server]:[Server Address]:{server_address}")
@@ -34,6 +34,7 @@ def create_and_copy_to_network_share(local_folder, remote_folder, server_address
     # Step 2: Copy files from local folder to the network share
     copy_command = [
         "smbclient", f"//{server_address}/{share_name}", "-U", f"{username}%{password}", "-c",
+        "--option=client min protocol=SMB2", "--option=client max protocol=SMB3",
         f'lcd "{local_folder}"; cd "{remote_folder}"; prompt OFF; recurse ON; mput *',
     ]
     
