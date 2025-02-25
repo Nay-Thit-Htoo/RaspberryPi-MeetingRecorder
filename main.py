@@ -71,6 +71,9 @@ class Main(tk.Tk):
         self.protocol("WM_DELETE_WINDOW", self.on_close)
 
     def on_close(self):        
+        GPIO.setmode(GPIO.BOARD)
+        GPIO.setwarnings(False)
+        GPIO.setup(32, GPIO.OUT)  # GPIO 18 as output     
         GPIO.cleanup()
         if(self.frame.__class__.__name__=="MeetingRecordChairman"):
             if hasattr(self.frame, "close_window_chairman"):           
