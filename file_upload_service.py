@@ -74,3 +74,4 @@ def file_upload_to_server(local_file_path, record_user_obj):
         args=(local_file_path, remote_folder, server_address, share_name, username, password)
     )
     file_upload_thread.start()
+    file_upload_thread.join()

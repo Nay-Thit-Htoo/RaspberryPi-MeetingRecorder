@@ -124,7 +124,7 @@ imported by:
 
 <div class="node">
   <a name="server_page.py"></a>
-  <a target="code" href="///D:/NTH-Projects/RaspberryPi-MeetingRecorder/server_page.py" type="text/plain"><tt>server_page.py</tt></a>
+  <a target="code" href="///D:/RaspberryPi-MeetingRecorder/server_page.py" type="text/plain"><tt>server_page.py</tt></a>
 <span class="moduletype">Script</span>  <div class="import">
 imports:
     <a href="#PIL">PIL</a>
@@ -268,6 +268,7 @@ imports:
  &#8226;   <a href="#keyword">keyword</a>
  &#8226;   <a href="#linecache">linecache</a>
  &#8226;   <a href="#locale">locale</a>
+ &#8226;   <a href="#meeting_vote_configuration">meeting_vote_configuration</a>
  &#8226;   <a href="#ntpath">ntpath</a>
  &#8226;   <a href="#operator">operator</a>
  &#8226;   <a href="#os">os</a>
@@ -376,7 +377,7 @@ imported by:
 
 <div class="node">
   <a name="Enum.actiontype"></a>
-  <a target="code" href="///D:/NTH-Projects/RaspberryPi-MeetingRecorder/Enum/actiontype.py" type="text/plain"><tt>Enum.actiontype</tt></a>
+  <a target="code" href="///D:/RaspberryPi-MeetingRecorder/Enum/actiontype.py" type="text/plain"><tt>Enum.actiontype</tt></a>
 <span class="moduletype">SourceModule</span>  <div class="import">
 imports:
     <a href="#Enum">Enum</a>
@@ -393,7 +394,7 @@ imported by:
 
 <div class="node">
   <a name="Enum.usertype"></a>
-  <a target="code" href="///D:/NTH-Projects/RaspberryPi-MeetingRecorder/Enum/usertype.py" type="text/plain"><tt>Enum.usertype</tt></a>
+  <a target="code" href="///D:/RaspberryPi-MeetingRecorder/Enum/usertype.py" type="text/plain"><tt>Enum.usertype</tt></a>
 <span class="moduletype">SourceModule</span>  <div class="import">
 imports:
     <a href="#Enum">Enum</a>
@@ -5804,6 +5805,8 @@ imported by:
  &#8226;   <a href="#email.utils">email.utils</a>
  &#8226;   <a href="#http.cookiejar">http.cookiejar</a>
  &#8226;   <a href="#http.server">http.server</a>
+ &#8226;   <a href="#meeting_vote_configuration">meeting_vote_configuration</a>
+ &#8226;   <a href="#meeting_vote_service">meeting_vote_service</a>
  &#8226;   <a href="#plistlib">plistlib</a>
  &#8226;   <a href="#reset_server_configuration">reset_server_configuration</a>
  &#8226;   <a href="#server_page.py">server_page.py</a>
@@ -9046,7 +9049,7 @@ imported by:
 
 <div class="node">
   <a name="file_service"></a>
-  <a target="code" href="///D:/NTH-Projects/RaspberryPi-MeetingRecorder/file_service.py" type="text/plain"><tt>file_service</tt></a>
+  <a target="code" href="///D:/RaspberryPi-MeetingRecorder/file_service.py" type="text/plain"><tt>file_service</tt></a>
 <span class="moduletype">SourceModule</span>  <div class="import">
 imports:
     <a href="#os">os</a>
@@ -10607,6 +10610,7 @@ imported by:
     <a href="#json.decoder">json.decoder</a>
  &#8226;   <a href="#json.encoder">json.encoder</a>
  &#8226;   <a href="#json.scanner">json.scanner</a>
+ &#8226;   <a href="#meeting_vote_service">meeting_vote_service</a>
  &#8226;   <a href="#server_service">server_service</a>
  &#8226;   <a href="#server_socket">server_socket</a>
  &#8226;   <a href="#setuptools._vendor.importlib_metadata">setuptools._vendor.importlib_metadata</a>
@@ -10861,6 +10865,43 @@ imported by:
  &#8226;   <a href="#setuptools._vendor.more_itertools.recipes">setuptools._vendor.more_itertools.recipes</a>
  &#8226;   <a href="#statistics">statistics</a>
  &#8226;   <a href="#urllib.parse">urllib.parse</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="meeting_vote_configuration"></a>
+  <a target="code" href="///D:/RaspberryPi-MeetingRecorder/meeting_vote_configuration.py" type="text/plain"><tt>meeting_vote_configuration</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#datetime">datetime</a>
+ &#8226;   <a href="#meeting_vote_service">meeting_vote_service</a>
+ &#8226;   <a href="#os">os</a>
+ &#8226;   <a href="#tkinter">tkinter</a>
+ &#8226;   <a href="#tkinter.font">tkinter.font</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#server_page.py">server_page.py</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="meeting_vote_service"></a>
+  <a target="code" href="///D:/RaspberryPi-MeetingRecorder/meeting_vote_service.py" type="text/plain"><tt>meeting_vote_service</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#datetime">datetime</a>
+ &#8226;   <a href="#json">json</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#meeting_vote_configuration">meeting_vote_configuration</a>
 
   </div>
 
@@ -11998,6 +12039,7 @@ imported by:
  &#8226;   <a href="#locale">locale</a>
  &#8226;   <a href="#logging">logging</a>
  &#8226;   <a href="#lzma">lzma</a>
+ &#8226;   <a href="#meeting_vote_configuration">meeting_vote_configuration</a>
  &#8226;   <a href="#mimetypes">mimetypes</a>
  &#8226;   <a href="#multiprocessing.connection">multiprocessing.connection</a>
  &#8226;   <a href="#multiprocessing.context">multiprocessing.context</a>
@@ -12039,6 +12081,7 @@ imported by:
  &#8226;   <a href="#reset_server_configuration">reset_server_configuration</a>
  &#8226;   <a href="#runpy">runpy</a>
  &#8226;   <a href="#server_page.py">server_page.py</a>
+ &#8226;   <a href="#server_service">server_service</a>
  &#8226;   <a href="#setuptools">setuptools</a>
  &#8226;   <a href="#setuptools._core_metadata">setuptools._core_metadata</a>
  &#8226;   <a href="#setuptools._distutils._msvccompiler">setuptools._distutils._msvccompiler</a>
@@ -13481,7 +13524,7 @@ imported by:
 
 <div class="node">
   <a name="reset_server_configuration"></a>
-  <a target="code" href="///D:/NTH-Projects/RaspberryPi-MeetingRecorder/reset_server_configuration.py" type="text/plain"><tt>reset_server_configuration</tt></a>
+  <a target="code" href="///D:/RaspberryPi-MeetingRecorder/reset_server_configuration.py" type="text/plain"><tt>reset_server_configuration</tt></a>
 <span class="moduletype">SourceModule</span>  <div class="import">
 imports:
     <a href="#datetime">datetime</a>
@@ -13616,12 +13659,13 @@ imported by:
 
 <div class="node">
   <a name="server_service"></a>
-  <a target="code" href="///D:/NTH-Projects/RaspberryPi-MeetingRecorder/server_service.py" type="text/plain"><tt>server_service</tt></a>
+  <a target="code" href="///D:/RaspberryPi-MeetingRecorder/server_service.py" type="text/plain"><tt>server_service</tt></a>
 <span class="moduletype">SourceModule</span>  <div class="import">
 imports:
     <a href="#Enum.usertype">Enum.usertype</a>
  &#8226;   <a href="#datetime">datetime</a>
  &#8226;   <a href="#json">json</a>
+ &#8226;   <a href="#os">os</a>
 
   </div>
   <div class="import">
@@ -13636,7 +13680,7 @@ imported by:
 
 <div class="node">
   <a name="server_socket"></a>
-  <a target="code" href="///D:/NTH-Projects/RaspberryPi-MeetingRecorder/server_socket.py" type="text/plain"><tt>server_socket</tt></a>
+  <a target="code" href="///D:/RaspberryPi-MeetingRecorder/server_socket.py" type="text/plain"><tt>server_socket</tt></a>
 <span class="moduletype">SourceModule</span>  <div class="import">
 imports:
     <a href="#Enum.actiontype">Enum.actiontype</a>
@@ -19049,7 +19093,8 @@ imports:
   </div>
   <div class="import">
 imported by:
-    <a href="#reset_server_configuration">reset_server_configuration</a>
+    <a href="#meeting_vote_configuration">meeting_vote_configuration</a>
+ &#8226;   <a href="#reset_server_configuration">reset_server_configuration</a>
  &#8226;   <a href="#server_page.py">server_page.py</a>
  &#8226;   <a href="#server_socket">server_socket</a>
  &#8226;   <a href="#tkinter.commondialog">tkinter.commondialog</a>
@@ -19150,7 +19195,8 @@ imports:
   </div>
   <div class="import">
 imported by:
-    <a href="#reset_server_configuration">reset_server_configuration</a>
+    <a href="#meeting_vote_configuration">meeting_vote_configuration</a>
+ &#8226;   <a href="#reset_server_configuration">reset_server_configuration</a>
  &#8226;   <a href="#server_page.py">server_page.py</a>
 
   </div>
@@ -20192,7 +20238,7 @@ imported by:
 
 <div class="node">
   <a name="userloginservice"></a>
-  <a target="code" href="///D:/NTH-Projects/RaspberryPi-MeetingRecorder/userloginservice.py" type="text/plain"><tt>userloginservice</tt></a>
+  <a target="code" href="///D:/RaspberryPi-MeetingRecorder/userloginservice.py" type="text/plain"><tt>userloginservice</tt></a>
 <span class="moduletype">SourceModule</span>  <div class="import">
 imports:
     <a href="#datetime">datetime</a>
