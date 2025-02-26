@@ -204,7 +204,7 @@ class MeetingRecordChairman(tk.Frame):
     # Meeting Start Vote Btn Click
     def meeting_start_vote_btn_click(self): 
       if(self.startVoteBtn.cget("text")=='Meeting Vote'):
-         meeting_vote_service.reset_meeting_vote_result()    
+         meeting_vote_service.check_create_newvote_result()    
          MeetingVoteConfiguration(self)        
       else:
          self.startVoteBtn.config(text="Meeting Vote")
