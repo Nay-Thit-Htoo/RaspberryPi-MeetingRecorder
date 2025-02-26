@@ -73,12 +73,13 @@ def check_create_newvote_result():
     vote_result=read_meeting_vote()
     if(vote_result['meeting_vote_result'] is None or len(vote_result['meeting_vote_result'])==0):
        reset_meeting_vote_result()
-    last_record=vote_result['meeting_vote_result'][-1]
-    if(not last_record is None):
-        last_record_date=datetime.strptime(last_record['created_date'], "%d-%m-%Y %H:%M:%S").date()
-        current_date=(datetime.now()).strftime("%d-%m-%Y")
-        if(last_record_date!=current_date):
-            reset_meeting_vote_result()
+    else:
+        last_record=vote_result['meeting_vote_result'][-1]
+        if(not last_record is None):
+            last_record_date=datetime.strptime(last_record['created_date'], "%d-%m-%Y %H:%M:%S").date()
+            current_date=(datetime.now()).strftime("%d-%m-%Y")
+            if(last_record_date!=current_date):
+                reset_meeting_vote_result()
 
 # Main function to demonstrate the process
 # def main(): 
