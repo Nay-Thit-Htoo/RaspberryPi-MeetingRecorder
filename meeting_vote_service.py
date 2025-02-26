@@ -74,11 +74,16 @@ def check_create_newvote_result():
     if(vote_result['meeting_vote_result'] is None or len(vote_result['meeting_vote_result'])==0):
        reset_meeting_vote_result()
     else:
+        print(f'[Meeting Vote Reult] : Orginal List {vote_result['meeting_vote_result']}')
         last_record=vote_result['meeting_vote_result'][-1]
+        print(f'[Meeting Vote Reult] : Last Record {last_record}')
         if(not last_record is None):
             last_record_date=datetime.strptime(last_record['created_date'], "%d-%m-%Y %H:%M:%S").date()
-            current_date=(datetime.now()).strftime("%d-%m-%Y")
+            print(f'[Meeting Vote Reult] : Last Record Date {last_record_date}')
+            current_date=datetime.now().date()
+            print(f'[Meeting Vote Reult] : Current Date {current_date}')
             if(last_record_date!=current_date):
+                print("[Meeting Vote Reult] : Record Date Not Equal with Current Date")
                 reset_meeting_vote_result()
 
 # Main function to demonstrate the process
