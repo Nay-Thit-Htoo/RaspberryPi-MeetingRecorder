@@ -131,7 +131,7 @@ def file_upload_meeting_vote_result(local_folder, remote_folder, server_address,
     create_folder_command = [
         "smbclient", f"//{server_address}/{share_name}", "-U", f"{username}%{password}",
         "--option=client min protocol=SMB2", "--option=client max protocol=SMB3",
-        "-c", f'mkdir "{remote_folder}"'
+        "-c", f'cd "{meeting_vote_folder_name}" mkdir "{remote_folder}"'
     ]
 
     try:
