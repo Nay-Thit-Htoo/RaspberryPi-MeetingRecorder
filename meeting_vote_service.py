@@ -74,7 +74,7 @@ def check_create_newvote_result():
     if(vote_result['meeting_vote_result'] is None or len(vote_result['meeting_vote_result'])==0):
        reset_meeting_vote_result()
     else:
-        print(f'[Meeting Vote Reult] : Orginal List {vote_result['meeting_vote_result']}')
+        print(f'[Meeting Vote Reult] : Orginal List {vote_result["meeting_vote_result"]}')
         last_record=vote_result['meeting_vote_result'][-1]
         print(f'[Meeting Vote Reult] : Last Record {last_record}')
         if(not last_record is None):
