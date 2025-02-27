@@ -133,7 +133,7 @@ class ServerSocket:
 
     # Create Folder Meeting Vote Result
     def create_meeting_vote_result_folder(self): 
-        create_folder_path=f"MeetingVoteResult\{{datetime.now().strftime('%d_%m_%Y')}}"
+        create_folder_path=f"MeetingVoteResult\{datetime.now().strftime('%d_%m_%Y')}"
         network_path = os.path.join(self.server_info['server_share_folder_path'], create_folder_path)       
         print(f'[Server Socket] : Create Meeting Vote Result Folder {network_path}')   
         # Create the directory if it doesn't exist
@@ -142,8 +142,7 @@ class ServerSocket:
             print(f"[Server Socket] Folder created at {network_path}")
         else:
             print(f"[Server Socket] Folder already exists at {network_path}")    
-      
-
+     
     # Stop Server
     def stop_server(self,server_log_panel):
         if not self.server_is_running:
@@ -174,7 +173,6 @@ class ServerSocket:
         return server_service.get_current_recording_user() 
         #current_record_userLst=server_service.get_current_recording_user() 
         #return [item['usercode'] for item in current_record_userLst]
-
        
     def write_logtext(self,log_panel,log_text):
         logDate=f"{datetime.now().strftime('%d-%m-%Y %H:%M:%S')}"
