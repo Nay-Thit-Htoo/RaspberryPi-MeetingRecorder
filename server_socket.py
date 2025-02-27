@@ -30,8 +30,8 @@ class ServerSocket:
         self.server_is_running = True
         clean_user_thread=threading.Thread(target=server_service.clean_clients)
         clean_user_thread.start() 
-        self.write_logtext(server_log_panel,f"[Server][Server listening on] : {socket.gethostbyname(socket.gethostname())}:{self.port}")
-        print(f"[Server][Server listening on] : {socket.gethostbyname(socket.gethostname())}:{self.port}")
+        self.write_logtext(server_log_panel,f"[Server Socket][Server listening on] : {socket.gethostbyname(socket.gethostname())}:{self.port}")
+        print(f"[Server Socket][Server listening on] : {socket.gethostbyname(socket.gethostname())}:{self.port}")
         threading.Thread(target=self.accept_connections, daemon=True,args=(server_log_panel,)).start() 
 
     def accept_connections(self,server_log_panel):
@@ -49,14 +49,14 @@ class ServerSocket:
 
     # Function to handle individual client connections
     def handle_client(self,client_socket, addr,server_log_panel):
-        self.write_logtext(server_log_panel,f"[Server][Connected By] : {addr}")
-        print(f"[Server][Connected By] : {addr}")   
+        self.write_logtext(server_log_panel,f"[Server Socket][Connected By] : {addr}")
+        print(f"[Server Socket][Connected By] : {addr}")   
         global clients  
         addr=addr[0]#only get ip address from tuple addr
         clients= {key: value for key, value in clients.items() if addr!=key} if (clients is not None) else clients
         clients[addr] = client_socket 
-        self.write_logtext(server_log_panel,f"[Server] [Requested Client Address List] : {clients}")
-        print(f"[Server] [Requested Client Address List] : {clients}")
+        self.write_logtext(server_log_panel,f"[Server Socket] [Requested Client Address List] : {clients}")
+        print(f"[Server Socket] [Requested Client Address List] : {clients}")
         while True:
             try:
                 message = client_socket.recv(1024)
@@ -66,8 +66,8 @@ class ServerSocket:
                 # Received Message and Decode Message
                 decoded_message = message.decode('utf-8')
                 recipient_ip, client_messsage = decoded_message.split(": ", 1)
-                self.write_logtext(server_log_panel,f"[Server][Server Receive Client Message]: {recipient_ip} {client_messsage}")
-                print(f"[Server][Server Receive Client Message]: {recipient_ip} {client_messsage}")       
+                self.write_logtext(server_log_panel,f"[Server Socket][Server Receive Client Message]: {recipient_ip} {client_messsage}")
+                print(f"[Server Socket][Server Receive Client Message]: {recipient_ip} {client_messsage}")       
                 # Replace single code to double code 
                 # Change to Json Format    
                 client_messsage_json=json.loads(client_messsage.replace("'", '"'))   
@@ -78,14 +78,14 @@ class ServerSocket:
                         'usertype':client_messsage_json['usertype']
                     })  
                     login_result['actiontype']=ActionType.LOGIN.name                    
-                    self.write_logtext(server_log_panel,f"[Server][Login Result]: {login_result}")            
-                    print(f"[Server][Login Result]: {login_result}")                
+                    self.write_logtext(server_log_panel,f"[Server Socket][Login Result]: {login_result}")            
+                    print(f"[Server Socket][Login Result]: {login_result}")                
                     clients[addr].sendall(str(login_result).encode('utf-8'))  
                 if(action_type==ActionType.OPEN_RECORD.name): 
                     user_code=client_messsage_json['usercode']                               
-                    self.write_logtext(server_log_panel,f"[Server][Open Meeting Record Page By]: {user_code}")
+                    self.write_logtext(server_log_panel,f"[Server Socket][Open Meeting Record Page By]: {user_code}")
                     current_record_user=self.get_current_recording_users(ActionType.OPEN_RECORD.name)
-                    print(f"[Server][Get Current Recording Users] {current_record_user}")
+                    print(f"[Server Socket][Get Current Recording Users] {current_record_user}")
                     client_messsage_json=client_messsage_json if current_record_user is None else current_record_user
                     client_messsage_json['usercode']=user_code
                     clients[addr].sendall(str(client_messsage_json).encode('utf-8'))  
@@ -97,6 +97,7 @@ class ServerSocket:
                         client_messsage_json=self.get_current_recording_users(ActionType.START_RECORD.name)
                         client_messsage_json['usercode']=user_code
                         client_messsage_json['usertype']=user_type
+                        self.create_remote_folder(user_code)
                     elif(action_type==ActionType.STOP_RECORD.name or action_type==ActionType.REMOVE_CLIENT.name):
                         server_service.update_recording_client_info(client_messsage_json,is_start_recording=False)
                         client_messsage_json["recording_users"]=self.get_current_recording_user_list()
@@ -110,33 +111,30 @@ class ServerSocket:
                     elif(action_type==ActionType.DISCUSS_REQUEST.name):
                          client_messsage_json["recording_users"]=self.get_current_recording_user_list()
                     elif(action_type==ActionType.START_MEETING_VOTE.name):
-                         self.create_meeting_vote_result_folder()
+                         self.create_remote_folder(f"MeetingVoteResult\{datetime.now().strftime('%d_%m_%Y')}")
                     # Send Message to Connected Clients
-                    self.write_logtext(server_log_panel,f"[Server][Send All Clients] : {clients}")
-                    print(f"[Server][Send All Clients]:{clients}")
+                    self.write_logtext(server_log_panel,f"[Server Socket][Send All Clients] : {clients}")
+                    print(f"[Server Socket][Send All Clients]:{clients}")
                     for client_addr, socket in clients.items():
-                        self.write_logtext(server_log_panel,f"[Server][Client Address] : {client_addr}")
-                        print(f"[Server][Client Address] : {client_addr}")
-                        self.write_logtext(server_log_panel,f"[Server][Socket Name] : {socket}")
-                        print(f"[Server][Socket Name] : {socket}")     
+                        self.write_logtext(server_log_panel,f"[Server Socket][Client Address] : {client_addr}")
+                        print(f"[Server Socket][Client Address] : {client_addr}")
+                        self.write_logtext(server_log_panel,f"[Server Socket][Socket Name] : {socket}")
+                        print(f"[Server Socket][Socket Name] : {socket}")     
                         socket.sendall(str(client_messsage_json).encode('utf-8'))
                                 
             except Exception as err:
-                self.write_logtext(server_log_panel,f"[Server][Exception Error Occur] : {err}")
-                print(f"[Server][Exception Error Occur] : {err}")
+                self.write_logtext(server_log_panel,f"[Server Socket][Exception Error Occur] : {err}")
+                print(f"[Server Socket][Exception Error Occur] : {err}")
                 break
-
 
     # Update Meeting Status
     def update_meeting_status(self,is_meeting_start):
         server_service.update_meeting_status(is_meeting_start)
 
-    # Create Folder Meeting Vote Result
-    def create_meeting_vote_result_folder(self): 
-        create_folder_path=f"MeetingVoteResult\{datetime.now().strftime('%d_%m_%Y')}"
-        network_path = os.path.join(self.server_info['server_share_folder_path'], create_folder_path)       
-        print(f'[Server Socket] : Create Meeting Vote Result Folder {network_path}')   
-        # Create the directory if it doesn't exist
+    # Create Remote Folder
+    def create_remote_folder(self,customer_folder_path):         
+        network_path = os.path.join(self.server_info['server_share_folder_path'], customer_folder_path)       
+        print(f'[Server Socket] : To Create Remote Folder Path {network_path}')   
         if not os.path.exists(network_path):
             os.makedirs(network_path)
             print(f"[Server Socket] Folder created at {network_path}")
@@ -149,8 +147,8 @@ class ServerSocket:
                 return
         self.server_is_running=False
         self.server_socket.close()
-        self.write_logtext(server_log_panel,"[Server]Server stopped....")
-        print("[Server]Server stopped....")  
+        self.write_logtext(server_log_panel,"[Server Socket]Server stopped....")
+        print("[Server Socket]Server stopped....")  
         server_service.clean_clients()  
 
     # Get Current Recording User List

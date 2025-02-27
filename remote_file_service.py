@@ -20,19 +20,19 @@ def create_and_copy_to_network_share(local_folder, remote_folder, server_address
     print(f"[File Upload To Server]:[Share Name]: {share_name}")
     print(f"[File Upload To Server]:[User Name]: {username}")
 
-    # Step 1: Create the target folder on the network share
-    create_folder_command = [
-        "smbclient", f"//{server_address}/{share_name}", "-U", f"{username}%{password}",
-        "--option=client min protocol=SMB2", "--option=client max protocol=SMB3",
-        "-c", f'mkdir "{remote_folder}"'
-    ]
+    # # Step 1: Create the target folder on the network share
+    # create_folder_command = [
+    #     "smbclient", f"//{server_address}/{share_name}", "-U", f"{username}%{password}",
+    #     "--option=client min protocol=SMB2", "--option=client max protocol=SMB3",
+    #     "-c", f'mkdir "{remote_folder}"'
+    # ]
 
-    try:
-        subprocess.run(create_folder_command, check=True, capture_output=True, text=True)
-        print(f"[File Upload To Server]: Created folder '{remote_folder}' on network share.")
-    except subprocess.CalledProcessError as e:
-        print(f"[File Upload To Server]: Error creating remote folder: {e.stderr}")
-        return
+    # try:
+    #     subprocess.run(create_folder_command, check=True, capture_output=True, text=True)
+    #     print(f"[File Upload To Server]: Created folder '{remote_folder}' on network share.")
+    # except subprocess.CalledProcessError as e:
+    #     print(f"[File Upload To Server]: Error creating remote folder: {e.stderr}")
+    #     return
 
     # Step 2: Copy files from local folder to the network share
     copy_command = [
@@ -124,38 +124,3 @@ def file_upload_meeting_vote_result(local_folder, remote_folder, server_address,
     except subprocess.CalledProcessError as e:
         print(f"[File Upload To Server]: Error copying files: {e.stderr}")
 
-def create_meeting_vote_folder_on_server(record_user_obj):   
-    remote_folder = record_user_obj['usercode']
-    server_address = record_user_obj['server_ip']
-    share_name = record_user_obj['server_share_folder_name']
-    username = record_user_obj['server_user_name'].replace("\\\\", "\\")
-    password = record_user_obj['server_password']  
-    meeting_vote_folder_name="MeetingVouteResult"
-
-     # Step 1: Create the target folder on the network share
-    create_meeting_vote_folder_command = [
-        "smbclient", f"//{server_address}/{share_name}", "-U", f"{username}%{password}",
-        "--option=client min protocol=SMB2", "--option=client max protocol=SMB3",
-        "-c", f'mkdir "{meeting_vote_folder_name}"'
-    ]
-
-    try:
-        subprocess.run(create_meeting_vote_folder_command, check=True, capture_output=True, text=True)
-        print(f"[File Upload To Server]: Created folder '{remote_folder}' on network share.")
-    except subprocess.CalledProcessError as e:
-        print(f"[File Upload To Server]: Error creating remote folder: {e.stderr}")
-        return
-
-   # Step 2: create folder for remote user folder
-    create_folder_command = [
-        "smbclient", f"//{server_address}/{share_name}", "-U", f"{username}%{password}",
-        "--option=client min protocol=SMB2", "--option=client max protocol=SMB3",
-        "-c", f'cd "{meeting_vote_folder_name}"; mkdir "{remote_folder}"'
-    ]
-
-    try:
-        subprocess.run(create_folder_command, check=True, capture_output=True, text=True)
-        print(f"[File Upload To Server]: Created folder '{remote_folder}' on network share.")
-    except subprocess.CalledProcessError as e:
-        print(f"[File Upload To Server]: Error creating remote folder: {e.stderr}")
-        return
