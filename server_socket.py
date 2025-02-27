@@ -7,6 +7,7 @@ from file_service import FileService
 from userloginservice import user_login
 from datetime import datetime
 import tkinter as tk
+import remote_file_service
 
 # json to hold all connected clients
 clients = {}
@@ -107,6 +108,8 @@ class ServerSocket:
                         self.update_meeting_status("false") 
                     elif(action_type==ActionType.DISCUSS_REQUEST.name):
                          client_messsage_json["recording_users"]=self.get_current_recording_user_list()
+                    elif(action_type==ActionType.START_MEETING_VOTE.name):
+                         self.create_meeting_vote_result_folder()
                     # Send Message to Connected Clients
                     self.write_logtext(server_log_panel,f"[Server][Send All Clients] : {clients}")
                     print(f"[Server][Send All Clients]:{clients}")
@@ -126,6 +129,18 @@ class ServerSocket:
     # Update Meeting Status
     def update_meeting_status(self,is_meeting_start):
         server_service.update_meeting_status(is_meeting_start)
+
+    # Create Folder Meeting Vote Result
+    def create_meeting_vote_result_folder(self):   
+        create_folder_object={
+                    'server_ip':socket.gethostbyname(socket.gethostname()),   
+                    'usercode':f"{datetime.now().strftime('%d_%m_%Y')}",           
+                    'server_share_folder_name':self.server_info['server_share_folder_name'],
+                    'server_user_name':self.server_info['server_user_name'].replace("\\\\", "\\"), 
+                    'server_password':self.server_info['server_password']                                                   
+                }
+        print(f'[Server Socket] : Create Meeting Vote Result Folder {create_folder_object}')
+        remote_file_service.create_meeting_vote_folder_on_server(create_folder_object)
 
     # Stop Server
     def stop_server(self,server_log_panel):

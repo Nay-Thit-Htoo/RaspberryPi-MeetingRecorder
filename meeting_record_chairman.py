@@ -203,16 +203,13 @@ class MeetingRecordChairman(tk.Frame):
 
     # Meeting Start Vote Btn Click
     def meeting_start_vote_btn_click(self): 
-      if(self.startVoteBtn.cget("text")=='Meeting Vote'):
-         current_logged_user=self.logged_user_info
-         print(f'[Meeting Record Chairman]:[Create Meeting Vote Result Folder]')
-         current_logged_user['usercode']=f"{datetime.now().strftime('%d_%m_%Y')}"
-         remote_file_service.create_meeting_vote_folder_on_server(current_logged_user)
+      if(self.startVoteBtn.cget("text")=='Meeting Vote'): 
          meeting_vote_service.check_create_newvote_result()    
          MeetingVoteConfiguration(self)        
       else:
          self.startVoteBtn.config(text="Meeting Vote")
          self.stop_meeting_vote_btn_click()
+      
    
     # Update Meeting Vote Title for Client
     def update_meeting_vote_info_for_client(self,meeting_vote_obj):
