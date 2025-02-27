@@ -12,7 +12,7 @@ import socket
 import threading
 import json
 from Enum.actiontype import ActionType
-import file_upload_service
+import remote_file_service
 from meeting_vote_configuration import MeetingVoteConfiguration
 import meeting_vote_service
 
@@ -204,6 +204,10 @@ class MeetingRecordChairman(tk.Frame):
     # Meeting Start Vote Btn Click
     def meeting_start_vote_btn_click(self): 
       if(self.startVoteBtn.cget("text")=='Meeting Vote'):
+         current_logged_user=self.logged_user_info
+         print(f'[Meeting Record Chairman]:[Create Meeting Vote Result Folder]')
+         current_logged_user['usercode']=f"{datetime.now().strftime('%d_%m_%Y')}"
+         remote_file_service.create_meeting_vote_folder_on_server(current_logged_user)
          meeting_vote_service.check_create_newvote_result()    
          MeetingVoteConfiguration(self)        
       else:
@@ -230,7 +234,7 @@ class MeetingRecordChairman(tk.Frame):
         current_logged_user['usercode']=f"{datetime.now().strftime('%d_%m_%Y')}"
         vote_result_file_path="Meeting_Vote_Result"
         print(f'[Meeting Record Chairman]:[Vote Result File Path] {vote_result_file_path}')
-        vote_result_file_upload_thread = threading.Thread(target=file_upload_service.meeting_vote_result_upload_to_server, args=(vote_result_file_path,current_logged_user))
+        vote_result_file_upload_thread = threading.Thread(target=remote_file_service.meeting_vote_result_upload_to_server, args=(vote_result_file_path,current_logged_user))
         vote_result_file_upload_thread.start() 
                
     # Update Meeting Vote Count
