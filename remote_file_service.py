@@ -129,17 +129,7 @@ def create_meeting_vote_folder_on_server(record_user_obj):
     server_address = record_user_obj['server_ip']
     share_name = record_user_obj['server_share_folder_name']
     username = record_user_obj['server_user_name'].replace("\\\\", "\\")
-    password = record_user_obj['server_password']
-    
-    # Start file upload in a separate thread
-    create_folder_on_server_thread = threading.Thread(
-        target=create_meeting_vote_folder_on_server_thread,
-        args=(remote_folder, server_address, share_name, username, password)
-    )
-    create_folder_on_server_thread.start()
-    create_folder_on_server_thread.join()
-
-def create_meeting_vote_folder_on_server_thread(remote_folder, server_address, share_name, username, password):
+    password = record_user_obj['server_password']  
     meeting_vote_folder_name="MeetingVouteResult"
 
      # Step 1: Create the target folder on the network share

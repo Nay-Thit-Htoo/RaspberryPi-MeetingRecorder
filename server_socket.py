@@ -8,6 +8,7 @@ from userloginservice import user_login
 from datetime import datetime
 import tkinter as tk
 import remote_file_service
+import os
 
 # json to hold all connected clients
 clients = {}
@@ -131,16 +132,17 @@ class ServerSocket:
         server_service.update_meeting_status(is_meeting_start)
 
     # Create Folder Meeting Vote Result
-    def create_meeting_vote_result_folder(self):   
-        create_folder_object={
-                    'server_ip':socket.gethostbyname(socket.gethostname()),   
-                    'usercode':f"{datetime.now().strftime('%d_%m_%Y')}",           
-                    'server_share_folder_name':self.server_info['server_share_folder_name'],
-                    'server_user_name':self.server_info['server_user_name'].replace("\\\\", "\\"), 
-                    'server_password':self.server_info['server_password']                                                   
-                }
-        print(f'[Server Socket] : Create Meeting Vote Result Folder {create_folder_object}')
-        remote_file_service.create_meeting_vote_folder_on_server(create_folder_object)
+    def create_meeting_vote_result_folder(self): 
+        create_folder_path=f"MeetingVoteResult\{{datetime.now().strftime('%d_%m_%Y')}}"
+        network_path = os.path.join(self.server_info['server_share_folder_path'], create_folder_path)       
+        print(f'[Server Socket] : Create Meeting Vote Result Folder {network_path}')   
+        # Create the directory if it doesn't exist
+        if not os.path.exists(network_path):
+            os.makedirs(network_path)
+            print(f"[Server Socket] Folder created at {network_path}")
+        else:
+            print(f"[Server Socket] Folder already exists at {network_path}")    
+      
 
     # Stop Server
     def stop_server(self,server_log_panel):

@@ -155,7 +155,8 @@ class ServerPage(tk.Tk):
                 self.server_stop_btn.config(state='normal')
                 server_service.update_meeting_status("false")
                 call_server_socket_thread=threading.Thread(target=self.call_server_socket)
-                call_server_socket_thread.start()
+                call_server_socket_thread.start()      
+
              
     def stop_server(self):      
         self.server_start_btn.config(text="Start")
