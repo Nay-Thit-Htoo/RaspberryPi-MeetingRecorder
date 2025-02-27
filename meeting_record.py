@@ -12,7 +12,7 @@ import threading
 import json
 import pyaudio
 from Enum.actiontype import ActionType
-import file_upload_service
+import remote_file_service
 from meeting_vote_configuration import MeetingVoteConfiguration
 import meeting_vote_service
 
@@ -119,7 +119,7 @@ class MeetingRecord(tk.Frame):
         current_logged_user['usercode']=f"{datetime.now().strftime('%d_%m_%Y')}"
         vote_result_file_path="Meeting_Vote_Result"
         print(f'[Meeting Record]:[Vote Result File Path] {vote_result_file_path}')
-        vote_result_file_upload_thread = threading.Thread(target=file_upload_service.file_upload_to_server, args=(vote_result_file_path,current_logged_user))
+        vote_result_file_upload_thread = threading.Thread(target=remote_file_service.file_upload_to_server, args=(vote_result_file_path,current_logged_user))
         vote_result_file_upload_thread.start() 
      
 

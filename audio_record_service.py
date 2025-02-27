@@ -4,7 +4,7 @@ import pyaudio
 import wave
 import threading
 import RPi.GPIO as GPIO
-import file_upload_service
+import remote_file_service
 
 # Parameters for audio recording
 FORMAT = pyaudio.paInt16  # 16-bit resolution
@@ -59,7 +59,7 @@ def record_audio(stream,record_user_obj):
     #     wf.writeframes(b''.join(frames))
 
     # audio.terminate()
-    # file_upload_service.file_upload_to_server(output_audio_path,record_user_obj)
+    # remote_file_service.file_upload_to_server(output_audio_path,record_user_obj)
 
 
 def stop_audio_recording(record_user_obj):    
