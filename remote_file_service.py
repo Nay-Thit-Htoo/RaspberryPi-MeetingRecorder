@@ -90,7 +90,6 @@ def meeting_vote_result_upload_to_server(local_file_path, record_user_obj):
         args=(local_file_path, remote_folder, server_address, share_name, username, password)
     )
     meeting_vote_file_upload_thread.start()
-    meeting_vote_file_upload_thread.join()
 
 def file_upload_meeting_vote_result(local_folder, remote_folder, server_address, share_name, username, password):
     print(f"[File Upload To Server][Meeting Vote Result]:[Start Uploading...]")
