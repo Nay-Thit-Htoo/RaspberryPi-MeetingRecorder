@@ -70,18 +70,21 @@ class Main(tk.Tk):
         
         self.protocol("WM_DELETE_WINDOW", self.on_close)
 
-    def on_close(self):        
-        GPIO.setmode(GPIO.BOARD)
-        GPIO.setwarnings(False)
-        GPIO.setup(32, GPIO.OUT)  # GPIO 18 as output     
-        GPIO.cleanup()
-        if(self.frame.__class__.__name__=="MeetingRecordChairman"):
-            if hasattr(self.frame, "close_window_chairman"):           
-             self.frame.close_window_chairman()
-        elif(self.frame.__class__.__name__=="MeetingRecord"):
-            if hasattr(self.frame, "close_window_client"):           
-             self.frame.close_window_client()
-        self.destroy()
+    def on_close(self): 
+        try:            
+            GPIO.setmode(GPIO.BOARD)
+            GPIO.setwarnings(False)
+            GPIO.setup(32, GPIO.OUT)  # GPIO 18 as output     
+            GPIO.cleanup()
+            if(self.frame.__class__.__name__=="MeetingRecordChairman"):
+                if hasattr(self.frame, "close_window_chairman"):           
+                    self.frame.close_window_chairman()
+            elif(self.frame.__class__.__name__=="MeetingRecord"):
+                if hasattr(self.frame, "close_window_client"):           
+                    self.frame.close_window_client()
+            self.destroy()
+        except Exception as e:  
+            self.destroy()    
 
     def resize_background(self, event=None):
         # Get the current window dimensions
