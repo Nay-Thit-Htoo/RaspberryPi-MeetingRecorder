@@ -109,17 +109,18 @@ def file_upload_meeting_vote_result(local_folder, remote_folder, server_address,
     print(f"[File Upload To Server]:[User Name]: {username}")
 
     meeting_vote_folder_name="MeetingVouteResult"   
-
     # Step 3: Copy files from local folder to the network share
     copy_command = [
         "smbclient", f"//{server_address}/{share_name}", "-U", f"{username}%{password}",
         "--option=client min protocol=SMB2", "--option=client max protocol=SMB3",
         "-c", f'lcd "{local_folder}"; cd "{meeting_vote_folder_name}/{remote_folder}"; prompt OFF; recurse ON; mput *'
     ]
-
     try:
         subprocess.run(copy_command, check=True, capture_output=True, text=True)
         print(f"[File Upload To Server]: Files copied successfully to network share.")
     except subprocess.CalledProcessError as e:
-        print(f"[File Upload To Server]: Error copying files: {e.stderr}")
+        print(f"[File Upload To Server]: Command failed: {e.cmd}")
+        print(f"[File Upload To Server]: Exit code: {e.returncode}")
+        print(f"[File Upload To Server]: Stdout: {e.stdout}")
+        print(f"[File Upload To Server]: Stderr: {e.stderr}")
 
