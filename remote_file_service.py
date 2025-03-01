@@ -108,7 +108,7 @@ def file_upload_meeting_vote_result(local_folder, remote_folder, server_address,
     print(f"[File Upload To Server]:[Share Name]: {share_name}")
     print(f"[File Upload To Server]:[User Name]: {username}")
 
-    meeting_vote_folder_name="MeetingVouteResult"   
+    meeting_vote_folder_name="MeetingVoteResult"   
     # Step 3: Copy files from local folder to the network share
     copy_command = [
         "smbclient", f"//{server_address}/{share_name}", "-U", f"{username}%{password}",
